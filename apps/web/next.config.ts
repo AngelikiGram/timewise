@@ -10,6 +10,7 @@ const config: NextConfig = {
   // Opening the dev server from another device on the home network uses this machine's LAN address.
   // Without it, Next.js blocks the dev scripts and pages never get past their loading state.
   allowedDevOrigins: ["192.168.0.160"],
+  output: "export",
 };
 
 export default config;

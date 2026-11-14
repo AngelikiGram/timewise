@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { Suspense } from "react";
 import { activityById, activitiesByJourney } from "@/lib/learning-activities";
 import { LearningHub } from "@/components/learn/LearningHub";
 
@@ -15,18 +15,18 @@ export async function generateMetadata({ params }: { params: Promise<{ journey?:
   };
 }
 
-export default async function LearnPage({ searchParams }: { searchParams: Promise<{ journey?: string; chapter?: string; activity?: string }> }) {
-  const { journey, chapter, activity } = await searchParams;
-  const journeyId = journey || "austria-1848-1921";
-
-  const activities = activitiesByJourney(journeyId);
-  if (activities.length === 0) notFound();
-
+function Loading() {
   return (
-    <LearningHub
-      initialJourneyId={journeyId}
-      initialChapterId={chapter || ""}
-      initialActivityId={activity || ""}
-    />
+    <div className="min-h-dvh flex items-center justify-center bg-paper">
+      <p className="text-xl text-ink-2">Loading Learning Hub...</p>
+    </div>
+  );
+}
+
+export default function LearnPage({ searchParams }: { searchParams: Promise<{ journey?: string; chapter?: string; activity?: string }> }) {
+  return (
+    <Suspense fallback={<Loading />}>
+      <LearningHub />
+    </Suspense>
   );
 }
