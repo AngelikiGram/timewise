@@ -106,7 +106,7 @@ export const LearningActivitySchema = z.object({
   chapterId: z.string(),
   type: ActivityTypeSchema,
   prompt: LocalizedText,
-  /** Claims this activity draws on — every answer must be derivable from these. */
+  /** Claims this activity draws on - every answer must be derivable from these. */
   claimIds: z.array(z.string()).min(1),
   /** Events this activity references (for map/timeline context). */
   eventIds: z.array(z.string()).default([]),
