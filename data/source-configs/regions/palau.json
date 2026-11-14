@@ -1,0 +1,19 @@
+{
+  "id": "palau",
+  "label": {
+    "en": "Palau"
+  },
+  "iso": "PW",
+  "wikidata_country": "Q695",
+  "wikidata_states": {
+    "Q695": "Palau"
+  },
+  "landmarks": [],
+  "generated": {
+    "by": "ingestion/generate_region_configs.py",
+    "on": "2026-11-09",
+    "method": "Sovereign state (Q3624078) with ISO code PW, plus historical countries linked to it by P1365/P1366 up to 1 steps. Not reviewed."
+  },
+  "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+  "continent": "oceania"
+}

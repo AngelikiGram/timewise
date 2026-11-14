@@ -1,0 +1,28 @@
+{
+ "gold_set": "developer-written, not archival",
+ "spatial_relation_extraction": {
+  "precision": 1.0,
+  "recall": 1.0,
+  "tp": 9,
+  "fp": 0,
+  "fn": 0
+ },
+ "temporal_correctness": {
+  "correct_years": 5,
+  "total": 5
+ },
+ "location_accuracy": {
+  "n": 4,
+  "mean_error_km": 27.4,
+  "within_stated_uncertainty": "4/4"
+ },
+ "topology_consistency": {
+  "valid_geometries": 9,
+  "total": 9
+ },
+ "boundary_overlap": {
+  "status": "not_measured",
+  "reason": "no polygons are reconstructed yet",
+  "iou_self_check": 0.3333333333333333
+ }
+}

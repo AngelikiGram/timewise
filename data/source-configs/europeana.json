@@ -1,0 +1,9 @@
+{
+  "provider": "europeana",
+  "documentation": "https://europeana.atlassian.net/wiki/spaces/EF/pages/2385739812/Search+API+Documentation",
+  "note": "Starting queries tied to events already in the Austria collection. They discover candidates and prove nothing about any claim.",
+  "queries": ["Semmeringbahn", "Brennerbahn", "Wiener Ringstraße", "Revolution 1848 Wien", "Salzburger Festspiele 1920", "Volksabstimmung Kärnten 1920",
+    "Carnuntum römisch", "Noricum Römer", "Vindobona", "Babenberger", "Stift Melk", "Privilegium minus", "Maximilian I. Kaiser", "Türkenbelagerung Wien 1529", "Zweite Türkenbelagerung Wien 1683",
+    "Maria Theresia", "Joseph II.", "Wiener Kongress 1815", "Andreas Hofer 1809", "Schlacht bei Aspern", "Franz Joseph I. Kaiser", "Erster Weltkrieg Österreich", "Erste Republik Österreich",
+    "Justizpalastbrand 1927", "Februarkämpfe 1934", "Anschluss 1938 Österreich", "Mauthausen", "Österreichischer Staatsvertrag 1955", "Salzburg Altstadt historisch", "Innsbruck historisch", "Graz historisch", "Linz historisch", "Klagenfurt historisch", "Bregenz historisch", "Eisenstadt historisch"]
+}

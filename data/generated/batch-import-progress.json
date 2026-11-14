@@ -1,0 +1,58 @@
+{
+ "states:afghanistan,albania,algeria,andorra,angola,antigua_and_barbuda,argentina,armenia,australia,austria,azerbaijan,bahrain,bangladesh,barbados,belarus,belgium,belize,benin,bhutan,bolivia,bosnia_and_herzegovina,botswana,brazil,brunei,bulgaria": {
+  "status": "ok",
+  "rows": 542,
+  "stored": 206,
+  "seconds": 23.3,
+  "at": "2026-11-12 09:39"
+ },
+ "states:burkina_faso,burundi,cambodia,cameroon,canada,cape_verde,central_african_republic,chad,chile,china,colombia,comoros,costa_rica,croatia,cuba,cyprus,czech_republic,democratic_republic_of_the_congo,denmark,djibouti,dominica,dominican_republic,ecuador,egypt,el_salvador": {
+  "status": "ok",
+  "rows": 601,
+  "stored": 266,
+  "seconds": 21.6,
+  "at": "2026-11-12 09:39"
+ },
+ "states:equatorial_guinea,eritrea,estonia,eswatini,ethiopia,federated_states_of_micronesia,fiji,finland,france,gabon,georgia,germany,ghana,greece,grenada,guatemala,guinea,guinea_bissau,guyana,haiti,honduras,hungary,iceland,india,indonesia": {
+  "status": "ok",
+  "rows": 1873,
+  "stored": 738,
+  "seconds": 32.5,
+  "at": "2026-11-12 09:50"
+ },
+ "states:iran,iraq,ireland,israel,italy,ivory_coast,jamaica,japan,jordan,kazakhstan,kenya,kiribati,kosovo,kuwait,kyrgyzstan,laos,latvia,lebanon,lesotho,liberia,libya,liechtenstein,lithuania,luxembourg,madagascar": {
+  "status": "ok",
+  "rows": 1114,
+  "stored": 338,
+  "seconds": 26.6,
+  "at": "2026-11-12 09:41"
+ },
+ "states:malawi,malaysia,maldives,mali,malta,marshall_islands,mauritania,mauritius,mexico,moldova,monaco,mongolia,montenegro,morocco,mozambique,myanmar,namibia,nauru,nepal,netherlands,new_zealand,nicaragua,niger,nigeria,north_korea": {
+  "status": "ok",
+  "rows": 381,
+  "stored": 172,
+  "seconds": 13.0,
+  "at": "2026-11-12 09:41"
+ },
+ "states:north_macedonia,norway,oman,pakistan,palau,palestine,panama,papua_new_guinea,paraguay,peru,philippines,poland,portugal,qatar,republic_of_the_congo,romania,russia,rwanda,saint_kitts_and_nevis,saint_lucia,saint_vincent_and_the_grenadines,samoa,san_marino,sao_tome_and_principe,saudi_arabia": {
+  "status": "ok",
+  "rows": 903,
+  "stored": 299,
+  "seconds": 33.0,
+  "at": "2026-11-12 09:47"
+ },
+ "states:senegal,serbia,seychelles,sierra_leone,singapore,slovakia,slovenia,solomon_islands,somalia,south_africa,south_korea,south_sudan,spain,sri_lanka,sudan,suriname,sweden,switzerland,syria,taiwan,tajikistan,tanzania,thailand,the_bahamas,the_gambia": {
+  "status": "ok",
+  "rows": 1037,
+  "stored": 323,
+  "seconds": 23.2,
+  "at": "2026-11-12 09:47"
+ },
+ "states:timor_leste,togo,tonga,trinidad_and_tobago,tunisia,turkey,turkmenistan,tuvalu,uganda,ukraine,united_arab_emirates,united_kingdom,united_states,uruguay,uzbekistan,vanuatu,vatican_city,venezuela,vietnam,yemen,zambia,zimbabwe": {
+  "status": "ok",
+  "rows": 924,
+  "stored": 310,
+  "seconds": 20.3,
+  "at": "2026-11-12 09:47"
+ }
+}

@@ -1,0 +1,20 @@
+{
+  "id": "myanmar",
+  "label": {
+    "en": "Myanmar"
+  },
+  "iso": "MM",
+  "wikidata_country": "Q836",
+  "wikidata_states": {
+    "Q836": "Myanmar",
+    "Q2376315": "British rule in Myanmar"
+  },
+  "landmarks": [],
+  "generated": {
+    "by": "ingestion/generate_region_configs.py",
+    "on": "2026-11-09",
+    "method": "Sovereign state (Q3624078) with ISO code MM, plus historical countries linked to it by P1365/P1366 up to 1 steps. Not reviewed."
+  },
+  "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+  "continent": "asia"
+}

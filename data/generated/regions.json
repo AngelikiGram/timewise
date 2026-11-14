@@ -1,0 +1,3354 @@
+{
+ "regions": [
+  {
+   "id": "afghanistan",
+   "label": {
+    "en": "Afghanistan"
+   },
+   "iso": "AF",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 295,
+   "continent": "asia",
+   "bbox": [
+    60.486,
+    29.392,
+    74.891,
+    38.456
+   ],
+   "curated": false
+  },
+  {
+   "id": "albania",
+   "label": {
+    "en": "Albania"
+   },
+   "iso": "AL",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 239,
+   "continent": "europe",
+   "bbox": [
+    19.281,
+    39.654,
+    21.031,
+    42.648
+   ],
+   "curated": false
+  },
+  {
+   "id": "algeria",
+   "label": {
+    "en": "Algeria"
+   },
+   "iso": "DZ",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 361,
+   "continent": "africa",
+   "bbox": [
+    -8.683,
+    18.987,
+    11.968,
+    37.092
+   ],
+   "curated": false
+  },
+  {
+   "id": "andorra",
+   "label": {
+    "en": "Andorra"
+   },
+   "iso": "AD",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 81,
+   "continent": "europe",
+   "bbox": [
+    1.415,
+    42.434,
+    1.74,
+    42.643
+   ],
+   "curated": false
+  },
+  {
+   "id": "angola",
+   "label": {
+    "en": "Angola"
+   },
+   "iso": "AO",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 57,
+   "continent": "africa",
+   "bbox": [
+    11.743,
+    -18.02,
+    24.047,
+    -5.855
+   ],
+   "curated": false
+  },
+  {
+   "id": "antigua_and_barbuda",
+   "label": {
+    "en": "Antigua and Barbuda"
+   },
+   "iso": "AG",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 23,
+   "continent": "north_america",
+   "bbox": [
+    -61.887,
+    16.997,
+    -61.686,
+    17.714
+   ],
+   "curated": false
+  },
+  {
+   "id": "argentina",
+   "label": {
+    "en": "Argentina"
+   },
+   "iso": "AR",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 338,
+   "continent": "south_america",
+   "bbox": [
+    -73.576,
+    -52.357,
+    -53.669,
+    -21.802
+   ],
+   "curated": false
+  },
+  {
+   "id": "armenia",
+   "label": {
+    "en": "Armenia"
+   },
+   "iso": "AM",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 514,
+   "continent": "asia",
+   "bbox": [
+    43.44,
+    38.869,
+    46.585,
+    41.291
+   ],
+   "curated": false
+  },
+  {
+   "id": "australia",
+   "label": {
+    "en": "Australia"
+   },
+   "iso": "AU",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 371,
+   "continent": "oceania",
+   "bbox": [
+    113.185,
+    -39.145,
+    153.617,
+    -10.707
+   ],
+   "curated": false
+  },
+  {
+   "id": "austria",
+   "label": {
+    "en": "Austria",
+    "de": "Österreich"
+   },
+   "iso": "AT",
+   "note": "Historical states are included so that earlier periods aren't lost. Events tied to the Habsburg lands can lie outside today's Austria.",
+   "imported": 859,
+   "continent": "europe",
+   "bbox": [
+    9.531,
+    46.372,
+    17.161,
+    49.021
+   ],
+   "curated": true
+  },
+  {
+   "id": "azerbaijan",
+   "label": {
+    "en": "Azerbaijan"
+   },
+   "iso": "AZ",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 574,
+   "continent": "asia",
+   "bbox": [
+    44.768,
+    38.399,
+    50.366,
+    41.891
+   ],
+   "curated": false
+  },
+  {
+   "id": "bahrain",
+   "label": {
+    "en": "Bahrain"
+   },
+   "iso": "BH",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 72,
+   "continent": "asia",
+   "bbox": [
+    50.452,
+    25.807,
+    50.617,
+    26.246
+   ],
+   "curated": false
+  },
+  {
+   "id": "bangladesh",
+   "label": {
+    "en": "Bangladesh"
+   },
+   "iso": "BD",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 127,
+   "continent": "asia",
+   "bbox": [
+    88.023,
+    20.79,
+    92.632,
+    26.572
+   ],
+   "curated": false
+  },
+  {
+   "id": "barbados",
+   "label": {
+    "en": "Barbados"
+   },
+   "iso": "BB",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 25,
+   "continent": "north_america",
+   "bbox": [
+    -59.647,
+    13.062,
+    -59.428,
+    13.318
+   ],
+   "curated": false
+  },
+  {
+   "id": "belarus",
+   "label": {
+    "en": "Belarus"
+   },
+   "iso": "BY",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 547,
+   "continent": "europe",
+   "bbox": [
+    23.175,
+    51.265,
+    32.71,
+    56.146
+   ],
+   "curated": false
+  },
+  {
+   "id": "belgium",
+   "label": {
+    "en": "Belgium"
+   },
+   "iso": "BE",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 694,
+   "continent": "europe",
+   "bbox": [
+    2.525,
+    49.511,
+    6.364,
+    51.491
+   ],
+   "curated": false
+  },
+  {
+   "id": "belize",
+   "label": {
+    "en": "Belize"
+   },
+   "iso": "BZ",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 42,
+   "continent": "north_america",
+   "bbox": [
+    -89.237,
+    15.889,
+    -88.085,
+    18.482
+   ],
+   "curated": false
+  },
+  {
+   "id": "benin",
+   "label": {
+    "en": "Benin"
+   },
+   "iso": "BJ",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 70,
+   "continent": "africa",
+   "bbox": [
+    0.763,
+    6.217,
+    3.834,
+    12.384
+   ],
+   "curated": false
+  },
+  {
+   "id": "bhutan",
+   "label": {
+    "en": "Bhutan"
+   },
+   "iso": "BT",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 29,
+   "continent": "asia",
+   "bbox": [
+    88.739,
+    26.702,
+    92.083,
+    28.311
+   ],
+   "curated": false
+  },
+  {
+   "id": "bolivia",
+   "label": {
+    "en": "Bolivia"
+   },
+   "iso": "BO",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 150,
+   "continent": "south_america",
+   "bbox": [
+    -69.646,
+    -22.892,
+    -57.496,
+    -9.71
+   ],
+   "curated": false
+  },
+  {
+   "id": "bosnia_and_herzegovina",
+   "label": {
+    "en": "Bosnia and Herzegovina"
+   },
+   "iso": "BA",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 267,
+   "continent": "europe",
+   "bbox": [
+    15.737,
+    42.56,
+    19.584,
+    45.277
+   ],
+   "curated": false
+  },
+  {
+   "id": "botswana",
+   "label": {
+    "en": "Botswana"
+   },
+   "iso": "BW",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 32,
+   "continent": "africa",
+   "bbox": [
+    19.977,
+    -26.854,
+    29.365,
+    -17.788
+   ],
+   "curated": false
+  },
+  {
+   "id": "brazil",
+   "label": {
+    "en": "Brazil"
+   },
+   "iso": "BR",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 738,
+   "continent": "south_america",
+   "bbox": [
+    -74.002,
+    -33.742,
+    -34.806,
+    5.258
+   ],
+   "curated": false
+  },
+  {
+   "id": "brunei",
+   "label": {
+    "en": "Brunei"
+   },
+   "iso": "BN",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 25,
+   "continent": "asia",
+   "bbox": [
+    114.064,
+    4.024,
+    115.327,
+    5.022
+   ],
+   "curated": false
+  },
+  {
+   "id": "bulgaria",
+   "label": {
+    "en": "Bulgaria"
+   },
+   "iso": "BG",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 406,
+   "continent": "europe",
+   "bbox": [
+    22.344,
+    41.244,
+    28.585,
+    44.238
+   ],
+   "curated": false
+  },
+  {
+   "id": "burkina_faso",
+   "label": {
+    "en": "Burkina Faso"
+   },
+   "iso": "BF",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 82,
+   "continent": "africa",
+   "bbox": [
+    -5.524,
+    9.425,
+    2.389,
+    15.078
+   ],
+   "curated": false
+  },
+  {
+   "id": "burundi",
+   "label": {
+    "en": "Burundi"
+   },
+   "iso": "BI",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 40,
+   "continent": "africa",
+   "bbox": [
+    29.014,
+    -4.456,
+    30.811,
+    -2.313
+   ],
+   "curated": false
+  },
+  {
+   "id": "cambodia",
+   "label": {
+    "en": "Cambodia"
+   },
+   "iso": "KH",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 107,
+   "continent": "asia",
+   "bbox": [
+    102.32,
+    10.411,
+    107.606,
+    14.705
+   ],
+   "curated": false
+  },
+  {
+   "id": "cameroon",
+   "label": {
+    "en": "Cameroon"
+   },
+   "iso": "CM",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 86,
+   "continent": "africa",
+   "bbox": [
+    8.533,
+    1.676,
+    16.183,
+    13.079
+   ],
+   "curated": false
+  },
+  {
+   "id": "canada",
+   "label": {
+    "en": "Canada"
+   },
+   "iso": "CA",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 610,
+   "continent": "north_america",
+   "bbox": [
+    -141.002,
+    41.675,
+    -55.673,
+    71.987
+   ],
+   "curated": false
+  },
+  {
+   "id": "cape_verde",
+   "label": {
+    "en": "Cape Verde"
+   },
+   "iso": "CV",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 37,
+   "continent": "africa",
+   "bbox": [
+    -25.342,
+    14.818,
+    -22.682,
+    17.194
+   ],
+   "curated": false
+  },
+  {
+   "id": "central_african_republic",
+   "label": {
+    "en": "Central African Republic"
+   },
+   "iso": "CF",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 44,
+   "continent": "africa",
+   "bbox": [
+    14.431,
+    2.27,
+    27.403,
+    10.996
+   ],
+   "curated": false
+  },
+  {
+   "id": "chad",
+   "label": {
+    "en": "Chad"
+   },
+   "iso": "TD",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 57,
+   "continent": "africa",
+   "bbox": [
+    13.448,
+    7.475,
+    23.983,
+    23.445
+   ],
+   "curated": false
+  },
+  {
+   "id": "chile",
+   "label": {
+    "en": "Chile"
+   },
+   "iso": "CL",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 309,
+   "continent": "south_america",
+   "bbox": [
+    -75.708,
+    -54.91,
+    -67.009,
+    -17.506
+   ],
+   "curated": false
+  },
+  {
+   "id": "colombia",
+   "label": {
+    "en": "Colombia"
+   },
+   "iso": "CO",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 324,
+   "continent": "south_america",
+   "bbox": [
+    -79.025,
+    -4.236,
+    -66.876,
+    12.434
+   ],
+   "curated": false
+  },
+  {
+   "id": "comoros",
+   "label": {
+    "en": "Comoros"
+   },
+   "iso": "KM",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 45,
+   "continent": "africa",
+   "bbox": [
+    43.227,
+    -12.368,
+    44.527,
+    -11.368
+   ],
+   "curated": false
+  },
+  {
+   "id": "costa_rica",
+   "label": {
+    "en": "Costa Rica"
+   },
+   "iso": "CR",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 97,
+   "continent": "north_america",
+   "bbox": [
+    -85.908,
+    8.071,
+    -82.564,
+    11.19
+   ],
+   "curated": false
+  },
+  {
+   "id": "croatia",
+   "label": {
+    "en": "Croatia"
+   },
+   "iso": "HR",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 335,
+   "continent": "europe",
+   "bbox": [
+    13.517,
+    42.938,
+    19.401,
+    46.535
+   ],
+   "curated": false
+  },
+  {
+   "id": "cuba",
+   "label": {
+    "en": "Cuba"
+   },
+   "iso": "CU",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 185,
+   "continent": "north_america",
+   "bbox": [
+    -84.887,
+    19.855,
+    -74.137,
+    23.19
+   ],
+   "curated": false
+  },
+  {
+   "id": "cyprus",
+   "label": {
+    "en": "Cyprus"
+   },
+   "iso": "CY",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 178,
+   "continent": "asia",
+   "bbox": [
+    32.301,
+    34.57,
+    34.05,
+    35.183
+   ],
+   "curated": false
+  },
+  {
+   "id": "czech_republic",
+   "label": {
+    "en": "Czech Republic"
+   },
+   "iso": "CZ",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 601,
+   "continent": "europe",
+   "bbox": [
+    12.09,
+    48.576,
+    18.832,
+    51.038
+   ],
+   "curated": false
+  },
+  {
+   "id": "democratic_republic_of_the_congo",
+   "label": {
+    "en": "Democratic Republic of the Congo"
+   },
+   "iso": "CD",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 102,
+   "continent": "africa",
+   "bbox": [
+    12.214,
+    -13.454,
+    31.274,
+    5.312
+   ],
+   "curated": false
+  },
+  {
+   "id": "denmark",
+   "label": {
+    "en": "Denmark"
+   },
+   "iso": "DK",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 481,
+   "continent": "europe",
+   "bbox": [
+    8.121,
+    54.773,
+    12.608,
+    57.737
+   ],
+   "curated": false
+  },
+  {
+   "id": "djibouti",
+   "label": {
+    "en": "Djibouti"
+   },
+   "iso": "DJ",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 33,
+   "continent": "africa",
+   "bbox": [
+    41.765,
+    10.941,
+    43.41,
+    12.709
+   ],
+   "curated": false
+  },
+  {
+   "id": "dominica",
+   "label": {
+    "en": "Dominica"
+   },
+   "iso": "DM",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 23,
+   "continent": "north_america",
+   "bbox": [
+    -61.481,
+    15.227,
+    -61.251,
+    15.633
+   ],
+   "curated": false
+  },
+  {
+   "id": "dominican_republic",
+   "label": {
+    "en": "Dominican Republic"
+   },
+   "iso": "DO",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 107,
+   "continent": "north_america",
+   "bbox": [
+    -72.0,
+    17.636,
+    -68.339,
+    19.914
+   ],
+   "curated": false
+  },
+  {
+   "id": "ecuador",
+   "label": {
+    "en": "Ecuador"
+   },
+   "iso": "EC",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 186,
+   "continent": "south_america",
+   "bbox": [
+    -80.963,
+    -4.991,
+    -75.25,
+    1.455
+   ],
+   "curated": false
+  },
+  {
+   "id": "egypt",
+   "label": {
+    "en": "Egypt"
+   },
+   "iso": "EG",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 393,
+   "continent": "africa",
+   "bbox": [
+    24.703,
+    21.995,
+    36.871,
+    31.655
+   ],
+   "curated": false
+  },
+  {
+   "id": "el_salvador",
+   "label": {
+    "en": "El Salvador"
+   },
+   "iso": "SV",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 89,
+   "continent": "north_america",
+   "bbox": [
+    -90.106,
+    13.164,
+    -87.715,
+    14.431
+   ],
+   "curated": false
+  },
+  {
+   "id": "equatorial_guinea",
+   "label": {
+    "en": "Equatorial Guinea"
+   },
+   "iso": "GQ",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 35,
+   "continent": "africa",
+   "bbox": [
+    8.434,
+    0.96,
+    11.335,
+    3.758
+   ],
+   "curated": false
+  },
+  {
+   "id": "eritrea",
+   "label": {
+    "en": "Eritrea"
+   },
+   "iso": "ER",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 52,
+   "continent": "africa",
+   "bbox": [
+    36.427,
+    12.377,
+    43.117,
+    18.005
+   ],
+   "curated": false
+  },
+  {
+   "id": "estonia",
+   "label": {
+    "en": "Estonia"
+   },
+   "iso": "EE",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 497,
+   "continent": "europe",
+   "bbox": [
+    21.855,
+    57.526,
+    28.151,
+    59.639
+   ],
+   "curated": false
+  },
+  {
+   "id": "eswatini",
+   "label": {
+    "en": "Eswatini"
+   },
+   "iso": "SZ",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 15,
+   "continent": "africa",
+   "bbox": [
+    30.788,
+    -27.31,
+    32.113,
+    -25.743
+   ],
+   "curated": false
+  },
+  {
+   "id": "ethiopia",
+   "label": {
+    "en": "Ethiopia"
+   },
+   "iso": "ET",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 159,
+   "continent": "africa",
+   "bbox": [
+    32.999,
+    3.456,
+    47.978,
+    14.852
+   ],
+   "curated": false
+  },
+  {
+   "id": "federated_states_of_micronesia",
+   "label": {
+    "en": "Federated States of Micronesia"
+   },
+   "iso": "FM",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 19,
+   "continent": "oceania",
+   "bbox": [
+    138.062,
+    5.277,
+    162.994,
+    9.593
+   ],
+   "curated": false
+  },
+  {
+   "id": "fiji",
+   "label": {
+    "en": "Fiji"
+   },
+   "iso": "FJ",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 37,
+   "continent": "oceania",
+   "bbox": [
+    177.255,
+    -18.264,
+    180.0,
+    -16.153
+   ],
+   "curated": false
+  },
+  {
+   "id": "finland",
+   "label": {
+    "en": "Finland"
+   },
+   "iso": "FI",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 405,
+   "continent": "europe",
+   "bbox": [
+    20.622,
+    59.816,
+    31.537,
+    70.065
+   ],
+   "curated": false
+  },
+  {
+   "id": "france",
+   "label": {
+    "en": "France"
+   },
+   "iso": "FR",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 3262,
+   "continent": "europe",
+   "bbox": [
+    -4.763,
+    42.34,
+    8.14,
+    51.097
+   ],
+   "curated": false
+  },
+  {
+   "id": "gabon",
+   "label": {
+    "en": "Gabon"
+   },
+   "iso": "GA",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 33,
+   "continent": "africa",
+   "bbox": [
+    8.703,
+    -3.916,
+    14.481,
+    2.302
+   ],
+   "curated": false
+  },
+  {
+   "id": "georgia",
+   "label": {
+    "en": "Georgia"
+   },
+   "iso": "GE",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 580,
+   "continent": "asia",
+   "bbox": [
+    39.978,
+    41.07,
+    46.673,
+    43.57
+   ],
+   "curated": false
+  },
+  {
+   "id": "germany",
+   "label": {
+    "en": "Germany"
+   },
+   "iso": "DE",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 3871,
+   "continent": "europe",
+   "bbox": [
+    5.857,
+    47.279,
+    15.017,
+    54.903
+   ],
+   "curated": false
+  },
+  {
+   "id": "ghana",
+   "label": {
+    "en": "Ghana"
+   },
+   "iso": "GH",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 104,
+   "continent": "africa",
+   "bbox": [
+    -3.244,
+    4.763,
+    1.187,
+    11.167
+   ],
+   "curated": false
+  },
+  {
+   "id": "greece",
+   "label": {
+    "en": "Greece"
+   },
+   "iso": "GR",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 1147,
+   "continent": "europe",
+   "bbox": [
+    20.001,
+    34.934,
+    26.625,
+    41.744
+   ],
+   "curated": false
+  },
+  {
+   "id": "grenada",
+   "label": {
+    "en": "Grenada"
+   },
+   "iso": "GD",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 39,
+   "continent": "north_america",
+   "bbox": [
+    -61.782,
+    12.008,
+    -61.607,
+    12.237
+   ],
+   "curated": false
+  },
+  {
+   "id": "guatemala",
+   "label": {
+    "en": "Guatemala"
+   },
+   "iso": "GT",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 124,
+   "continent": "north_america",
+   "bbox": [
+    -92.235,
+    13.736,
+    -88.228,
+    17.816
+   ],
+   "curated": false
+  },
+  {
+   "id": "guinea",
+   "label": {
+    "en": "Guinea"
+   },
+   "iso": "GN",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 50,
+   "continent": "africa",
+   "bbox": [
+    -15.051,
+    7.216,
+    -7.681,
+    12.674
+   ],
+   "curated": false
+  },
+  {
+   "id": "guinea_bissau",
+   "label": {
+    "en": "Guinea-Bissau"
+   },
+   "iso": "GW",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 55,
+   "continent": "africa",
+   "bbox": [
+    -16.712,
+    10.94,
+    -13.674,
+    12.68
+   ],
+   "curated": false
+  },
+  {
+   "id": "guyana",
+   "label": {
+    "en": "Guyana"
+   },
+   "iso": "GY",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 19,
+   "continent": "south_america",
+   "bbox": [
+    -61.391,
+    1.201,
+    -56.483,
+    8.549
+   ],
+   "curated": false
+  },
+  {
+   "id": "haiti",
+   "label": {
+    "en": "Haiti"
+   },
+   "iso": "HT",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 138,
+   "continent": "north_america",
+   "bbox": [
+    -74.478,
+    18.039,
+    -71.645,
+    19.928
+   ],
+   "curated": false
+  },
+  {
+   "id": "honduras",
+   "label": {
+    "en": "Honduras"
+   },
+   "iso": "HN",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 87,
+   "continent": "north_america",
+   "bbox": [
+    -89.363,
+    12.979,
+    -83.157,
+    16.024
+   ],
+   "curated": false
+  },
+  {
+   "id": "hungary",
+   "label": {
+    "en": "Hungary"
+   },
+   "iso": "HU",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 319,
+   "continent": "europe",
+   "bbox": [
+    16.093,
+    45.753,
+    22.877,
+    48.553
+   ],
+   "curated": false
+  },
+  {
+   "id": "iceland",
+   "label": {
+    "en": "Iceland"
+   },
+   "iso": "IS",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 94,
+   "continent": "europe",
+   "bbox": [
+    -24.476,
+    63.407,
+    -13.556,
+    66.526
+   ],
+   "curated": false
+  },
+  {
+   "id": "india",
+   "label": {
+    "en": "India"
+   },
+   "iso": "IN",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 2500,
+   "continent": "asia",
+   "bbox": [
+    68.165,
+    8.078,
+    97.344,
+    35.496
+   ],
+   "curated": false
+  },
+  {
+   "id": "indonesia",
+   "label": {
+    "en": "Indonesia"
+   },
+   "iso": "ID",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 847,
+   "continent": "asia",
+   "bbox": [
+    95.207,
+    -9.119,
+    140.976,
+    5.629
+   ],
+   "curated": false
+  },
+  {
+   "id": "iran",
+   "label": {
+    "en": "Iran"
+   },
+   "iso": "IR",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 573,
+   "continent": "asia",
+   "bbox": [
+    44.023,
+    25.102,
+    63.305,
+    39.769
+   ],
+   "curated": false
+  },
+  {
+   "id": "iraq",
+   "label": {
+    "en": "Iraq"
+   },
+   "iso": "IQ",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 491,
+   "continent": "asia",
+   "bbox": [
+    38.773,
+    29.064,
+    48.547,
+    37.372
+   ],
+   "curated": false
+  },
+  {
+   "id": "ireland",
+   "label": {
+    "en": "Ireland"
+   },
+   "iso": "IE",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 334,
+   "continent": "europe",
+   "bbox": [
+    -10.39,
+    51.474,
+    -6.027,
+    55.366
+   ],
+   "curated": false
+  },
+  {
+   "id": "israel",
+   "label": {
+    "en": "Israel"
+   },
+   "iso": "IL",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 493,
+   "continent": "asia",
+   "bbox": [
+    34.245,
+    29.477,
+    35.888,
+    33.416
+   ],
+   "curated": false
+  },
+  {
+   "id": "italy",
+   "label": {
+    "en": "Italy"
+   },
+   "iso": "IT",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 2687,
+   "continent": "europe",
+   "bbox": [
+    6.628,
+    36.688,
+    18.486,
+    47.082
+   ],
+   "curated": false
+  },
+  {
+   "id": "ivory_coast",
+   "label": {
+    "en": "Ivory Coast"
+   },
+   "iso": "CI",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 53,
+   "continent": "africa",
+   "bbox": [
+    -8.604,
+    4.351,
+    -2.506,
+    10.724
+   ],
+   "curated": false
+  },
+  {
+   "id": "jamaica",
+   "label": {
+    "en": "Jamaica"
+   },
+   "iso": "JM",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 49,
+   "continent": "north_america",
+   "bbox": [
+    -78.34,
+    17.715,
+    -76.211,
+    18.522
+   ],
+   "curated": false
+  },
+  {
+   "id": "japan",
+   "label": {
+    "en": "Japan"
+   },
+   "iso": "JP",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 1823,
+   "continent": "asia",
+   "bbox": [
+    129.58,
+    31.015,
+    145.833,
+    45.51
+   ],
+   "curated": false
+  },
+  {
+   "id": "jordan",
+   "label": {
+    "en": "Jordan"
+   },
+   "iso": "JO",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 136,
+   "continent": "asia",
+   "bbox": [
+    34.951,
+    29.191,
+    39.293,
+    33.372
+   ],
+   "curated": false
+  },
+  {
+   "id": "kazakhstan",
+   "label": {
+    "en": "Kazakhstan"
+   },
+   "iso": "KZ",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 387,
+   "continent": "asia",
+   "bbox": [
+    46.609,
+    40.609,
+    87.323,
+    55.39
+   ],
+   "curated": false
+  },
+  {
+   "id": "kenya",
+   "label": {
+    "en": "Kenya"
+   },
+   "iso": "KE",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 77,
+   "continent": "africa",
+   "bbox": [
+    33.9,
+    -4.692,
+    41.884,
+    5.492
+   ],
+   "curated": false
+  },
+  {
+   "id": "netherlands",
+   "label": {
+    "en": "Kingdom of the Netherlands"
+   },
+   "iso": "NL",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 732,
+   "continent": "europe",
+   "bbox": [
+    3.449,
+    50.75,
+    7.197,
+    53.441
+   ],
+   "curated": false
+  },
+  {
+   "id": "kiribati",
+   "label": {
+    "en": "Kiribati"
+   },
+   "iso": "KI",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 17,
+   "continent": "oceania",
+   "bbox": [
+    -171.728,
+    -4.094,
+    -154.943,
+    3.924
+   ],
+   "curated": false
+  },
+  {
+   "id": "kosovo",
+   "label": {
+    "en": "Kosovo"
+   },
+   "iso": "XK",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 54,
+   "continent": "europe",
+   "bbox": [
+    20.029,
+    41.854,
+    21.753,
+    43.261
+   ],
+   "curated": false
+  },
+  {
+   "id": "kuwait",
+   "label": {
+    "en": "Kuwait"
+   },
+   "iso": "KW",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 96,
+   "continent": "asia",
+   "bbox": [
+    46.531,
+    28.533,
+    48.443,
+    30.097
+   ],
+   "curated": false
+  },
+  {
+   "id": "kyrgyzstan",
+   "label": {
+    "en": "Kyrgyzstan"
+   },
+   "iso": "KG",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 346,
+   "continent": "asia",
+   "bbox": [
+    69.229,
+    39.208,
+    80.246,
+    43.24
+   ],
+   "curated": false
+  },
+  {
+   "id": "laos",
+   "label": {
+    "en": "Laos"
+   },
+   "iso": "LA",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 59,
+   "continent": "asia",
+   "bbox": [
+    100.115,
+    13.921,
+    107.653,
+    22.495
+   ],
+   "curated": false
+  },
+  {
+   "id": "latvia",
+   "label": {
+    "en": "Latvia"
+   },
+   "iso": "LV",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 472,
+   "continent": "europe",
+   "bbox": [
+    21.015,
+    55.667,
+    28.202,
+    58.063
+   ],
+   "curated": false
+  },
+  {
+   "id": "lebanon",
+   "label": {
+    "en": "Lebanon"
+   },
+   "iso": "LB",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 243,
+   "continent": "asia",
+   "bbox": [
+    35.109,
+    33.076,
+    36.585,
+    34.679
+   ],
+   "curated": false
+  },
+  {
+   "id": "lesotho",
+   "label": {
+    "en": "Lesotho"
+   },
+   "iso": "LS",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 26,
+   "continent": "africa",
+   "bbox": [
+    27.052,
+    -30.642,
+    29.391,
+    -28.582
+   ],
+   "curated": false
+  },
+  {
+   "id": "liberia",
+   "label": {
+    "en": "Liberia"
+   },
+   "iso": "LR",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 85,
+   "continent": "africa",
+   "bbox": [
+    -11.508,
+    4.351,
+    -7.4,
+    8.538
+   ],
+   "curated": false
+  },
+  {
+   "id": "libya",
+   "label": {
+    "en": "Libya"
+   },
+   "iso": "LY",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 230,
+   "continent": "africa",
+   "bbox": [
+    9.31,
+    19.497,
+    25.151,
+    33.182
+   ],
+   "curated": false
+  },
+  {
+   "id": "liechtenstein",
+   "label": {
+    "en": "Liechtenstein"
+   },
+   "iso": "LI",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 109,
+   "continent": "europe",
+   "bbox": [
+    9.479,
+    47.057,
+    9.611,
+    47.271
+   ],
+   "curated": false
+  },
+  {
+   "id": "lithuania",
+   "label": {
+    "en": "Lithuania"
+   },
+   "iso": "LT",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 445,
+   "continent": "europe",
+   "bbox": [
+    21.046,
+    53.893,
+    26.776,
+    56.411
+   ],
+   "curated": false
+  },
+  {
+   "id": "luxembourg",
+   "label": {
+    "en": "Luxembourg"
+   },
+   "iso": "LU",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 105,
+   "continent": "europe",
+   "bbox": [
+    5.725,
+    49.446,
+    6.494,
+    50.167
+   ],
+   "curated": false
+  },
+  {
+   "id": "madagascar",
+   "label": {
+    "en": "Madagascar"
+   },
+   "iso": "MG",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 47,
+   "continent": "africa",
+   "bbox": [
+    43.257,
+    -25.57,
+    50.483,
+    -12.08
+   ],
+   "curated": false
+  },
+  {
+   "id": "malawi",
+   "label": {
+    "en": "Malawi"
+   },
+   "iso": "MW",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 27,
+   "continent": "africa",
+   "bbox": [
+    32.67,
+    -17.131,
+    35.893,
+    -9.395
+   ],
+   "curated": false
+  },
+  {
+   "id": "malaysia",
+   "label": {
+    "en": "Malaysia"
+   },
+   "iso": "MY",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 323,
+   "continent": "asia",
+   "bbox": [
+    100.119,
+    0.862,
+    119.266,
+    6.99
+   ],
+   "curated": false
+  },
+  {
+   "id": "maldives",
+   "label": {
+    "en": "Maldives"
+   },
+   "iso": "MV",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 37,
+   "continent": "asia",
+   "bbox": [
+    73.382,
+    3.229,
+    73.528,
+    4.248
+   ],
+   "curated": false
+  },
+  {
+   "id": "mali",
+   "label": {
+    "en": "Mali"
+   },
+   "iso": "ML",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 124,
+   "continent": "africa",
+   "bbox": [
+    -12.281,
+    10.143,
+    4.235,
+    24.996
+   ],
+   "curated": false
+  },
+  {
+   "id": "malta",
+   "label": {
+    "en": "Malta"
+   },
+   "iso": "MT",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 150,
+   "continent": "europe",
+   "bbox": [
+    14.18,
+    35.82,
+    14.566,
+    36.076
+   ],
+   "curated": false
+  },
+  {
+   "id": "marshall_islands",
+   "label": {
+    "en": "Marshall Islands"
+   },
+   "iso": "MH",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 15,
+   "continent": "oceania",
+   "bbox": [
+    166.845,
+    5.8,
+    171.757,
+    11.169
+   ],
+   "curated": false
+  },
+  {
+   "id": "mauritania",
+   "label": {
+    "en": "Mauritania"
+   },
+   "iso": "MR",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 73,
+   "continent": "africa",
+   "bbox": [
+    -17.064,
+    14.745,
+    -4.823,
+    27.286
+   ],
+   "curated": false
+  },
+  {
+   "id": "mauritius",
+   "label": {
+    "en": "Mauritius"
+   },
+   "iso": "MU",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 18,
+   "continent": "africa",
+   "bbox": [
+    57.318,
+    -20.513,
+    57.792,
+    -19.99
+   ],
+   "curated": false
+  },
+  {
+   "id": "mexico",
+   "label": {
+    "en": "Mexico"
+   },
+   "iso": "MX",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 640,
+   "continent": "north_america",
+   "bbox": [
+    -117.128,
+    14.545,
+    -86.772,
+    32.715
+   ],
+   "curated": false
+  },
+  {
+   "id": "moldova",
+   "label": {
+    "en": "Moldova"
+   },
+   "iso": "MD",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 388,
+   "continent": "europe",
+   "bbox": [
+    26.619,
+    45.45,
+    30.131,
+    48.478
+   ],
+   "curated": false
+  },
+  {
+   "id": "monaco",
+   "label": {
+    "en": "Monaco"
+   },
+   "iso": "MC",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 80,
+   "continent": "europe",
+   "bbox": [
+    7.378,
+    43.732,
+    7.439,
+    43.771
+   ],
+   "curated": false
+  },
+  {
+   "id": "mongolia",
+   "label": {
+    "en": "Mongolia"
+   },
+   "iso": "MN",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 93,
+   "continent": "asia",
+   "bbox": [
+    87.743,
+    41.596,
+    119.898,
+    52.117
+   ],
+   "curated": false
+  },
+  {
+   "id": "montenegro",
+   "label": {
+    "en": "Montenegro"
+   },
+   "iso": "ME",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 168,
+   "continent": "europe",
+   "bbox": [
+    18.436,
+    41.869,
+    20.348,
+    43.542
+   ],
+   "curated": false
+  },
+  {
+   "id": "morocco",
+   "label": {
+    "en": "Morocco"
+   },
+   "iso": "MA",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 374,
+   "continent": "africa",
+   "bbox": [
+    -17.003,
+    21.421,
+    -1.065,
+    35.93
+   ],
+   "curated": false
+  },
+  {
+   "id": "mozambique",
+   "label": {
+    "en": "Mozambique"
+   },
+   "iso": "MZ",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 40,
+   "continent": "africa",
+   "bbox": [
+    30.222,
+    -26.862,
+    40.844,
+    -10.464
+   ],
+   "curated": false
+  },
+  {
+   "id": "myanmar",
+   "label": {
+    "en": "Myanmar"
+   },
+   "iso": "MM",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 167,
+   "continent": "asia",
+   "bbox": [
+    92.18,
+    10.035,
+    101.147,
+    28.517
+   ],
+   "curated": false
+  },
+  {
+   "id": "namibia",
+   "label": {
+    "en": "Namibia"
+   },
+   "iso": "NA",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 51,
+   "continent": "africa",
+   "bbox": [
+    11.722,
+    -28.939,
+    25.259,
+    -16.968
+   ],
+   "curated": false
+  },
+  {
+   "id": "nauru",
+   "label": {
+    "en": "Nauru"
+   },
+   "iso": "NR",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 37,
+   "continent": "oceania",
+   "bbox": [
+    166.907,
+    -0.551,
+    166.958,
+    -0.489
+   ],
+   "curated": false
+  },
+  {
+   "id": "nepal",
+   "label": {
+    "en": "Nepal"
+   },
+   "iso": "NP",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 80,
+   "continent": "asia",
+   "bbox": [
+    80.052,
+    26.36,
+    88.162,
+    30.387
+   ],
+   "curated": false
+  },
+  {
+   "id": "new_zealand",
+   "label": {
+    "en": "New Zealand"
+   },
+   "iso": "NZ",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 118,
+   "continent": "oceania",
+   "bbox": [
+    166.478,
+    -46.631,
+    178.536,
+    -34.429
+   ],
+   "curated": false
+  },
+  {
+   "id": "nicaragua",
+   "label": {
+    "en": "Nicaragua"
+   },
+   "iso": "NI",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 71,
+   "continent": "north_america",
+   "bbox": [
+    -87.67,
+    10.735,
+    -83.157,
+    15.008
+   ],
+   "curated": false
+  },
+  {
+   "id": "niger",
+   "label": {
+    "en": "Niger"
+   },
+   "iso": "NE",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 76,
+   "continent": "africa",
+   "bbox": [
+    0.164,
+    11.696,
+    15.963,
+    23.518
+   ],
+   "curated": false
+  },
+  {
+   "id": "nigeria",
+   "label": {
+    "en": "Nigeria"
+   },
+   "iso": "NG",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 459,
+   "continent": "africa",
+   "bbox": [
+    2.686,
+    4.277,
+    14.627,
+    13.873
+   ],
+   "curated": false
+  },
+  {
+   "id": "north_korea",
+   "label": {
+    "en": "North Korea"
+   },
+   "iso": "KP",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 125,
+   "continent": "asia",
+   "bbox": [
+    124.349,
+    37.719,
+    130.687,
+    42.998
+   ],
+   "curated": false
+  },
+  {
+   "id": "north_macedonia",
+   "label": {
+    "en": "North Macedonia"
+   },
+   "iso": "MK",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 172,
+   "continent": "europe",
+   "bbox": [
+    20.449,
+    40.85,
+    23.006,
+    42.358
+   ],
+   "curated": false
+  },
+  {
+   "id": "norway",
+   "label": {
+    "en": "Norway"
+   },
+   "iso": "NO",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 323,
+   "continent": "europe",
+   "bbox": [
+    4.91,
+    58.021,
+    30.961,
+    80.478
+   ],
+   "curated": false
+  },
+  {
+   "id": "oman",
+   "label": {
+    "en": "Oman"
+   },
+   "iso": "OM",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 89,
+   "continent": "asia",
+   "bbox": [
+    51.978,
+    16.648,
+    59.837,
+    24.979
+   ],
+   "curated": false
+  },
+  {
+   "id": "pakistan",
+   "label": {
+    "en": "Pakistan"
+   },
+   "iso": "PK",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 326,
+   "continent": "asia",
+   "bbox": [
+    60.843,
+    23.753,
+    77.049,
+    37.037
+   ],
+   "curated": false
+  },
+  {
+   "id": "palau",
+   "label": {
+    "en": "Palau"
+   },
+   "iso": "PW",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 66,
+   "continent": "oceania",
+   "bbox": [
+    131.135,
+    3.022,
+    134.66,
+    7.712
+   ],
+   "curated": false
+  },
+  {
+   "id": "palestine",
+   "label": {
+    "en": "Palestine"
+   },
+   "iso": "PS",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 226,
+   "continent": "asia",
+   "bbox": [
+    34.198,
+    31.208,
+    35.572,
+    32.534
+   ],
+   "curated": false
+  },
+  {
+   "id": "panama",
+   "label": {
+    "en": "Panama"
+   },
+   "iso": "PA",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 64,
+   "continent": "north_america",
+   "bbox": [
+    -83.027,
+    7.22,
+    -77.196,
+    9.598
+   ],
+   "curated": false
+  },
+  {
+   "id": "papua_new_guinea",
+   "label": {
+    "en": "Papua New Guinea"
+   },
+   "iso": "PG",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 76,
+   "continent": "oceania",
+   "bbox": [
+    140.862,
+    -10.655,
+    152.406,
+    -2.61
+   ],
+   "curated": false
+  },
+  {
+   "id": "paraguay",
+   "label": {
+    "en": "Paraguay"
+   },
+   "iso": "PY",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 86,
+   "continent": "south_america",
+   "bbox": [
+    -62.651,
+    -27.554,
+    -54.242,
+    -19.286
+   ],
+   "curated": false
+  },
+  {
+   "id": "china",
+   "label": {
+    "en": "People's Republic of China"
+   },
+   "iso": "CN",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 1455,
+   "continent": "asia",
+   "bbox": [
+    73.607,
+    20.264,
+    134.752,
+    53.556
+   ],
+   "curated": false
+  },
+  {
+   "id": "peru",
+   "label": {
+    "en": "Peru"
+   },
+   "iso": "PE",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 320,
+   "continent": "south_america",
+   "bbox": [
+    -81.337,
+    -18.346,
+    -68.685,
+    -0.042
+   ],
+   "curated": false
+  },
+  {
+   "id": "philippines",
+   "label": {
+    "en": "Philippines"
+   },
+   "iso": "PH",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 594,
+   "continent": "asia",
+   "bbox": [
+    117.219,
+    5.599,
+    126.593,
+    18.615
+   ],
+   "curated": false
+  },
+  {
+   "id": "poland",
+   "label": {
+    "en": "Poland"
+   },
+   "iso": "PL",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 1237,
+   "continent": "europe",
+   "bbox": [
+    14.129,
+    49.021,
+    24.106,
+    54.838
+   ],
+   "curated": false
+  },
+  {
+   "id": "portugal",
+   "label": {
+    "en": "Portugal"
+   },
+   "iso": "PT",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 763,
+   "continent": "europe",
+   "bbox": [
+    -9.48,
+    37.005,
+    -6.213,
+    42.137
+   ],
+   "curated": false
+  },
+  {
+   "id": "qatar",
+   "label": {
+    "en": "Qatar"
+   },
+   "iso": "QA",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 72,
+   "continent": "asia",
+   "bbox": [
+    50.755,
+    24.565,
+    51.609,
+    26.153
+   ],
+   "curated": false
+  },
+  {
+   "id": "republic_of_the_congo",
+   "label": {
+    "en": "Republic of the Congo"
+   },
+   "iso": "CG",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 32,
+   "continent": "africa",
+   "bbox": [
+    11.13,
+    -5.004,
+    18.622,
+    3.687
+   ],
+   "curated": false
+  },
+  {
+   "id": "romania",
+   "label": {
+    "en": "Romania"
+   },
+   "iso": "RO",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 424,
+   "continent": "europe",
+   "bbox": [
+    20.242,
+    43.671,
+    29.706,
+    48.264
+   ],
+   "curated": false
+  },
+  {
+   "id": "russia",
+   "label": {
+    "en": "Russia"
+   },
+   "iso": "RU",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 2006,
+   "continent": "europe",
+   "bbox": [
+    27.352,
+    41.199,
+    180.0,
+    77.731
+   ],
+   "curated": false
+  },
+  {
+   "id": "rwanda",
+   "label": {
+    "en": "Rwanda"
+   },
+   "iso": "RW",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 51,
+   "continent": "africa",
+   "bbox": [
+    28.858,
+    -2.809,
+    30.877,
+    -1.063
+   ],
+   "curated": false
+  },
+  {
+   "id": "saint_kitts_and_nevis",
+   "label": {
+    "en": "Saint Kitts and Nevis"
+   },
+   "iso": "KN",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 26,
+   "continent": "north_america",
+   "bbox": [
+    -62.84,
+    17.101,
+    -62.532,
+    17.403
+   ],
+   "curated": false
+  },
+  {
+   "id": "saint_lucia",
+   "label": {
+    "en": "Saint Lucia"
+   },
+   "iso": "LC",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 37,
+   "continent": "north_america",
+   "bbox": [
+    -61.073,
+    13.718,
+    -60.887,
+    14.093
+   ],
+   "curated": false
+  },
+  {
+   "id": "saint_vincent_and_the_grenadines",
+   "label": {
+    "en": "Saint Vincent and the Grenadines"
+   },
+   "iso": "VC",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 28,
+   "continent": "north_america",
+   "bbox": [
+    -61.277,
+    12.976,
+    -61.124,
+    13.359
+   ],
+   "curated": false
+  },
+  {
+   "id": "samoa",
+   "label": {
+    "en": "Samoa"
+   },
+   "iso": "WS",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 20,
+   "continent": "oceania",
+   "bbox": [
+    -172.779,
+    -14.047,
+    -171.45,
+    -13.465
+   ],
+   "curated": false
+  },
+  {
+   "id": "san_marino",
+   "label": {
+    "en": "San Marino"
+   },
+   "iso": "SM",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 67,
+   "continent": "europe",
+   "bbox": [
+    12.397,
+    43.894,
+    12.515,
+    43.99
+   ],
+   "curated": false
+  },
+  {
+   "id": "saudi_arabia",
+   "label": {
+    "en": "Saudi Arabia"
+   },
+   "iso": "SA",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 199,
+   "continent": "asia",
+   "bbox": [
+    34.616,
+    16.372,
+    55.641,
+    32.124
+   ],
+   "curated": false
+  },
+  {
+   "id": "senegal",
+   "label": {
+    "en": "Senegal"
+   },
+   "iso": "SN",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 80,
+   "continent": "africa",
+   "bbox": [
+    -17.536,
+    12.328,
+    -11.382,
+    16.679
+   ],
+   "curated": false
+  },
+  {
+   "id": "serbia",
+   "label": {
+    "en": "Serbia"
+   },
+   "iso": "RS",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 369,
+   "continent": "europe",
+   "bbox": [
+    18.839,
+    42.242,
+    22.977,
+    46.169
+   ],
+   "curated": false
+  },
+  {
+   "id": "seychelles",
+   "label": {
+    "en": "Seychelles"
+   },
+   "iso": "SC",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 27,
+   "continent": "africa",
+   "bbox": [
+    55.383,
+    -4.785,
+    55.543,
+    -4.559
+   ],
+   "curated": false
+  },
+  {
+   "id": "sierra_leone",
+   "label": {
+    "en": "Sierra Leone"
+   },
+   "iso": "SL",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 53,
+   "continent": "africa",
+   "bbox": [
+    -13.293,
+    6.907,
+    -10.283,
+    9.996
+   ],
+   "curated": false
+  },
+  {
+   "id": "singapore",
+   "label": {
+    "en": "Singapore"
+   },
+   "iso": "SG",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 79,
+   "continent": "asia",
+   "bbox": [
+    103.65,
+    1.265,
+    103.996,
+    1.447
+   ],
+   "curated": false
+  },
+  {
+   "id": "slovakia",
+   "label": {
+    "en": "Slovakia"
+   },
+   "iso": "SK",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 162,
+   "continent": "europe",
+   "bbox": [
+    16.863,
+    47.763,
+    22.539,
+    49.598
+   ],
+   "curated": false
+  },
+  {
+   "id": "slovenia",
+   "label": {
+    "en": "Slovenia"
+   },
+   "iso": "SI",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 222,
+   "continent": "europe",
+   "bbox": [
+    13.378,
+    45.428,
+    16.516,
+    46.863
+   ],
+   "curated": false
+  },
+  {
+   "id": "solomon_islands",
+   "label": {
+    "en": "Solomon Islands"
+   },
+   "iso": "SB",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 47,
+   "continent": "oceania",
+   "bbox": [
+    156.452,
+    -11.832,
+    166.162,
+    -6.609
+   ],
+   "curated": false
+  },
+  {
+   "id": "somalia",
+   "label": {
+    "en": "Somalia"
+   },
+   "iso": "SO",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 146,
+   "continent": "africa",
+   "bbox": [
+    40.965,
+    -1.695,
+    51.39,
+    11.984
+   ],
+   "curated": false
+  },
+  {
+   "id": "south_africa",
+   "label": {
+    "en": "South Africa"
+   },
+   "iso": "ZA",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 276,
+   "continent": "africa",
+   "bbox": [
+    16.448,
+    -34.786,
+    32.886,
+    -22.146
+   ],
+   "curated": false
+  },
+  {
+   "id": "south_korea",
+   "label": {
+    "en": "South Korea"
+   },
+   "iso": "KR",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 362,
+   "continent": "asia",
+   "bbox": [
+    126.16,
+    34.314,
+    129.573,
+    38.623
+   ],
+   "curated": false
+  },
+  {
+   "id": "south_sudan",
+   "label": {
+    "en": "South Sudan"
+   },
+   "iso": "SS",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 30,
+   "continent": "africa",
+   "bbox": [
+    24.147,
+    3.491,
+    35.268,
+    12.223
+   ],
+   "curated": false
+  },
+  {
+   "id": "spain",
+   "label": {
+    "en": "Spain"
+   },
+   "iso": "ES",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 2919,
+   "continent": "europe",
+   "bbox": [
+    -9.236,
+    36.026,
+    3.307,
+    43.765
+   ],
+   "curated": false
+  },
+  {
+   "id": "sri_lanka",
+   "label": {
+    "en": "Sri Lanka"
+   },
+   "iso": "LK",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 154,
+   "continent": "asia",
+   "bbox": [
+    79.708,
+    5.949,
+    81.877,
+    9.813
+   ],
+   "curated": false
+  },
+  {
+   "id": "sudan",
+   "label": {
+    "en": "Sudan"
+   },
+   "iso": "SD",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 163,
+   "continent": "africa",
+   "bbox": [
+    21.825,
+    8.666,
+    38.609,
+    22.202
+   ],
+   "curated": false
+  },
+  {
+   "id": "suriname",
+   "label": {
+    "en": "Suriname"
+   },
+   "iso": "SR",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 34,
+   "continent": "south_america",
+   "bbox": [
+    -58.054,
+    1.842,
+    -53.99,
+    5.994
+   ],
+   "curated": false
+  },
+  {
+   "id": "sweden",
+   "label": {
+    "en": "Sweden"
+   },
+   "iso": "SE",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 561,
+   "continent": "europe",
+   "bbox": [
+    11.147,
+    55.346,
+    24.155,
+    69.037
+   ],
+   "curated": false
+  },
+  {
+   "id": "switzerland",
+   "label": {
+    "en": "Switzerland"
+   },
+   "iso": "CH",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 735,
+   "continent": "europe",
+   "bbox": [
+    5.97,
+    45.83,
+    10.455,
+    47.776
+   ],
+   "curated": false
+  },
+  {
+   "id": "syria",
+   "label": {
+    "en": "Syria"
+   },
+   "iso": "SY",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 508,
+   "continent": "asia",
+   "bbox": [
+    35.764,
+    32.317,
+    42.359,
+    37.297
+   ],
+   "curated": false
+  },
+  {
+   "id": "sao_tome_and_principe",
+   "label": {
+    "en": "São Tomé and Príncipe"
+   },
+   "iso": "ST",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 44,
+   "continent": "africa",
+   "bbox": [
+    6.468,
+    0.047,
+    7.452,
+    1.699
+   ],
+   "curated": false
+  },
+  {
+   "id": "taiwan",
+   "label": {
+    "en": "Taiwan"
+   },
+   "iso": "TW",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 449,
+   "continent": "asia",
+   "bbox": [
+    120.073,
+    21.925,
+    121.929,
+    25.277
+   ],
+   "curated": false
+  },
+  {
+   "id": "tajikistan",
+   "label": {
+    "en": "Tajikistan"
+   },
+   "iso": "TJ",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 343,
+   "continent": "asia",
+   "bbox": [
+    67.35,
+    36.684,
+    75.119,
+    41.035
+   ],
+   "curated": false
+  },
+  {
+   "id": "tanzania",
+   "label": {
+    "en": "Tanzania"
+   },
+   "iso": "TZ",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 89,
+   "continent": "africa",
+   "bbox": [
+    29.323,
+    -11.716,
+    40.464,
+    -0.995
+   ],
+   "curated": false
+  },
+  {
+   "id": "thailand",
+   "label": {
+    "en": "Thailand"
+   },
+   "iso": "TH",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 228,
+   "continent": "asia",
+   "bbox": [
+    97.374,
+    5.637,
+    105.641,
+    20.424
+   ],
+   "curated": false
+  },
+  {
+   "id": "the_bahamas",
+   "label": {
+    "en": "The Bahamas"
+   },
+   "iso": "BS",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 24,
+   "continent": "north_america",
+   "bbox": [
+    -78.986,
+    20.937,
+    -72.747,
+    26.94
+   ],
+   "curated": false
+  },
+  {
+   "id": "the_gambia",
+   "label": {
+    "en": "The Gambia"
+   },
+   "iso": "GM",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 55,
+   "continent": "africa",
+   "bbox": [
+    -16.825,
+    13.064,
+    -13.827,
+    13.812
+   ],
+   "curated": false
+  },
+  {
+   "id": "timor_leste",
+   "label": {
+    "en": "Timor-Leste"
+   },
+   "iso": "TL",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 44,
+   "continent": "asia",
+   "bbox": [
+    124.915,
+    -9.512,
+    127.296,
+    -8.316
+   ],
+   "curated": false
+  },
+  {
+   "id": "togo",
+   "label": {
+    "en": "Togo"
+   },
+   "iso": "TG",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 57,
+   "continent": "africa",
+   "bbox": [
+    -0.09,
+    6.089,
+    1.778,
+    11.116
+   ],
+   "curated": false
+  },
+  {
+   "id": "tonga",
+   "label": {
+    "en": "Tonga"
+   },
+   "iso": "TO",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 13,
+   "continent": "oceania",
+   "bbox": [
+    -175.362,
+    -21.451,
+    -173.922,
+    -18.565
+   ],
+   "curated": false
+  },
+  {
+   "id": "trinidad_and_tobago",
+   "label": {
+    "en": "Trinidad and Tobago"
+   },
+   "iso": "TT",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 28,
+   "continent": "north_america",
+   "bbox": [
+    -61.906,
+    10.065,
+    -60.918,
+    10.84
+   ],
+   "curated": false
+  },
+  {
+   "id": "tunisia",
+   "label": {
+    "en": "Tunisia"
+   },
+   "iso": "TN",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 270,
+   "continent": "africa",
+   "bbox": [
+    7.496,
+    30.229,
+    11.536,
+    37.34
+   ],
+   "curated": false
+  },
+  {
+   "id": "turkey",
+   "label": {
+    "en": "Turkey"
+   },
+   "iso": "TR",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 2178,
+   "continent": "asia",
+   "bbox": [
+    26.096,
+    35.831,
+    44.817,
+    42.063
+   ],
+   "curated": false
+  },
+  {
+   "id": "turkmenistan",
+   "label": {
+    "en": "Turkmenistan"
+   },
+   "iso": "TM",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 333,
+   "continent": "asia",
+   "bbox": [
+    52.494,
+    35.171,
+    66.629,
+    42.779
+   ],
+   "curated": false
+  },
+  {
+   "id": "tuvalu",
+   "label": {
+    "en": "Tuvalu"
+   },
+   "iso": "TV",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 11,
+   "continent": "oceania",
+   "bbox": [
+    179.196,
+    -8.535,
+    179.217,
+    -8.466
+   ],
+   "curated": false
+  },
+  {
+   "id": "uganda",
+   "label": {
+    "en": "Uganda"
+   },
+   "iso": "UG",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 83,
+   "continent": "africa",
+   "bbox": [
+    29.562,
+    -1.47,
+    34.978,
+    4.22
+   ],
+   "curated": false
+  },
+  {
+   "id": "ukraine",
+   "label": {
+    "en": "Ukraine"
+   },
+   "iso": "UA",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 1284,
+   "continent": "europe",
+   "bbox": [
+    22.132,
+    45.234,
+    40.128,
+    52.354
+   ],
+   "curated": false
+  },
+  {
+   "id": "united_arab_emirates",
+   "label": {
+    "en": "United Arab Emirates"
+   },
+   "iso": "AE",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 106,
+   "continent": "asia",
+   "bbox": [
+    51.568,
+    22.622,
+    56.388,
+    26.068
+   ],
+   "curated": false
+  },
+  {
+   "id": "united_kingdom",
+   "label": {
+    "en": "United Kingdom"
+   },
+   "iso": "GB",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 2709,
+   "continent": "europe",
+   "bbox": [
+    -8.145,
+    50.021,
+    1.747,
+    58.65
+   ],
+   "curated": false
+  },
+  {
+   "id": "united_states",
+   "label": {
+    "en": "United States"
+   },
+   "iso": "US",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 8943,
+   "continent": "north_america",
+   "bbox": [
+    -124.71,
+    25.133,
+    -66.987,
+    49.37
+   ],
+   "curated": false
+  },
+  {
+   "id": "uruguay",
+   "label": {
+    "en": "Uruguay"
+   },
+   "iso": "UY",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 162,
+   "continent": "south_america",
+   "bbox": [
+    -58.438,
+    -34.933,
+    -53.126,
+    -30.101
+   ],
+   "curated": false
+  },
+  {
+   "id": "uzbekistan",
+   "label": {
+    "en": "Uzbekistan"
+   },
+   "iso": "UZ",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 425,
+   "continent": "asia",
+   "bbox": [
+    55.976,
+    37.172,
+    73.137,
+    45.555
+   ],
+   "curated": false
+  },
+  {
+   "id": "vanuatu",
+   "label": {
+    "en": "Vanuatu"
+   },
+   "iso": "VU",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 26,
+   "continent": "oceania",
+   "bbox": [
+    166.526,
+    -19.649,
+    169.491,
+    -13.71
+   ],
+   "curated": false
+  },
+  {
+   "id": "vatican_city",
+   "label": {
+    "en": "Vatican City"
+   },
+   "iso": "VA",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 417,
+   "continent": "europe",
+   "bbox": [
+    12.428,
+    41.898,
+    12.439,
+    41.906
+   ],
+   "curated": false
+  },
+  {
+   "id": "venezuela",
+   "label": {
+    "en": "Venezuela"
+   },
+   "iso": "VE",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 254,
+   "continent": "south_america",
+   "bbox": [
+    -73.366,
+    0.688,
+    -59.829,
+    12.178
+   ],
+   "curated": false
+  },
+  {
+   "id": "vietnam",
+   "label": {
+    "en": "Vietnam"
+   },
+   "iso": "VN",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 261,
+   "continent": "asia",
+   "bbox": [
+    102.127,
+    8.583,
+    109.445,
+    23.345
+   ],
+   "curated": false
+  },
+  {
+   "id": "yemen",
+   "label": {
+    "en": "Yemen"
+   },
+   "iso": "YE",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 167,
+   "continent": "asia",
+   "bbox": [
+    42.658,
+    12.608,
+    53.086,
+    18.996
+   ],
+   "curated": false
+  },
+  {
+   "id": "zambia",
+   "label": {
+    "en": "Zambia"
+   },
+   "iso": "ZM",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 44,
+   "continent": "africa",
+   "bbox": [
+    21.979,
+    -18.041,
+    33.661,
+    -8.194
+   ],
+   "curated": false
+  },
+  {
+   "id": "zimbabwe",
+   "label": {
+    "en": "Zimbabwe"
+   },
+   "iso": "ZW",
+   "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+   "imported": 39,
+   "continent": "africa",
+   "bbox": [
+    25.224,
+    -22.402,
+    33.007,
+    -15.643
+   ],
+   "curated": false
+  }
+ ]
+}

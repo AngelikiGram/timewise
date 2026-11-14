@@ -1,0 +1,21 @@
+{
+  "id": "thailand",
+  "label": {
+    "en": "Thailand"
+  },
+  "iso": "TH",
+  "wikidata_country": "Q869",
+  "wikidata_states": {
+    "Q869": "Thailand",
+    "Q1155700": "Rattanakosin Kingdom",
+    "Q1081620": "Siam"
+  },
+  "landmarks": [],
+  "generated": {
+    "by": "ingestion/generate_region_configs.py",
+    "on": "2026-11-09",
+    "method": "Sovereign state (Q3624078) with ISO code TH, plus historical countries linked to it by P1365/P1366 up to 1 steps. Not reviewed."
+  },
+  "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+  "continent": "asia"
+}

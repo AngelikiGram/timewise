@@ -1,0 +1,525 @@
+{
+ "failed_sources": [],
+ "tally": {
+  "unresolved": 15,
+  "needs_review": 7,
+  "already_curated": 2,
+  "duplicate_of_curated": 2
+ },
+ "skipped_non_route": 34,
+ "features": [
+  {
+   "id": "x-Q1741-Q679328",
+   "classification": "inferred",
+   "status": "needs_review",
+   "reasons": [
+    "more than one place matches a name",
+    "no opening date in the same sentence, so validity is unknown"
+   ],
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      16.3725,
+      48.208333333333336
+     ],
+     [
+      15.938333333333,
+      47.675833333333
+     ]
+    ]
+   },
+   "uncertainty_km": null,
+   "uncertainty": "Only the two named ends are known. The line between them is assumed, not the real route.",
+   "places": [
+    "Q1741",
+    "Q679328"
+   ],
+   "valid_from": null,
+   "sources": [
+    {
+     "source_id": "dewp-suedbahn",
+     "locator": "von Wien nach Gloggnitz",
+     "sentence_sha256": "6f4f36e0b1415d3e8ce1a451f5c36e2f8c32b6381042c0d027a9d7b1c6046133",
+     "year": null
+    },
+    {
+     "source_id": "dewp-suedbahn",
+     "locator": "von Wien nach Gloggnitz",
+     "sentence_sha256": "2775cfb02c3e37439b886f4352180eb659e5c9ec86c65d59fc5c27181312f11e",
+     "year": null
+    }
+   ],
+   "alternatives": [
+    {
+     "subject": "Q131612",
+     "label": "Wiener Neustadt",
+     "description": "city in Lower Austria, Austria"
+    }
+   ],
+   "checks": {
+    "geometry_valid": "pass",
+    "length": "not_stated",
+    "date": "missing",
+    "reference_map": "no_reference_for_date"
+   },
+   "extractor": "rules-v1",
+   "names": [
+    "Wien",
+    "Gloggnitz"
+   ]
+  },
+  {
+   "id": "x-Q1741-Q546",
+   "classification": "inferred",
+   "status": "needs_review",
+   "reasons": [
+    "more than one place matches a name",
+    "no opening date in the same sentence, so validity is unknown"
+   ],
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      16.3725,
+      48.208333333333336
+     ],
+     [
+      13.770277777777778,
+      45.65027777777778
+     ]
+    ]
+   },
+   "uncertainty_km": null,
+   "uncertainty": "Only the two named ends are known. The line between them is assumed, not the real route.",
+   "places": [
+    "Q1741",
+    "Q546"
+   ],
+   "valid_from": null,
+   "sources": [
+    {
+     "source_id": "dewp-suedbahn",
+     "locator": "zwischen Wien und Triest",
+     "sentence_sha256": "e2042b08a1223c646e9c91fff5046746d56547511727911b6f6f8eeae6261dba",
+     "year": 1839
+    },
+    {
+     "source_id": "dewp-semmering",
+     "locator": "von Wien nach Triest",
+     "sentence_sha256": "65e4d1f5450f4f437c219c560093c95ec38af7d142145008167b74e441c21e38",
+     "year": null
+    }
+   ],
+   "alternatives": [
+    {
+     "subject": "Q131612",
+     "label": "Wiener Neustadt",
+     "description": "city in Lower Austria, Austria"
+    }
+   ],
+   "checks": {
+    "geometry_valid": "pass",
+    "length": "not_stated",
+    "date": "missing",
+    "reference_map": "no_reference_for_date"
+   },
+   "extractor": "rules-v1",
+   "names": [
+    "Wien",
+    "Triest"
+   ]
+  },
+  {
+   "id": "x-Q1741-Q437",
+   "classification": "inferred",
+   "status": "needs_review",
+   "reasons": [
+    "more than one place matches a name",
+    "no opening date in the same sentence, so validity is unknown"
+   ],
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      16.3725,
+      48.208333333333336
+     ],
+     [
+      14.50611111111111,
+      46.05138888888889
+     ]
+    ]
+   },
+   "uncertainty_km": null,
+   "uncertainty": "Only the two named ends are known. The line between them is assumed, not the real route.",
+   "places": [
+    "Q1741",
+    "Q437"
+   ],
+   "valid_from": null,
+   "sources": [
+    {
+     "source_id": "dewp-suedbahn",
+     "locator": "zwischen Wien und Laibach",
+     "sentence_sha256": "dc911ddcdb12ffada32456e75fe97035bb90206c65af277ba30d463226a0896a",
+     "year": null
+    },
+    {
+     "source_id": "dewp-suedbahn",
+     "locator": "zwischen Wien und Laibach",
+     "sentence_sha256": "4c2a9f8b04ff116498cfa3fc429290cc2ad07dadc5c47ec5a0ce523afe1f54fe",
+     "year": 1875
+    }
+   ],
+   "alternatives": [
+    {
+     "subject": "Q131612",
+     "label": "Wiener Neustadt",
+     "description": "city in Lower Austria, Austria"
+    }
+   ],
+   "checks": {
+    "geometry_valid": "pass",
+    "length": "not_stated",
+    "date": "missing",
+    "reference_map": "no_reference_for_date"
+   },
+   "extractor": "rules-v1",
+   "names": [
+    "Wien",
+    "Laibach"
+   ]
+  },
+  {
+   "id": "x-Q1741-Q63939",
+   "classification": "inferred",
+   "status": "needs_review",
+   "reasons": [
+    "more than one place matches a name",
+    "no opening date in the same sentence, so validity is unknown"
+   ],
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      8.30799,
+      47.47291
+     ],
+     [
+      16.3725,
+      48.208333333333336
+     ]
+    ]
+   },
+   "uncertainty_km": null,
+   "uncertainty": "Only the two named ends are known. The line between them is assumed, not the real route.",
+   "places": [
+    "Q63939",
+    "Q1741"
+   ],
+   "valid_from": null,
+   "sources": [
+    {
+     "source_id": "dewp-suedbahn",
+     "locator": "von Baden nach Wien",
+     "sentence_sha256": "a955339b589a9db89290dc725d8ed18f217b5a53e304ab41691cf68237ca31db",
+     "year": 1839
+    },
+    {
+     "source_id": "dewp-suedbahn",
+     "locator": "zwischen Baden und Wien",
+     "sentence_sha256": "113477029cf95889b0f8c52abc911076a02632d582a7f395c2af460bb92bff4f",
+     "year": 1841
+    }
+   ],
+   "alternatives": [
+    {
+     "subject": "Q486450",
+     "label": "Baden",
+     "description": "municipality in Lower Austria, Austria"
+    },
+    {
+     "subject": "Q131612",
+     "label": "Wiener Neustadt",
+     "description": "city in Lower Austria, Austria"
+    }
+   ],
+   "checks": {
+    "geometry_valid": "pass",
+    "length": "not_stated",
+    "date": "missing",
+    "reference_map": "no_reference_for_date"
+   },
+   "extractor": "rules-v1",
+   "names": [
+    "Baden",
+    "Wien"
+   ]
+  },
+  {
+   "id": "x-Q131612-Q63939",
+   "classification": "inferred",
+   "status": "needs_review",
+   "reasons": [
+    "more than one place matches a name"
+   ],
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      8.30799,
+      47.47291
+     ],
+     [
+      16.25,
+      47.816666666667
+     ]
+    ]
+   },
+   "uncertainty_km": null,
+   "uncertainty": "Only the two named ends are known. The line between them is assumed, not the real route.",
+   "places": [
+    "Q63939",
+    "Q131612"
+   ],
+   "valid_from": "1841-01-01",
+   "sources": [
+    {
+     "source_id": "dewp-suedbahn",
+     "locator": "zwischen Baden und Wiener Neustadt",
+     "sentence_sha256": "8a9bf30b9fc27bea6a69920db4c79aecd4d58cc32aafd76d82d69f06bf95538c",
+     "year": 1841
+    }
+   ],
+   "alternatives": [
+    {
+     "subject": "Q486450",
+     "label": "Baden",
+     "description": "municipality in Lower Austria, Austria"
+    }
+   ],
+   "checks": {
+    "geometry_valid": "pass",
+    "length": "not_stated",
+    "date": "pass",
+    "reference_map": "no_reference_for_date"
+   },
+   "extractor": "rules-v1",
+   "names": [
+    "Baden",
+    "Wiener Neustadt"
+   ]
+  },
+  {
+   "id": "x-Q546-Q679328",
+   "classification": "inferred",
+   "status": "needs_review",
+   "reasons": [
+    "no opening date in the same sentence, so validity is unknown"
+   ],
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      15.938333333333,
+      47.675833333333
+     ],
+     [
+      13.770277777777778,
+      45.65027777777778
+     ]
+    ]
+   },
+   "uncertainty_km": null,
+   "uncertainty": "Only the two named ends are known. The line between them is assumed, not the real route.",
+   "places": [
+    "Q679328",
+    "Q546"
+   ],
+   "valid_from": null,
+   "sources": [
+    {
+     "source_id": "dewp-suedbahn",
+     "locator": "von Gloggnitz nach Triest",
+     "sentence_sha256": "3d1cc56b7570d20e6340a34634be5ec27c4a89c14b3a61bdbb0a5e7d88d0e201",
+     "year": null
+    }
+   ],
+   "alternatives": [],
+   "checks": {
+    "geometry_valid": "pass",
+    "length": "not_stated",
+    "date": "missing",
+    "reference_map": "no_reference_for_date"
+   },
+   "extractor": "rules-v1",
+   "names": [
+    "Gloggnitz",
+    "Triest"
+   ]
+  },
+  {
+   "id": "x-Q13298-Q492868",
+   "classification": "inferred",
+   "status": "duplicate_of_curated",
+   "reasons": [
+    "this connection is already on the map"
+   ],
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      15.673055555556,
+      47.6075
+     ],
+     [
+      15.438611111111111,
+      47.07083333333333
+     ]
+    ]
+   },
+   "uncertainty_km": null,
+   "uncertainty": "Only the two named ends are known. The line between them is assumed, not the real route.",
+   "places": [
+    "Q492868",
+    "Q13298"
+   ],
+   "valid_from": null,
+   "sources": [
+    {
+     "source_id": "dewp-suedbahn",
+     "locator": "zwischen Mürzzuschlag und Graz",
+     "sentence_sha256": "af02fdfbc9ac6a401f7bdffc74043702068b03a8aa426f33f0f5dc04c25f4356",
+     "year": 1842
+    }
+   ],
+   "alternatives": [
+    {
+     "subject": "Q21879928",
+     "label": "Mürzzuschlag",
+     "description": "cadastral municipality in Bruck-Mürzzuschlag District"
+    }
+   ],
+   "checks": {
+    "geometry_valid": "pass",
+    "length": "not_stated",
+    "date": "missing",
+    "reference_map": "no_reference_for_date"
+   },
+   "extractor": "rules-v1",
+   "names": [
+    "Mürzzuschlag",
+    "Graz"
+   ]
+  },
+  {
+   "id": "x-Q492868-Q679328",
+   "classification": "inferred",
+   "status": "duplicate_of_curated",
+   "reasons": [
+    "this connection is already on the map"
+   ],
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      15.938333333333,
+      47.675833333333
+     ],
+     [
+      15.673055555556,
+      47.6075
+     ]
+    ]
+   },
+   "uncertainty_km": null,
+   "uncertainty": "Only the two named ends are known. The line between them is assumed, not the real route.",
+   "places": [
+    "Q679328",
+    "Q492868"
+   ],
+   "valid_from": null,
+   "sources": [
+    {
+     "source_id": "dewp-suedbahn",
+     "locator": "zwischen Gloggnitz und Mürzzuschlag",
+     "sentence_sha256": "2212e74f221fd5235750cb504ad7c9fcf87ceac49582ba4f6b6f01f86814a9ef",
+     "year": 1854
+    },
+    {
+     "source_id": "dewp-semmering",
+     "locator": "zwischen Gloggnitz und Mürzzuschlag",
+     "sentence_sha256": "7c4bdebca93033afcba1323966123f3743b4f301882bbb31a1c9812de5145937",
+     "year": 1875
+    }
+   ],
+   "alternatives": [
+    {
+     "subject": "Q21879928",
+     "label": "Mürzzuschlag",
+     "description": "cadastral municipality in Bruck-Mürzzuschlag District"
+    }
+   ],
+   "checks": {
+    "geometry_valid": "pass",
+    "length": "not_stated",
+    "date": "missing",
+    "reference_map": "no_reference_for_date"
+   },
+   "extractor": "rules-v1",
+   "names": [
+    "Gloggnitz",
+    "Mürzzuschlag"
+   ]
+  },
+  {
+   "id": "x-Q1726-Q2028",
+   "classification": "inferred",
+   "status": "needs_review",
+   "reasons": [
+    "no opening date in the same sentence, so validity is unknown"
+   ],
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      10.992777777777778,
+      45.43861111111111
+     ],
+     [
+      11.575,
+      48.1375
+     ]
+    ]
+   },
+   "uncertainty_km": null,
+   "uncertainty": "Only the two named ends are known. The line between them is assumed, not the real route.",
+   "places": [
+    "Q2028",
+    "Q1726"
+   ],
+   "valid_from": null,
+   "sources": [
+    {
+     "source_id": "wp-brenner",
+     "locator": "from Verona to Munich",
+     "sentence_sha256": "78994c444378434f0c24327432dc6352fc24ae105534804fda2694a168780bf2",
+     "year": null
+    }
+   ],
+   "alternatives": [],
+   "checks": {
+    "geometry_valid": "pass",
+    "length": "not_stated",
+    "date": "missing",
+    "reference_map": "no_reference_for_date"
+   },
+   "extractor": "rules-v1",
+   "names": [
+    "Verona",
+    "Munich"
+   ]
+  }
+ ]
+}

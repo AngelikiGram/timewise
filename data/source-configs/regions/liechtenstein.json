@@ -1,0 +1,20 @@
+{
+  "id": "liechtenstein",
+  "label": {
+    "en": "Liechtenstein"
+  },
+  "iso": "LI",
+  "wikidata_country": "Q347",
+  "wikidata_states": {
+    "Q347": "Liechtenstein",
+    "Q66087897": "Imperial Principality of Liechtenstein"
+  },
+  "landmarks": [],
+  "generated": {
+    "by": "ingestion/generate_region_configs.py",
+    "on": "2026-11-09",
+    "method": "Sovereign state (Q3624078) with ISO code LI, plus historical countries linked to it by P1365/P1366 up to 1 steps. Not reviewed."
+  },
+  "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+  "continent": "europe"
+}

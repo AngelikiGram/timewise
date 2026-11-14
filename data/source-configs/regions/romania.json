@@ -1,0 +1,21 @@
+{
+  "id": "romania",
+  "label": {
+    "en": "Romania"
+  },
+  "iso": "RO",
+  "wikidata_country": "Q218",
+  "wikidata_states": {
+    "Q218": "Romania",
+    "Q842794": "Socialist Republic of Romania",
+    "Q958291": "United Principalities of Moldavia and Wallachia"
+  },
+  "landmarks": [],
+  "generated": {
+    "by": "ingestion/generate_region_configs.py",
+    "on": "2026-11-09",
+    "method": "Sovereign state (Q3624078) with ISO code RO, plus historical countries linked to it by P1365/P1366 up to 1 steps. Not reviewed."
+  },
+  "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+  "continent": "europe"
+}

@@ -1,0 +1,590 @@
+{
+"Kunst": [
+{
+"qid": "Q95569",
+"label": "Kunsthistorisches Museum",
+"description": "art museum in Vienna, Austria",
+"lat": 48.20388055555556,
+"lng": 16.3616
+},
+{
+"qid": "Q662355",
+"label": "Kunstakademie Düsseldorf",
+"description": "art school in Düsseldorf, Germany",
+"lat": 51.23054,
+"lng": 6.77365
+},
+{
+"qid": "Q6445022",
+"label": "Kunstbibliothek Berlin",
+"description": "art library in Berlin",
+"lat": 52.50861,
+"lng": 13.36666
+},
+{
+"qid": "Q671384",
+"label": "Statens Museum for Kunst",
+"description": "art museum in Copenhagen, Denmark",
+"lat": 55.68889,
+"lng": 12.57861
+}
+],
+"Bürokratie": [],
+"Wien": [
+{
+"qid": "Q1741",
+"label": "Vienna",
+"description": "capital of and state in Austria",
+"lat": 48.208333333333336,
+"lng": 16.3725
+},
+{
+"qid": "Q131612",
+"label": "Wiener Neustadt",
+"description": "city in Lower Austria, Austria",
+"lat": 47.816666666667,
+"lng": 16.25
+}
+],
+"Gloggnitz": [
+{
+"qid": "Q679328",
+"label": "Gloggnitz",
+"description": "municipality in Neunkirchen District, Lower Austria, Austria",
+"lat": 47.675833333333,
+"lng": 15.938333333333
+},
+{
+"qid": "Q21879620",
+"label": "Gloggnitz",
+"description": "locality in Neunkirchen District",
+"lat": 47.66999,
+"lng": 15.92462
+},
+{
+"qid": "Q800821",
+"label": "Gloggnitz railway station",
+"description": "railway station in Lower Austria",
+"lat": 47.6777,
+"lng": 15.9467
+},
+{
+"qid": "Q136936411",
+"label": "Gloggnitz",
+"description": "cadastral community in Neunkirchen District",
+"lat": 47.66999,
+"lng": 15.92462
+},
+{
+"qid": "Q1797960",
+"label": "Gloggnitz Castle",
+"description": "building in Lower Austria, Austria",
+"lat": 47.673519444444445,
+"lng": 15.929280555555556
+},
+{
+"qid": "Q24262218",
+"label": "Gloggnitz Dr.-Karl-Renner-Brücke",
+"description": "bridge in Austria",
+"lat": 47.67671,
+"lng": 15.9456
+}
+],
+"Triest": [
+{
+"qid": "Q546",
+"label": "Trieste",
+"description": "city and seaport in northeastern Italy",
+"lat": 45.65027777777778,
+"lng": 13.770277777777778
+},
+{
+"qid": "Q16293",
+"label": "Province of Trieste",
+"description": "former province in Italy",
+"lat": 45.636111111111,
+"lng": 13.804166666667
+},
+{
+"qid": "Q850157",
+"label": "Bathyscaphe Trieste",
+"description": "deep sea scientific submarine",
+"lat": 11.316666666667,
+"lng": 142.25
+}
+],
+"Payerbach-Reichenau": [
+{
+"qid": "Q801311",
+"label": "Payerbach-Reichenau railway station",
+"description": "railway station of the Semmering railway in Lower Austria",
+"lat": 47.6959,
+"lng": 15.8645
+}
+],
+"Laibach": [
+{
+"qid": "Q437",
+"label": "Ljubljana",
+"description": "capital city of Slovenia",
+"lat": 46.05138888888889,
+"lng": 14.50611111111111
+},
+{
+"qid": "Q830086",
+"label": "Laibach",
+"description": "river in North Rhine-Westphalia, Germany",
+"lat": 52.0816,
+"lng": 8.3754
+},
+{
+"qid": "Q96337820",
+"label": "Laibacher Straße",
+"description": "street in Dresden, Germany",
+"lat": 51.02072,
+"lng": 13.83536
+}
+],
+"Baden": [
+{
+"qid": "Q63939",
+"label": "Baden",
+"description": "municipality in the canton Aargau, Switzerland",
+"lat": 47.47291,
+"lng": 8.30799
+},
+{
+"qid": "Q127451",
+"label": "Baden",
+"description": "commune in Morbihan, France",
+"lat": 47.618611111111,
+"lng": -2.9202777777778
+},
+{
+"qid": "Q985",
+"label": "Baden-Württemberg",
+"description": "state in the southwest of the Federal Republic of Germany",
+"lat": 48.537777777778,
+"lng": 9.0411111111111
+},
+{
+"qid": "Q486450",
+"label": "Baden",
+"description": "municipality in Lower Austria, Austria",
+"lat": 48.0075,
+"lng": 16.234444444444
+}
+],
+"Wiener Neustadt": [
+{
+"qid": "Q131612",
+"label": "Wiener Neustadt",
+"description": "city in Lower Austria, Austria",
+"lat": 47.816666666667,
+"lng": 16.25
+},
+{
+"qid": "Q2569048",
+"label": "Wiener Neustädter Straße",
+"description": "road in Austria",
+"lat": 48.18035,
+"lng": 16.35934
+},
+{
+"qid": "Q874341",
+"label": "Wiener Neustadt Canal",
+"description": "canal",
+"lat": 48.0753,
+"lng": 16.3497
+},
+{
+"qid": "Q462362",
+"label": "Wiener Neustädter Lokomotivfabrik",
+"description": "Austrian locomotive manufacturer",
+"lat": 47.8183,
+"lng": 16.255
+},
+{
+"qid": "Q663815",
+"label": "Wiener Neustadt Hauptbahnhof",
+"description": "railway station in Austria",
+"lat": 47.811667,
+"lng": 16.234167
+},
+{
+"qid": "Q694413",
+"label": "Wiener Neustadt District",
+"description": "district of Austria",
+"lat": 47.6225,
+"lng": 16.340833333333
+}
+],
+"Mürzzuschlag": [
+{
+"qid": "Q492868",
+"label": "Mürzzuschlag",
+"description": "municipality in Bruck-Mürzzuschlag District, Styria, Austria",
+"lat": 47.6075,
+"lng": 15.673055555556
+},
+{
+"qid": "Q801226",
+"label": "Mürzzuschlag railway station",
+"description": "railway station in Styria, Austria",
+"lat": 47.6076,
+"lng": 15.6771
+},
+{
+"qid": "Q21879928",
+"label": "Mürzzuschlag",
+"description": "cadastral municipality in Bruck-Mürzzuschlag District",
+"lat": 47.61131,
+"lng": 15.67877
+},
+{
+"qid": "Q112585174",
+"label": "Mürzzuschlag",
+"description": "locality in Bruck-Mürzzuschlag District",
+"lat": 47.60613,
+"lng": 15.67389
+},
+{
+"qid": "Q257024",
+"label": "Mürzzuschlag District",
+"description": "district of Austria",
+"lat": 47.579,
+"lng": 15.559
+}
+],
+"Graz": [
+{
+"qid": "Q13298",
+"label": "Graz",
+"description": "capital of Styria, Austria",
+"lat": 47.07083333333333,
+"lng": 15.438611111111111
+}
+],
+"Paris": [
+{
+"qid": "Q90",
+"label": "Paris",
+"description": "capital and most populous city in France",
+"lat": 48.85666666666667,
+"lng": 2.352222222222222
+},
+{
+"qid": "Q830149",
+"label": "Paris",
+"description": "city in and county seat of Lamar County, Texas, United States",
+"lat": 33.662508,
+"lng": -95.547692
+},
+{
+"qid": "Q3181341",
+"label": "Paris",
+"description": "county seat of Bourbon County, Kentucky, United States",
+"lat": 38.2064,
+"lng": -84.2578
+}
+],
+"Marseille": [
+{
+"qid": "Q23482",
+"label": "Marseille",
+"description": "French commune",
+"lat": 43.296666666667,
+"lng": 5.3763888888889
+},
+{
+"qid": "Q971261",
+"label": "Marseille-en-Beauvaisis",
+"description": "commune in Oise, France",
+"lat": 49.575555555556,
+"lng": 1.9555555555556
+}
+],
+"Villach Hauptbahnhof": [
+{
+"qid": "Q699533",
+"label": "Villach Hbf",
+"description": "railway station in Villach, Austria",
+"lat": 46.618333,
+"lng": 13.848333
+}
+],
+"Leoben Hauptbahnhof": [
+{
+"qid": "Q873541",
+"label": "Leoben Hauptbahnhof",
+"description": "railway station in Leoben, Austria",
+"lat": 47.386663,
+"lng": 15.089724
+}
+],
+"Graz Hauptbahnhof": [
+{
+"qid": "Q873836",
+"label": "Graz Hauptbahnhof",
+"description": "railway station in Graz, Austria",
+"lat": 47.072222,
+"lng": 15.417222
+},
+{
+"qid": "Q132451237",
+"label": "Graz Hbf (Tiefgeschoß)",
+"description": "tram stop",
+"lat": 47.071806,
+"lng": 15.418595
+}
+],
+"Wien Hauptbahnhof": [
+{
+"qid": "Q697300",
+"label": "Wien Hauptbahnhof",
+"description": "railway station in Vienna, Austria",
+"lat": 48.185,
+"lng": 16.377777777778
+},
+{
+"qid": "Q657324",
+"label": "Südtiroler Platz-Hauptbahnhof",
+"description": "",
+"lat": 48.186,
+"lng": 16.375
+},
+{
+"qid": "Q132177077",
+"label": "Wien Hauptbahnhof Ost",
+"description": "",
+"lat": 48.18450529932131,
+"lng": 16.38059072268642
+},
+{
+"qid": "Q111267113",
+"label": "Wien Hauptbahnhof (platform 13–16)",
+"description": "railway station in Austria",
+"lat": 48.177873,
+"lng": 16.391002
+}
+],
+"Wien Meidling": [
+{
+"qid": "Q514441",
+"label": "Wien Meidling",
+"description": "railway station in Vienna",
+"lat": 48.175,
+"lng": 16.335278
+},
+{
+"qid": "Q132177185",
+"label": "Bahnhof Meidling",
+"description": "tram stop in Vienna",
+"lat": 48.17444817816824,
+"lng": 16.331102850216638
+}
+],
+"Wien Liesing": [
+{
+"qid": "Q801607",
+"label": "Wien Liesing railway station",
+"description": "railway station in Vienna",
+"lat": 48.1351,
+"lng": 16.2843
+}
+],
+"Spielfeld-Straß": [
+{
+"qid": "Q801450",
+"label": "Spielfeld-Straß railway station",
+"description": "railway station on the Austrian side of the Austro-Slovene border",
+"lat": 46.7098,
+"lng": 15.6292
+},
+{
+"qid": "Q15087845",
+"label": "Spielfeld-Straß–Trieste railway line",
+"description": "railway line in Austria, Slovenia and Italy",
+"lat": 45.90612,
+"lng": 14.37417
+}
+],
+"Mürzzuschlag Güterbahnhof": [],
+"Mürzzuschlag Siehe": [],
+"Wien-Meidling": [
+{
+"qid": "Q514441",
+"label": "Wien Meidling",
+"description": "railway station in Vienna",
+"lat": 48.175,
+"lng": 16.335278
+},
+{
+"qid": "Q132177185",
+"label": "Bahnhof Meidling",
+"description": "tram stop in Vienna",
+"lat": 48.17444817816824,
+"lng": 16.331102850216638
+}
+],
+"Mödling": [
+{
+"qid": "Q277965",
+"label": "Mödling",
+"description": "town in Mödling District, Lower Austria, Austria",
+"lat": 48.085555555556,
+"lng": 16.283055555556
+},
+{
+"qid": "Q254176",
+"label": "Mödling District",
+"description": "district in Lower Austria, Austria",
+"lat": 48.095,
+"lng": 16.239
+},
+{
+"qid": "Q1957849",
+"label": "Mödlingbach",
+"description": "river in Lower Austria",
+"lat": 48.0811,
+"lng": 16.3992
+},
+{
+"qid": "Q18668081",
+"label": "Mödling railway station",
+"description": "railway station in Mödling, Austria",
+"lat": 48.0856,
+"lng": 16.2954
+},
+{
+"qid": "Q32235566",
+"label": "Mödling",
+"description": "human settlement in Mödling District",
+"lat": 48.07724,
+"lng": 16.28263
+}
+],
+"Breitenstein": [
+{
+"qid": "Q698830",
+"label": "Breitenstein",
+"description": "human settlement in Südharz, Germany",
+"lat": 51.621111111111,
+"lng": 10.946944444444
+},
+{
+"qid": "Q124981",
+"label": "Breitenstein",
+"description": "municipality in Neunkirchen District, Lower Austria, Austria",
+"lat": 47.661388888889,
+"lng": 15.824166666667
+},
+{
+"qid": "Q26836881",
+"label": "Breitenstein",
+"description": "",
+"lat": 50.923654,
+"lng": 7.357948
+},
+{
+"qid": "Q15108006",
+"label": "Breitenstein",
+"description": "mountain in the Chiemgau Alps at the border Tyrol / Bavaria",
+"lat": 47.69694444,
+"lng": 12.33805556
+},
+{
+"qid": "Q83527833",
+"label": "Breitenstein",
+"description": "human settlement in Neunkirchen District",
+"lat": 47.68194444444445,
+"lng": 16.205555555555556
+}
+],
+"Bratislava-Petržalka": [
+{
+"qid": "Q800563",
+"label": "Bratislava-Petržalka railway station",
+"description": "railway station",
+"lat": 48.122222,
+"lng": 17.098611
+}
+],
+"Verona": [
+{
+"qid": "Q2028",
+"label": "Verona",
+"description": "city in Veneto, northern Italy",
+"lat": 45.43861111111111,
+"lng": 10.992777777777778
+},
+{
+"qid": "Q16314",
+"label": "Province of Verona",
+"description": "one of seven provinces in the Italian region Veneto",
+"lat": 45.43,
+"lng": 10.98
+},
+{
+"qid": "Q1087483",
+"label": "Verona",
+"description": "township in Essex County, New Jersey, United States",
+"lat": 40.829722222222,
+"lng": -74.240277777778
+}
+],
+"Bolzano": [],
+"Trento": [
+{
+"qid": "Q3376",
+"label": "Trento",
+"description": "Italian city in the northeast of the country",
+"lat": 46.06666667,
+"lng": 11.11666667
+},
+{
+"qid": "Q627320",
+"label": "Trento",
+"description": "municipality of the Philippines in the province of Agusan del Sur",
+"lat": 8.0459,
+"lng": 126.0614
+},
+{
+"qid": "Q33721822",
+"label": "Trento",
+"description": "city in Italy, capital of the municipality of Trento",
+"lat": 46.07043,
+"lng": 11.12074
+},
+{
+"qid": "Q25330",
+"label": "Trenton",
+"description": "capital city of the U.S. state of New Jersey and seat of Mercer County",
+"lat": 40.22027777777778,
+"lng": -74.76583333333333
+}
+],
+"Munich": [
+{
+"qid": "Q1726",
+"label": "Munich",
+"description": "capital and most populous city of Bavaria, Germany",
+"lat": 48.1375,
+"lng": 11.575
+},
+{
+"qid": "Q1053735",
+"label": "Munich Central Collecting Point",
+"description": "depot used by the Monuments, Fine Arts, and Archives program after the end of the Second World War to process, photograph and redistribute artwork and cultural artefacts that had been confiscated by the Nazis and hidden throughout Germany and Austria",
+"lat": 48.145208333333336,
+"lng": 11.566619444444445
+},
+{
+"qid": "Q154568",
+"label": "Alte Pinakothek",
+"description": "art museum in Munich, Germany",
+"lat": 48.148291,
+"lng": 11.569985
+}
+]
+}

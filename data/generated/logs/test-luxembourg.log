@@ -1,0 +1,86 @@
+war: 20 stored, dropped {'no_label': 0, 'bce_or_too_vague': 3}, years 0280..1944; e.g. ['Franco-Dutch War', 'Umayyad conquest of Hispania', 'Ecuadorian–Peruvian War of 1857–1860', 'Bagaudic Wars']
+uprising: 2 stored, dropped {'no_label': 0, 'bce_or_too_vague': 0}, years 1848..1856; e.g. ['Revolution of 1848 in Luxembourg', 'Luxembourg Coup of 1856']
+treaty: 10 stored, dropped {'no_label': 3, 'bce_or_too_vague': 0}, years 1953..2025; e.g. ['Schengen Implementing Convention', 'Single European Act', 'Reparations Agreement between Israel and West Germany', 'Saar Treaty']
+vote: FAILED wikidata kept failing (last HTTP 502).
+disaster: 1 stored, dropped {'no_label': 0, 'bce_or_too_vague': 0}, years 2021..2021; e.g. ['2021 European floods']
+university: 2 stored, dropped {'no_label': 0, 'bce_or_too_vague': 0}, years 1968..1991; e.g. ['Founding of Sacred Heart University Luxembourg', 'Founding of Miami University Dolibois European Center']
+monastery: 1 stored, dropped {'no_label': 1, 'bce_or_too_vague': 0}, years 1300..1300; e.g. ['Founding of Marienthal monastery']
+museum: 8 stored, dropped {'no_label': 4, 'bce_or_too_vague': 0}, years 1967..2012; e.g. ['Casino Luxembourg – Forum d’Art Contemporain', 'Founding of Luxemburg tramway museum', 'Founding of Prehistory Museum, Echternach', 'Founding of Tudor Museum']
+war: 20 stored, dropped {'no_label': 0, 'bce_or_too_vague': 3}, years 0280..1944; e.g. ['Franco-Dutch War', 'Umayyad conquest of Hispania', 'Ecuadorian–Peruvian War of 1857–1860', 'Bagaudic Wars']
+uprising: 2 stored, dropped {'no_label': 0, 'bce_or_too_vague': 0}, years 1848..1856; e.g. ['Revolution of 1848 in Luxembourg', 'Luxembourg Coup of 1856']
+treaty: 10 stored, dropped {'no_label': 3, 'bce_or_too_vague': 0}, years 1953..2025; e.g. ['Schengen Implementing Convention', 'Single European Act', 'Reparations Agreement between Israel and West Germany', 'Saar Treaty']
+vote: 76 stored, dropped {'no_label': 5, 'bce_or_too_vague': 0}, years 1845..2024; e.g. ['Luxembourgian European Constitution referendum, 2005', 'Luxembourgian political parties referendum, 1937', 'Luxembourg constitutional referendum', '2019 European Parliament election']
+disaster: 1 stored, dropped {'no_label': 0, 'bce_or_too_vague': 0}, years 2021..2021; e.g. ['2021 European floods']
+university: FAILED wikidata kept failing (last HTTP 429).
+monastery: 1 stored, dropped {'no_label': 1, 'bce_or_too_vague': 0}, years 1300..1300; e.g. ['Founding of Marienthal monastery']
+museum: 8 stored, dropped {'no_label': 4, 'bce_or_too_vague': 0}, years 1967..2012; e.g. ['Founding of Museum Sybodo', 'Casino Luxembourg – Forum d’Art Contemporain', 'Founding of Luxemburg tramway museum', 'Founding of Prehistory Museum, Echternach']
+war: 20 stored, dropped {'no_label': 0, 'bce_or_too_vague': 3}, years 0280..1944; e.g. ['Franco-Dutch War', 'Umayyad conquest of Hispania', 'Ecuadorian–Peruvian War of 1857–1860', 'Bagaudic Wars']
+uprising: 2 stored, dropped {'no_label': 0, 'bce_or_too_vague': 0}, years 1848..1856; e.g. ['Revolution of 1848 in Luxembourg', 'Luxembourg Coup of 1856']
+treaty: 10 stored, dropped {'no_label': 3, 'bce_or_too_vague': 0}, years 1953..2025; e.g. ['Schengen Implementing Convention', 'Single European Act', 'Reparations Agreement between Israel and West Germany', 'Saar Treaty']
+vote: 76 stored, dropped {'no_label': 5, 'bce_or_too_vague': 0}, years 1845..2024; e.g. ['Luxembourgian European Constitution referendum, 2005', 'Luxembourgian political parties referendum, 1937', 'Luxembourg constitutional referendum', '2019 European Parliament election']
+disaster: 1 stored, dropped {'no_label': 0, 'bce_or_too_vague': 0}, years 2021..2021; e.g. ['2021 European floods']
+university: 2 stored, dropped {'no_label': 0, 'bce_or_too_vague': 0}, years 1968..1991; e.g. ['Founding of Sacred Heart University Luxembourg', 'Founding of Miami University Dolibois European Center']
+monastery: 1 stored, dropped {'no_label': 1, 'bce_or_too_vague': 0}, years 1300..1300; e.g. ['Founding of Marienthal monastery']
+museum: 8 stored, dropped {'no_label': 4, 'bce_or_too_vague': 0}, years 1967..2012; e.g. ['Casino Luxembourg – Forum d’Art Contemporain', 'Founding of Luxemburg tramway museum', 'Founding of Prehistory Museum, Echternach', 'Founding of Tudor Museum']
+wars with these states as participants: 3 stored, dropped {'no_label': 0, 'bce_or_too_vague': 0}
+landmarks: none in this config
+rules: {'dated in the future': 0, 'local election': 1, 'party or internal vote': 0, 'minor election': 23, 'minor museum': 2, 'founding of a very recent minor institution': 2}
+by workflow: {'imported': 86, 'rejected': 28}
+kept by century: [(200, 1), (400, 5), (500, 1), (700, 1), (800, 1), (1300, 1), (1600, 1), (1700, 1), (1800, 4), (1900, 51), (2000, 19)]
+imported: {'austria': 822, 'luxembourg': 86, 'united_states': 6253}
+Processing 1 regions: luxembourg
+Delay between regions: 5.0s
+Max retries per step: 3
+
+######################################################################
+# REGION 1/1: luxembourg
+######################################################################
+
+============================================================
+Wikidata events for luxembourg (attempt 1/3)
+Command: C:\Users\angie\Documents\timewise\.venv\Scripts\python.exe -m ingestion.connectors.wikidata_events luxembourg
+============================================================
+
+
+[FAIL] Wikidata events for luxembourg failed (exit code 1)
+  Waiting 60s before retry...
+
+============================================================
+Wikidata events for luxembourg (attempt 2/3)
+Command: C:\Users\angie\Documents\timewise\.venv\Scripts\python.exe -m ingestion.connectors.wikidata_events luxembourg
+============================================================
+
+
+[FAIL] Wikidata events for luxembourg failed (exit code 1)
+  Waiting 120s before retry...
+
+============================================================
+Wikidata events for luxembourg (attempt 3/3)
+Command: C:\Users\angie\Documents\timewise\.venv\Scripts\python.exe -m ingestion.connectors.wikidata_events luxembourg
+============================================================
+
+
+[OK] Wikidata events for luxembourg succeeded
+
+============================================================
+Wikidata more for luxembourg (attempt 1/3)
+Command: C:\Users\angie\Documents\timewise\.venv\Scripts\python.exe -m ingestion.connectors.wikidata_more luxembourg
+============================================================
+
+
+[OK] Wikidata more for luxembourg succeeded
+
+============================================================
+Export for luxembourg (attempt 1/3)
+Command: C:\Users\angie\Documents\timewise\.venv\Scripts\python.exe -m timewise_api.export --imported
+============================================================
+
+
+[OK] Export for luxembourg succeeded
+
+======================================================================
+SUMMARY
+======================================================================
+  [OK] luxembourg: events=[OK], more=[OK], export=[OK]
+
+[OK] All 1 regions completed successfully

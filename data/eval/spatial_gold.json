@@ -1,0 +1,26 @@
+{
+  "note": "Developer-written sentences with hand-set expected answers. Not archival text and not a benchmark. Distances in 'locations' are approximate real-world figures.",
+  "relations": [
+    { "text": "The railway section between Innsbruck and Bolzano opened in 1867.", "expected": [{ "kind": "connects", "subject": "Innsbruck", "object": "Bolzano", "year": 1867 }] },
+    { "text": "Die Strecke von Wien nach Gloggnitz wurde 1842 eröffnet.", "expected": [{ "kind": "connects", "subject": "Wien", "object": "Gloggnitz", "year": 1842 }] },
+    { "text": "Der Abschnitt zwischen Graz und Celje wurde 1846 fertiggestellt.", "expected": [{ "kind": "connects", "subject": "Graz", "object": "Celje", "year": 1846 }] },
+    { "text": "A line from Linz to Budweis carried horse-drawn trains by 1832.", "expected": [{ "kind": "connects", "subject": "Linz", "object": "Budweis", "year": 1832 }] },
+    { "text": "A canal from Wiener Neustadt to Vienna was opened in 1803.", "expected": [{ "kind": "connects", "subject": "Wiener Neustadt", "object": "Vienna", "year": 1803 }] },
+    { "text": "Talks between Austria and Hungary continued through 1867.", "expected": [] },
+    { "text": "He travelled from Vienna to Prague in 1848 to meet the delegates.", "expected": [] },
+    { "text": "Relations between Prussia and Austria worsened in 1866.", "expected": [] },
+    { "text": "The treaty was signed in 1919 and changed the border.", "expected": [] },
+    { "text": "Graz lies about 145 km southwest of Vienna.", "expected": [{ "kind": "offset", "subject": "Graz", "object": "Vienna" }] },
+    { "text": "Linz liegt rund 160 km westlich von Wien.", "expected": [{ "kind": "offset", "subject": "Linz", "object": "Wien" }] },
+    { "text": "Sopron is 60 km south of Vienna.", "expected": [{ "kind": "offset", "subject": "Sopron", "object": "Vienna" }] },
+    { "text": "Königgrätz lay at 50.27° N, 15.75° E.", "expected": [{ "kind": "coordinates", "subject": "Königgrätz" }] },
+    { "text": "The bridge was 300 km long and very old.", "expected": [] },
+    { "text": "In the east of the empire the railway arrived late.", "expected": [] }
+  ],
+  "locations": [
+    { "text": "Graz lies about 145 km southwest of Vienna.", "anchor_lnglat": [16.3725, 48.2083], "true_lnglat": [15.4386, 47.0708] },
+    { "text": "Linz liegt rund 160 km westlich von Wien.", "anchor_lnglat": [16.3725, 48.2083], "true_lnglat": [14.2864, 48.3058] },
+    { "text": "Sopron is 60 km south of Vienna.", "anchor_lnglat": [16.3725, 48.2083], "true_lnglat": [16.5833, 47.6833] },
+    { "text": "Salzburg lies 250 km west of Vienna.", "anchor_lnglat": [16.3725, 48.2083], "true_lnglat": [13.045, 47.8] }
+  ]
+}

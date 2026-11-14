@@ -1,0 +1,20 @@
+{
+  "id": "uruguay",
+  "label": {
+    "en": "Uruguay"
+  },
+  "iso": "UY",
+  "wikidata_country": "Q77",
+  "wikidata_states": {
+    "Q77": "Uruguay",
+    "Q738144": "United Provinces of the Río de la Plata"
+  },
+  "landmarks": [],
+  "generated": {
+    "by": "ingestion/generate_region_configs.py",
+    "on": "2026-11-09",
+    "method": "Sovereign state (Q3624078) with ISO code UY, plus historical countries linked to it by P1365/P1366 up to 1 steps. Not reviewed."
+  },
+  "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+  "continent": "south_america"
+}

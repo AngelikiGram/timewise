@@ -1,0 +1,21 @@
+{
+  "name": "timewise",
+  "private": true,
+  "workspaces": ["apps/*", "packages/*"],
+  "scripts": {
+    "dev": "npm run dev -w @timewise/web",
+    "build": "npm run build -w @timewise/web",
+    "start": "npm run start -w @timewise/web",
+    "typecheck": "npm run typecheck -w @timewise/web",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "verify:sources": "node scripts/verify-sources.mjs",
+    "audit:data": "node scripts/audit-data.mjs",
+    "api": ".venv\\Scripts\\python -m uvicorn timewise_api.main:app --port 8000 --app-dir apps/api",
+    "sync:db": "cd apps/api && ..\\..\\.venv\\Scripts\\python -m alembic upgrade head && ..\\..\\.venv\\Scripts\\python -m timewise_api.seed austria && ..\\..\\.venv\\Scripts\\python -m timewise_api.export austria"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.64.1",
+    "vitest": "^4.0.0"
+  }
+}

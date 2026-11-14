@@ -1,0 +1,20 @@
+{
+  "id": "belgium",
+  "label": {
+    "en": "Belgium"
+  },
+  "iso": "BE",
+  "wikidata_country": "Q31",
+  "wikidata_states": {
+    "Q31": "Belgium",
+    "Q15864": "United Kingdom of the Netherlands"
+  },
+  "landmarks": [],
+  "generated": {
+    "by": "ingestion/generate_region_configs.py",
+    "on": "2026-11-09",
+    "method": "Sovereign state (Q3624078) with ISO code BE, plus historical countries linked to it by P1365/P1366 up to 1 steps. Not reviewed."
+  },
+  "note": "Built automatically from Wikidata. Predecessor states are the ones Wikidata links to this country, so events can lie outside today's borders, and earlier periods may be missing where Wikidata has no link.",
+  "continent": "europe"
+}

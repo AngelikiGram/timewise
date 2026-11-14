@@ -1,0 +1,335 @@
+{
+ "journeys": [
+  {
+   "id": "austria-1848-1921",
+   "title": {
+    "en": "How Austria Changed, 1848–1921"
+   },
+   "closing": {
+    "en": "This journey covers only what its 27 claims can support. Most of its evidence is reference works, no historian has reviewed it, and it says little about daily life, the war years or most of Austria's regions. Treat it as a starting point, and open the evidence to see how far each statement can be trusted."
+   },
+   "chapters": [
+    {
+     "id": "revolution",
+     "summary": {
+      "en": "Concessions in March, armed defeat by the end of October: all inside one year."
+     },
+     "eventIds": [
+      "vienna-march-1848",
+      "vienna-october-1848"
+     ],
+     "question": {
+      "en": "What could a revolution change in two days?"
+     },
+     "segments": [
+      {
+       "text": {
+        "en": "In March 1848 an uprising carried by the bourgeoisie broke out in Vienna. Within two days Metternich had resigned, a National Guard had formed, and press freedom had been granted."
+       },
+       "claimIds": [
+        "c-mar-1"
+       ]
+      },
+      {
+       "text": {
+        "en": "It didn't last. From 6 October troops mutinied at the Gumpendorf barracks, and an army under Windisch-Graetz was formed to subdue the city."
+       },
+       "claimIds": [
+        "c-oct-1"
+       ]
+      }
+     ]
+    },
+    {
+     "id": "rails",
+     "summary": {
+      "en": "A connection that took six years to build. The lines on this map are straight links between named places, not the real curving track."
+     },
+     "eventIds": [
+      "graz-railway-1844",
+      "semmering-construction",
+      "semmering-1854"
+     ],
+     "question": {
+      "en": "How did a railway cross a mountain range?"
+     },
+     "segments": [
+      {
+       "text": {
+        "en": "Rail had already reached Styria: the section from Mürzzuschlag to Graz entered service in October 1844."
+       },
+       "claimIds": [
+        "c-graz-1"
+       ]
+      },
+      {
+       "text": {
+        "en": "Between 1848 and 1854, some 20,000 workers under Carl von Ghega built the Semmering line, with 14 tunnels and 16 viaducts."
+       },
+       "claimIds": [
+        "c-semc-1",
+        "c-sem-1"
+       ]
+      },
+      {
+       "text": {
+        "en": "It opened in 1854, and has been a UNESCO World Heritage site since 1998."
+       },
+       "claimIds": [
+        "c-sem-2"
+       ]
+      }
+     ],
+     "connection": {
+      "en": "In the same year that Vienna fought, work began on a line over the Semmering."
+     }
+    },
+    {
+     "id": "walls",
+     "summary": {
+      "en": "The line on the map is today's Ringstrasse, for orientation. The old walls aren't in this collection yet, so they can't be drawn."
+     },
+     "eventIds": [
+      "ring-decree-1857",
+      "ring-opening-1865"
+     ],
+     "question": {
+      "en": "What happened to Vienna's walls?"
+     },
+     "segments": [
+      {
+       "text": {
+        "en": "On 20 December 1857 Franz Joseph signed a handwritten decree, published in the Wiener Zeitung five days later. Known as “Es ist Mein Wille”, it ordered the city's walls and moats demolished."
+       },
+       "claimIds": [
+        "c-dec-1",
+        "c-dec-2"
+       ]
+      },
+      {
+       "text": {
+        "en": "The first section of the Ringstrasse opened to the public on 1 May 1865. A smaller stretch had opened in 1858, so “first” depends on what counts as the Ringstrasse."
+       },
+       "claimIds": [
+        "c-ring-1"
+       ]
+      }
+     ],
+     "connection": {
+      "en": "Three years after the Semmering opened, change came to the capital by imperial order."
+     }
+    },
+    {
+     "id": "divided",
+     "summary": {
+      "en": "A battle, a new constitutional settlement and a mountain railway, all within about fourteen months."
+     },
+     "eventIds": [
+      "koniggratz-1866",
+      "compromise-1867",
+      "brenner-1867"
+     ],
+     "question": {
+      "en": "What came after 1866?"
+     },
+     "segments": [
+      {
+       "text": {
+        "en": "On 3 July 1866, at Königgrätz in Bohemia, the Austro-Prussian War produced a Prussian victory."
+       },
+       "claimIds": [
+        "c-kon-1"
+       ]
+      },
+      {
+       "text": {
+        "en": "Less than a year later, Franz Joseph and Ferenc Deák had signed the Compromise, ratified by the restored Diet of Hungary on 29 May 1867."
+       },
+       "claimIds": [
+        "c-comp-1"
+       ]
+      },
+      {
+       "text": {
+        "en": "One interpretation: this settlement was arranged by a narrow part of Hungarian society, when under 8% of the population could vote."
+       },
+       "claimIds": [
+        "c-comp-2"
+       ]
+      },
+      {
+       "text": {
+        "en": "That August, rail opened across the Brenner, on 24 August 1867."
+       },
+       "claimIds": [
+        "c-bren-1"
+       ]
+      }
+     ],
+     "connection": {
+      "en": "These events follow one another here. This journey doesn't claim that one caused the next, because its sources don't establish that."
+     }
+    },
+    {
+     "id": "nationalism",
+     "summary": {
+      "en": "A political programme has no shape on a map. The marker only shows the city it was named after."
+     },
+     "eventIds": [
+      "linz-program-1882"
+     ],
+     "question": {
+      "en": "Who was this state meant to be for?"
+     },
+     "segments": [
+      {
+       "text": {
+        "en": "The framers of the 1882 Linz Program wanted a German-dominated Austrian state, out of fear that Slavs were overrunning the German element of the monarchy. That was their view, not a neutral description."
+       },
+       "claimIds": [
+        "c-linz-1"
+       ]
+      },
+      {
+       "text": {
+        "en": "One assessment is that it never gained much support in influential political circles."
+       },
+       "claimIds": [
+        "c-linz-2"
+       ]
+      }
+     ],
+     "connection": {
+      "en": "Fifteen years after the Compromise, a programme from Linz gave one answer."
+     }
+    },
+    {
+     "id": "end",
+     "summary": {
+      "en": "Watch the outline of Austria-Hungary as the date passes November 1918: the collection has no boundary data for the next period, so nothing replaces it yet."
+     },
+     "eventIds": [
+      "sarajevo-1914",
+      "republic-1918"
+     ],
+     "question": {
+      "en": "How did the monarchy come to an end?"
+     },
+     "segments": [
+      {
+       "text": {
+        "en": "On 28 June 1914 Archduke Franz Ferdinand was assassinated near the Latin Bridge in Sarajevo. Gavrilo Princip was found guilty, and sentenced to 20 years because he was too young to be executed."
+       },
+       "claimIds": [
+        "c-sar-1",
+        "c-sar-2"
+       ]
+      },
+      {
+       "text": {
+        "en": "On 11 November 1918 Emperor Charles recognised the Austrian people's right to determine the form of the state, and left Schönbrunn."
+       },
+       "claimIds": [
+        "c-rep-2"
+       ]
+      },
+      {
+       "text": {
+        "en": "The next day the National Assembly declared German-Austria a republic, with Karl Renner as provisional chancellor."
+       },
+       "claimIds": [
+        "c-rep-1"
+       ]
+      }
+     ],
+     "connection": {
+      "en": "This collection jumps more than thirty years here. That's a gap in the collection, not a quiet period in history."
+     }
+    },
+    {
+     "id": "borders",
+     "summary": {
+      "en": "Treaties and votes both helped set the border. The outlines shown are coarse, or present-day, and marked as such."
+     },
+     "eventIds": [
+      "german-austria-state",
+      "saint-germain-1919",
+      "carinthia-1920",
+      "burgenland-adjustments",
+      "sopron-1921"
+     ],
+     "question": {
+      "en": "Where would the new state end?"
+     },
+     "segments": [
+      {
+       "text": {
+        "en": "German-Austria lasted from its proclamation until the Treaty of Saint-Germain, signed on 10 September 1919, which is recorded as prohibiting it. The treaty took effect on 16 July 1920."
+       },
+       "claimIds": [
+        "c-ga-1",
+        "c-ger-1"
+       ]
+      },
+      {
+       "text": {
+        "en": "On 10 October 1920, voters in southern Carinthia chose Austria over the Kingdom of Serbs, Croats and Slovenes, by 22,025 votes to 15,279."
+       },
+       "claimIds": [
+        "c-car-1"
+       ]
+      },
+      {
+       "text": {
+        "en": "Territory gained from Hungary became the state of Burgenland, and villages were still being exchanged up to 1923."
+       },
+       "claimIds": [
+        "c-bur-1",
+        "c-ger-3"
+       ]
+      },
+      {
+       "text": {
+        "en": "But a local vote on 14 December 1921 kept Sopron in Hungary, with 65% in favour. The source itself calls that vote controversial."
+       },
+       "claimIds": [
+        "c-sop-1"
+       ]
+      }
+     ],
+     "connection": {
+      "en": "A new republic existed before anyone had settled its borders."
+     }
+    },
+    {
+     "id": "culture",
+     "summary": {
+      "en": "No shape on the map could explain this, so here the story belongs to people and the work they staged."
+     },
+     "eventIds": [
+      "salzburg-festival-1920"
+     ],
+     "question": {
+      "en": "What else began in these years?"
+     },
+     "segments": [
+      {
+       "text": {
+        "en": "On 22 August 1920, while Austria's borders were still unsettled, the Salzburg Festival was officially inaugurated with Jedermann on the steps of Salzburg Cathedral."
+       },
+       "claimIds": [
+        "c-sal-1"
+       ]
+      }
+     ],
+     "connection": {
+      "en": "Not all history is a line on a map."
+     }
+    }
+   ],
+   "subtitle": {
+    "en": "From a revolution in Vienna to a small republic with its borders still in question."
+   }
+  }
+ ]
+}

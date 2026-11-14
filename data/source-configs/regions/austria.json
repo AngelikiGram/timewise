@@ -1,0 +1,46 @@
+{
+  "id": "austria",
+  "label": {
+    "en": "Austria",
+    "de": "Österreich"
+  },
+  "wikidata_country": "Q40",
+  "wikidata_states": {
+    "Q40": "Austria",
+    "Q283627": "Margraviate of Austria",
+    "Q3624335": "Duchy of Austria",
+    "Q699964": "Archduchy of Austria",
+    "Q153136": "Habsburg monarchy",
+    "Q131964": "Austrian Empire",
+    "Q28513": "Austria-Hungary",
+    "Q533534": "Cisleithania",
+    "Q268970": "Republic of German-Austria",
+    "Q518101": "First Austrian Republic"
+  },
+  "landmarks": [
+    "Congress of Vienna",
+    "Anschluss",
+    "Austrian Civil War",
+    "World War I",
+    "World War II",
+    "Thirty Years' War",
+    "War of the Austrian Succession",
+    "Seven Years' War",
+    "War of the Spanish Succession",
+    "Great Turkish War",
+    "German Peasants' War",
+    "Privilegium Minus",
+    "Pragmatic Sanction of 1713",
+    "Austro-Prussian War",
+    "Battle of Mohács",
+    "July Putsch",
+    "Allied-occupied Austria",
+    "War of the Fifth Coalition",
+    "Austro-Hungarian Compromise of 1867",
+    "Peace of Westphalia",
+    "Treaty of Saint-Germain-en-Laye",
+    "Austria's accession to the European Union"
+  ],
+  "note": "Historical states are included so that earlier periods aren't lost. Events tied to the Habsburg lands can lie outside today's Austria.",
+  "continent": "europe"
+}

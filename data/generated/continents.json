@@ -1,0 +1,94 @@
+{
+ "continents": [
+  {
+   "id": "europe",
+   "label": {
+    "en": "Europe"
+   },
+   "kind": "continent",
+   "imported": 28616,
+   "bbox": [
+    -25,
+    34,
+    45,
+    71
+   ],
+   "note": "Today's 45 countries of Europe. Events are those Wikidata ties to one of them."
+  },
+  {
+   "id": "asia",
+   "label": {
+    "en": "Asia"
+   },
+   "kind": "continent",
+   "imported": 15703,
+   "bbox": [
+    25,
+    -11,
+    150,
+    56
+   ],
+   "note": "Today's 49 countries of Asia. Events are those Wikidata ties to one of them."
+  },
+  {
+   "id": "africa",
+   "label": {
+    "en": "Africa"
+   },
+   "kind": "continent",
+   "imported": 4488,
+   "bbox": [
+    -20,
+    -36,
+    52,
+    38
+   ],
+   "note": "Today's 54 countries of Africa. Events are those Wikidata ties to one of them."
+  },
+  {
+   "id": "north_america",
+   "label": {
+    "en": "North America"
+   },
+   "kind": "continent",
+   "imported": 11024,
+   "bbox": [
+    -130,
+    7,
+    -55,
+    60
+   ],
+   "note": "Today's 23 countries of North America. Events are those Wikidata ties to one of them."
+  },
+  {
+   "id": "south_america",
+   "label": {
+    "en": "South America"
+   },
+   "kind": "continent",
+   "imported": 2657,
+   "bbox": [
+    -82,
+    -56,
+    -34,
+    13
+   ],
+   "note": "Today's 12 countries of South America. Events are those Wikidata ties to one of them."
+  },
+  {
+   "id": "oceania",
+   "label": {
+    "en": "Oceania"
+   },
+   "kind": "continent",
+   "imported": 818,
+   "bbox": [
+    110,
+    -48,
+    180,
+    0
+   ],
+   "note": "Today's 14 countries of Oceania. Events are those Wikidata ties to one of them."
+  }
+ ]
+}

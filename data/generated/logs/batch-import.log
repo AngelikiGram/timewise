@@ -1,0 +1,332 @@
+197 regions in 8 chunks, categories: ['war', 'uprising', 'treaty', 'vote', 'disaster', 'university', 'monastery', 'museum', 'participants']
+war chunk 1/8: 5389 rows, 2105 events in 25 countries, 13s
+war chunk 2/8: 4542 rows, 1843 events in 25 countries, 12s
+war chunk 3/8: FAILED qlever-wikidata refused the request (HTTP 414).
+war chunk 4/8: 8863 rows, 3187 events in 25 countries, 17s
+war chunk 5/8: 3063 rows, 1446 events in 25 countries, 12s
+--- resumed 2026-11-11 11:52
+197 regions in 8 chunks, categories: ['war', 'uprising', 'treaty', 'vote', 'disaster', 'university', 'monastery', 'museum', 'participants']
+war chunk 3/8: FAILED qlever-wikidata refused the request (HTTP 308).
+war chunk 6/8: FAILED qlever-wikidata refused the request (HTTP 308).
+war chunk 7/8: FAILED qlever-wikidata refused the request (HTTP 308).
+war chunk 8/8: FAILED qlever-wikidata refused the request (HTTP 308).
+uprising chunk 1/8: FAILED qlever-wikidata refused the request (HTTP 308).
+uprising chunk 2/8: FAILED qlever-wikidata refused the request (HTTP 308).
+uprising chunk 3/8: FAILED qlever-wikidata refused the request (HTTP 308).
+uprising chunk 4/8: FAILED qlever-wikidata refused the request (HTTP 308).
+uprising chunk 5/8: FAILED qlever-wikidata refused the request (HTTP 308).
+uprising chunk 6/8: FAILED qlever-wikidata refused the request (HTTP 308).
+uprising chunk 7/8: FAILED qlever-wikidata refused the request (HTTP 308).
+uprising chunk 8/8: FAILED qlever-wikidata refused the request (HTTP 308).
+treaty chunk 1/8: FAILED qlever-wikidata refused the request (HTTP 308).
+treaty chunk 2/8: FAILED qlever-wikidata refused the request (HTTP 308).
+treaty chunk 3/8: FAILED qlever-wikidata refused the request (HTTP 308).
+treaty chunk 4/8: FAILED qlever-wikidata refused the request (HTTP 308).
+treaty chunk 5/8: FAILED qlever-wikidata refused the request (HTTP 308).
+treaty chunk 6/8: FAILED qlever-wikidata refused the request (HTTP 308).
+treaty chunk 7/8: FAILED qlever-wikidata refused the request (HTTP 308).
+treaty chunk 8/8: FAILED qlever-wikidata refused the request (HTTP 308).
+vote chunk 1/8: FAILED qlever-wikidata refused the request (HTTP 308).
+vote chunk 2/8: FAILED qlever-wikidata refused the request (HTTP 308).
+vote chunk 3/8: FAILED qlever-wikidata refused the request (HTTP 308).
+vote chunk 4/8: FAILED qlever-wikidata refused the request (HTTP 308).
+vote chunk 5/8: FAILED qlever-wikidata refused the request (HTTP 308).
+vote chunk 6/8: FAILED qlever-wikidata refused the request (HTTP 308).
+vote chunk 7/8: FAILED qlever-wikidata refused the request (HTTP 308).
+vote chunk 8/8: FAILED qlever-wikidata refused the request (HTTP 308).
+disaster chunk 1/8: FAILED qlever-wikidata refused the request (HTTP 308).
+disaster chunk 2/8: FAILED qlever-wikidata refused the request (HTTP 308).
+disaster chunk 3/8: FAILED qlever-wikidata refused the request (HTTP 308).
+disaster chunk 4/8: FAILED qlever-wikidata refused the request (HTTP 308).
+disaster chunk 5/8: FAILED qlever-wikidata refused the request (HTTP 308).
+disaster chunk 6/8: FAILED qlever-wikidata refused the request (HTTP 308).
+disaster chunk 7/8: FAILED qlever-wikidata refused the request (HTTP 308).
+disaster chunk 8/8: FAILED qlever-wikidata refused the request (HTTP 308).
+university chunk 1/8: FAILED qlever-wikidata refused the request (HTTP 308).
+university chunk 2/8: FAILED qlever-wikidata refused the request (HTTP 308).
+university chunk 3/8: FAILED qlever-wikidata refused the request (HTTP 308).
+university chunk 4/8: FAILED qlever-wikidata refused the request (HTTP 308).
+university chunk 5/8: FAILED qlever-wikidata refused the request (HTTP 308).
+university chunk 6/8: FAILED qlever-wikidata refused the request (HTTP 308).
+university chunk 7/8: FAILED qlever-wikidata refused the request (HTTP 308).
+university chunk 8/8: FAILED qlever-wikidata refused the request (HTTP 308).
+monastery chunk 1/8: FAILED qlever-wikidata refused the request (HTTP 308).
+monastery chunk 2/8: FAILED qlever-wikidata refused the request (HTTP 308).
+monastery chunk 3/8: FAILED qlever-wikidata refused the request (HTTP 308).
+monastery chunk 4/8: FAILED qlever-wikidata refused the request (HTTP 308).
+monastery chunk 5/8: FAILED qlever-wikidata refused the request (HTTP 308).
+monastery chunk 6/8: FAILED qlever-wikidata refused the request (HTTP 308).
+monastery chunk 7/8: FAILED qlever-wikidata refused the request (HTTP 308).
+monastery chunk 8/8: FAILED qlever-wikidata refused the request (HTTP 308).
+museum chunk 1/8: FAILED qlever-wikidata refused the request (HTTP 308).
+museum chunk 2/8: FAILED qlever-wikidata refused the request (HTTP 308).
+museum chunk 3/8: FAILED qlever-wikidata refused the request (HTTP 308).
+museum chunk 4/8: FAILED qlever-wikidata refused the request (HTTP 308).
+museum chunk 5/8: FAILED qlever-wikidata refused the request (HTTP 308).
+museum chunk 6/8: FAILED qlever-wikidata refused the request (HTTP 308).
+museum chunk 7/8: FAILED qlever-wikidata refused the request (HTTP 308).
+museum chunk 8/8: FAILED qlever-wikidata refused the request (HTTP 308).
+participants chunk 1/8: FAILED qlever-wikidata refused the request (HTTP 308).
+participants chunk 2/8: FAILED qlever-wikidata refused the request (HTTP 308).
+participants chunk 3/8: FAILED qlever-wikidata refused the request (HTTP 308).
+participants chunk 4/8: FAILED qlever-wikidata refused the request (HTTP 308).
+participants chunk 5/8: FAILED qlever-wikidata refused the request (HTTP 308).
+participants chunk 6/8: FAILED qlever-wikidata refused the request (HTTP 308).
+participants chunk 7/8: FAILED qlever-wikidata refused the request (HTTP 308).
+participants chunk 8/8: FAILED qlever-wikidata refused the request (HTTP 308).
+applying filler rules...
+hidden by rule: {'dated in the future': 0, 'local election': 2, 'party or internal vote': 0, 'minor election': 0, 'minor museum': 1418, 'founding of a very recent minor institution': 768}
+kept: 14964 events in 167 countries; failed chunks: 68
+--- resumed 2026-11-11 11:57 (qlever.dev, POST)
+197 regions in 8 chunks, categories: ['war', 'uprising', 'treaty', 'vote', 'disaster', 'university', 'monastery', 'museum', 'participants']
+war chunk 3/8: 10590 rows, 4085 events in 25 countries, 16s
+war chunk 6/8: 6477 rows, 2407 events in 25 countries, 14s
+war chunk 7/8: 7771 rows, 2840 events in 25 countries, 12s
+--- resumed 2026-11-11 14:16 (after silent stop)
+197 regions in 8 chunks, categories: ['war', 'uprising', 'treaty', 'vote', 'disaster', 'university', 'monastery', 'museum', 'participants']
+war chunk 8/8: 10994 rows, 4094 events in 20 countries, 8s
+uprising chunk 1/8: 868 rows, 305 events in 22 countries, 3s
+uprising chunk 2/8: 779 rows, 302 events in 23 countries, 3s
+uprising chunk 3/8: 1229 rows, 572 events in 24 countries, 3s
+uprising chunk 4/8: 1450 rows, 398 events in 24 countries, 3s
+uprising chunk 5/8: 551 rows, 169 events in 19 countries, 3s
+uprising chunk 6/8: 967 rows, 351 events in 21 countries, 3s
+uprising chunk 7/8: 1101 rows, 407 events in 24 countries, 3s
+uprising chunk 8/8: 1760 rows, 421 events in 20 countries, 4s
+treaty chunk 1/8: 536 rows, 239 events in 21 countries, 3s
+treaty chunk 2/8: 243 rows, 149 events in 15 countries, 3s
+treaty chunk 3/8: 1113 rows, 560 events in 20 countries, 3s
+treaty chunk 4/8: 575 rows, 264 events in 20 countries, 2s
+treaty chunk 5/8: 213 rows, 114 events in 19 countries, 3s
+treaty chunk 6/8: 563 rows, 260 events in 18 countries, 3s
+treaty chunk 7/8: 614 rows, 297 events in 18 countries, 3s
+treaty chunk 8/8: 1187 rows, 570 events in 15 countries, 4s
+vote chunk 1/8: 6534 rows, 4774 events in 25 countries, 4s
+vote chunk 2/8: 10821 rows, 9108 events in 25 countries, 5s
+vote chunk 3/8: 11219 rows, 6809 events in 25 countries, 6s
+vote chunk 4/8: 5069 rows, 3665 events in 25 countries, 4s
+vote chunk 5/8: 14402 rows, 12911 events in 25 countries, 7s
+vote chunk 6/8: 4554 rows, 2611 events in 25 countries, 4s
+vote chunk 7/8: 7928 rows, 5616 events in 25 countries, 7s
+vote chunk 8/8: 32231 rows, 29350 events in 22 countries, 23s
+disaster chunk 1/8: 244 rows, 67 events in 20 countries, 3s
+disaster chunk 2/8: 658 rows, 133 events in 17 countries, 3s
+disaster chunk 3/8: 442 rows, 180 events in 18 countries, 3s
+disaster chunk 4/8: 457 rows, 218 events in 16 countries, 3s
+disaster chunk 5/8: 184 rows, 90 events in 14 countries, 3s
+disaster chunk 6/8: 389 rows, 97 events in 17 countries, 5s
+disaster chunk 7/8: 332 rows, 85 events in 19 countries, 3s
+disaster chunk 8/8: 442 rows, 181 events in 15 countries, 2s
+university chunk 1/8: 1090 rows, 852 events in 24 countries, 3s
+university chunk 2/8: 1482 rows, 1288 events in 25 countries, 4s
+university chunk 3/8: 2949 rows, 2381 events in 24 countries, 4s
+university chunk 4/8: 2238 rows, 1731 events in 25 countries, 3s
+university chunk 5/8: 1547 rows, 1016 events in 24 countries, 3s
+university chunk 6/8: 1749 rows, 1375 events in 24 countries, 4s
+university chunk 7/8: 1175 rows, 905 events in 24 countries, 3s
+university chunk 8/8: 3288 rows, 2632 events in 21 countries, 4s
+monastery chunk 1/8: 590 rows, 418 events in 12 countries, 3s
+monastery chunk 2/8: 397 rows, 282 events in 10 countries, 3s
+monastery chunk 3/8: 2216 rows, 1874 events in 13 countries, 4s
+monastery chunk 4/8: 482 rows, 366 events in 15 countries, 3s
+monastery chunk 5/8: 223 rows, 175 events in 10 countries, 2s
+monastery chunk 6/8: 1085 rows, 453 events in 9 countries, 4s
+monastery chunk 7/8: 501 rows, 352 events in 10 countries, 4s
+monastery chunk 8/8: 311 rows, 212 events in 8 countries, 3s
+museum chunk 1/8: 4710 rows, 2128 events in 25 countries, 4s
+museum chunk 2/8: 1934 rows, 1141 events in 22 countries, 3s
+museum chunk 3/8: 4806 rows, 2917 events in 20 countries, 5s
+museum chunk 4/8: 3001 rows, 1490 events in 21 countries, 3s
+museum chunk 5/8: 2243 rows, 950 events in 22 countries, 3s
+museum chunk 6/8: 3553 rows, 1813 events in 22 countries, 3s
+museum chunk 7/8: 2552 rows, 1577 events in 21 countries, 3s
+museum chunk 8/8: 6282 rows, 4144 events in 19 countries, 5s
+participants chunk 1/8: 1035 rows, 538 events in 18 countries, 2s
+participants chunk 2/8: 471 rows, 220 events in 22 countries, 3s
+participants chunk 3/8: 1357 rows, 902 events in 15 countries, 3s
+participants chunk 4/8: 877 rows, 502 events in 18 countries, 3s
+participants chunk 5/8: 439 rows, 226 events in 20 countries, 4s
+participants chunk 6/8: 955 rows, 647 events in 16 countries, 3s
+participants chunk 7/8: 1293 rows, 896 events in 20 countries, 3s
+participants chunk 8/8: 4348 rows, 3009 events in 17 countries, 6s
+applying filler rules...
+hidden by rule: {'dated in the future': 201, 'local election': 15128, 'party or internal vote': 32, 'minor election': 46624, 'minor museum': 5816, 'founding of a very recent minor institution': 6881}
+kept: 67866 events in 197 countries; failed chunks: 0
+--- fresh 2026-11-11 14:24 (coordinates fix + area fallback)
+197 regions in 8 chunks, categories: ['war', 'uprising', 'treaty', 'vote', 'disaster', 'university', 'monastery', 'museum', 'participants']
+war chunk 1/8: 5407 rows, 2105 events in 25 countries, 7s
+war chunk 2/8: 4545 rows, 1843 events in 25 countries, 6s
+war chunk 3/8: 10671 rows, 4085 events in 25 countries, 6s
+war chunk 4/8: 8962 rows, 3187 events in 25 countries, 5s
+war chunk 5/8: 3083 rows, 1446 events in 25 countries, 7s
+war chunk 6/8: 6515 rows, 2407 events in 25 countries, 8s
+war chunk 7/8: 7806 rows, 2840 events in 25 countries, 5s
+war chunk 8/8: 11062 rows, 4094 events in 20 countries, 7s
+uprising chunk 1/8: 876 rows, 305 events in 22 countries, 4s
+uprising chunk 2/8: 780 rows, 302 events in 23 countries, 6s
+uprising chunk 3/8: 1235 rows, 572 events in 24 countries, 4s
+uprising chunk 4/8: 1523 rows, 398 events in 24 countries, 4s
+uprising chunk 5/8: 557 rows, 169 events in 19 countries, 4s
+uprising chunk 6/8: 1011 rows, 351 events in 21 countries, 6s
+uprising chunk 7/8: 1103 rows, 407 events in 24 countries, 9s
+uprising chunk 8/8: 1775 rows, 421 events in 20 countries, 8s
+treaty chunk 1/8: 560 rows, 239 events in 21 countries, 12s
+treaty chunk 2/8: 246 rows, 149 events in 15 countries, 8s
+treaty chunk 3/8: 1127 rows, 560 events in 20 countries, 9s
+treaty chunk 4/8: 576 rows, 264 events in 20 countries, 7s
+treaty chunk 5/8: 213 rows, 114 events in 19 countries, 6s
+treaty chunk 6/8: 563 rows, 260 events in 18 countries, 6s
+treaty chunk 7/8: 614 rows, 297 events in 18 countries, 5s
+treaty chunk 8/8: 1194 rows, 570 events in 15 countries, 8s
+vote chunk 1/8: 6534 rows, 4774 events in 25 countries, 16s
+vote chunk 2/8: 10821 rows, 9108 events in 25 countries, 11s
+vote chunk 3/8: 11222 rows, 6810 events in 25 countries, 10s
+vote chunk 4/8: 5133 rows, 3665 events in 25 countries, 7s
+vote chunk 5/8: 14402 rows, 12911 events in 25 countries, 12s
+vote chunk 6/8: 4554 rows, 2611 events in 25 countries, 7s
+vote chunk 7/8: 7928 rows, 5616 events in 25 countries, 6s
+vote chunk 8/8: 32235 rows, 29350 events in 22 countries, 18s
+disaster chunk 1/8: 264 rows, 67 events in 20 countries, 3s
+disaster chunk 2/8: 716 rows, 133 events in 17 countries, 5s
+disaster chunk 3/8: 515 rows, 180 events in 18 countries, 13s
+disaster chunk 4/8: 479 rows, 218 events in 16 countries, 11s
+disaster chunk 5/8: 226 rows, 90 events in 14 countries, 5s
+disaster chunk 6/8: 431 rows, 97 events in 17 countries, 4s
+disaster chunk 7/8: 345 rows, 85 events in 19 countries, 4s
+disaster chunk 8/8: 471 rows, 181 events in 15 countries, 6s
+university chunk 1/8: 1247 rows, 852 events in 24 countries, 7s
+university chunk 2/8: 1613 rows, 1288 events in 25 countries, 10s
+university chunk 3/8: 3924 rows, 2381 events in 24 countries, 10s
+university chunk 4/8: 2971 rows, 1731 events in 25 countries, 5s
+university chunk 5/8: 2060 rows, 1016 events in 24 countries, 7s
+university chunk 6/8: 2119 rows, 1375 events in 24 countries, 10s
+university chunk 7/8: 1293 rows, 905 events in 24 countries, 10s
+university chunk 8/8: 3688 rows, 2632 events in 21 countries, 11s
+monastery chunk 1/8: 678 rows, 418 events in 12 countries, 7s
+monastery chunk 2/8: 434 rows, 282 events in 10 countries, 8s
+monastery chunk 3/8: 2332 rows, 1874 events in 13 countries, 10s
+monastery chunk 4/8: 509 rows, 366 events in 15 countries, 7s
+monastery chunk 5/8: 238 rows, 175 events in 10 countries, 7s
+monastery chunk 6/8: 1254 rows, 453 events in 9 countries, 6s
+monastery chunk 7/8: 547 rows, 352 events in 10 countries, 5s
+monastery chunk 8/8: 349 rows, 212 events in 8 countries, 5s
+museum chunk 1/8: 5076 rows, 2128 events in 25 countries, 5s
+museum chunk 2/8: 2133 rows, 1141 events in 22 countries, 7s
+museum chunk 3/8: 5345 rows, 2917 events in 20 countries, 7s
+museum chunk 4/8: 3107 rows, 1490 events in 21 countries, 8s
+museum chunk 5/8: 2694 rows, 950 events in 22 countries, 6s
+museum chunk 6/8: 4085 rows, 1813 events in 22 countries, 7s
+museum chunk 7/8: 2691 rows, 1577 events in 21 countries, 8s
+museum chunk 8/8: 7446 rows, 4144 events in 19 countries, 11s
+participants chunk 1/8: 1038 rows, 538 events in 18 countries, 6s
+participants chunk 2/8: 471 rows, 220 events in 22 countries, 5s
+participants chunk 3/8: 1357 rows, 902 events in 15 countries, 6s
+participants chunk 4/8: 890 rows, 502 events in 18 countries, 4s
+participants chunk 5/8: 440 rows, 226 events in 20 countries, 4s
+participants chunk 6/8: 956 rows, 647 events in 16 countries, 4s
+participants chunk 7/8: 1293 rows, 896 events in 20 countries, 6s
+participants chunk 8/8: 4369 rows, 3009 events in 17 countries, 7s
+applying filler rules...
+hidden by rule: {'dated in the future': 201, 'local election': 15128, 'party or internal vote': 32, 'minor election': 46624, 'minor museum': 5816, 'founding of a very recent minor institution': 6881}
+kept: 67867 events in 197 countries; failed chunks: 0
+--- fresh 2026-11-11 21:58 (BC dates, epidemics, constitutions, states)
+197 regions in 8 chunks, categories: ['war', 'uprising', 'treaty', 'vote', 'disaster', 'university', 'monastery', 'museum', 'epidemic', 'constitution', 'participants', 'states']
+war chunk 1/8: 5407 rows, 2170 events in 25 countries, 21s
+war chunk 2/8: 4552 rows, 1904 events in 25 countries, 16s
+war chunk 3/8: 10671 rows, 4346 events in 25 countries, 24s
+war chunk 4/8: 8962 rows, 3539 events in 25 countries, 23s
+war chunk 5/8: 3083 rows, 1465 events in 25 countries, 11s
+war chunk 6/8: 6515 rows, 2455 events in 25 countries, 19s
+war chunk 7/8: 7806 rows, 2938 events in 25 countries, 27s
+war chunk 8/8: 11062 rows, 4287 events in 20 countries, 21s
+uprising chunk 1/8: 876 rows, 305 events in 22 countries, 12s
+uprising chunk 2/8: 780 rows, 305 events in 23 countries, 13s
+uprising chunk 3/8: 1235 rows, 575 events in 24 countries, 14s
+uprising chunk 4/8: 1523 rows, 405 events in 24 countries, 15s
+uprising chunk 5/8: 557 rows, 169 events in 19 countries, 14s
+uprising chunk 6/8: 1011 rows, 352 events in 21 countries, 14s
+uprising chunk 7/8: 1103 rows, 407 events in 24 countries, 18s
+uprising chunk 8/8: 1775 rows, 425 events in 20 countries, 19s
+treaty chunk 1/8: 560 rows, 239 events in 21 countries, 9s
+treaty chunk 2/8: 246 rows, 150 events in 15 countries, 10s
+treaty chunk 3/8: 1127 rows, 561 events in 20 countries, 19s
+treaty chunk 4/8: 576 rows, 269 events in 20 countries, 17s
+treaty chunk 5/8: 213 rows, 114 events in 19 countries, 11s
+treaty chunk 6/8: 563 rows, 260 events in 18 countries, 17s
+treaty chunk 7/8: 614 rows, 298 events in 18 countries, 13s
+treaty chunk 8/8: 1194 rows, 573 events in 15 countries, 17s
+vote chunk 1/8: 6534 rows, 4774 events in 25 countries, 18s
+vote chunk 2/8: 10821 rows, 9108 events in 25 countries, 20s
+vote chunk 3/8: 11222 rows, 6810 events in 25 countries, 22s
+vote chunk 4/8: 5133 rows, 3665 events in 25 countries, 22s
+vote chunk 5/8: 14402 rows, 12911 events in 25 countries, 23s
+vote chunk 6/8: 4554 rows, 2611 events in 25 countries, 15s
+vote chunk 7/8: 7928 rows, 5616 events in 25 countries, 19s
+vote chunk 8/8: 32235 rows, 29350 events in 22 countries, 30s
+disaster chunk 1/8: 264 rows, 67 events in 20 countries, 9s
+disaster chunk 2/8: 716 rows, 134 events in 17 countries, 10s
+disaster chunk 3/8: 515 rows, 185 events in 18 countries, 9s
+disaster chunk 4/8: 479 rows, 218 events in 16 countries, 7s
+disaster chunk 5/8: 226 rows, 90 events in 14 countries, 8s
+disaster chunk 6/8: 431 rows, 97 events in 17 countries, 11s
+disaster chunk 7/8: 345 rows, 85 events in 19 countries, 9s
+disaster chunk 8/8: 471 rows, 182 events in 15 countries, 10s
+university chunk 1/8: 1247 rows, 852 events in 24 countries, 10s
+university chunk 2/8: 1613 rows, 1288 events in 25 countries, 9s
+university chunk 3/8: 3924 rows, 2381 events in 24 countries, 12s
+university chunk 4/8: 2971 rows, 1731 events in 25 countries, 11s
+university chunk 5/8: 2060 rows, 1016 events in 24 countries, 7s
+university chunk 6/8: 2119 rows, 1375 events in 24 countries, 10s
+university chunk 7/8: 1293 rows, 905 events in 24 countries, 11s
+university chunk 8/8: 3689 rows, 2633 events in 21 countries, 12s
+monastery chunk 1/8: 678 rows, 418 events in 12 countries, 9s
+monastery chunk 2/8: 434 rows, 282 events in 10 countries, 11s
+monastery chunk 3/8: 2332 rows, 1874 events in 13 countries, 12s
+monastery chunk 4/8: 509 rows, 367 events in 15 countries, 10s
+monastery chunk 5/8: 238 rows, 175 events in 10 countries, 9s
+monastery chunk 6/8: 1254 rows, 453 events in 9 countries, 10s
+monastery chunk 7/8: 547 rows, 352 events in 10 countries, 10s
+monastery chunk 8/8: 349 rows, 212 events in 8 countries, 11s
+museum chunk 1/8: 5076 rows, 2128 events in 25 countries, 14s
+museum chunk 2/8: 2133 rows, 1141 events in 22 countries, 12s
+museum chunk 3/8: 5345 rows, 2919 events in 20 countries, 16s
+museum chunk 4/8: 3109 rows, 1497 events in 21 countries, 12s
+museum chunk 5/8: 2694 rows, 951 events in 22 countries, 12s
+museum chunk 6/8: 4085 rows, 1813 events in 22 countries, 15s
+museum chunk 7/8: 2693 rows, 1579 events in 21 countries, 14s
+museum chunk 8/8: 7445 rows, 4144 events in 19 countries, 18s
+epidemic chunk 1/8: 710 rows, 155 events in 25 countries, 10s
+epidemic chunk 2/8: 611 rows, 165 events in 24 countries, 11s
+epidemic chunk 3/8: 3705 rows, 683 events in 25 countries, 12s
+epidemic chunk 4/8: 618 rows, 141 events in 24 countries, 14s
+epidemic chunk 5/8: 523 rows, 126 events in 25 countries, 13s
+epidemic chunk 6/8: 733 rows, 187 events in 25 countries, 11s
+epidemic chunk 7/8: 691 rows, 178 events in 25 countries, 11s
+epidemic chunk 8/8: 2736 rows, 1046 events in 22 countries, 16s
+constitution chunk 1/8: 48 rows, 36 events in 14 countries, 25s
+constitution chunk 2/8: 40 rows, 31 events in 16 countries, 26s
+constitution chunk 3/8: 38 rows, 29 events in 14 countries, 27s
+constitution chunk 4/8: 31 rows, 22 events in 14 countries, 25s
+constitution chunk 5/8: 22 rows, 18 events in 12 countries, 21s
+constitution chunk 6/8: 29 rows, 25 events in 10 countries, 20s
+constitution chunk 7/8: 37 rows, 33 events in 13 countries, 20s
+constitution chunk 8/8: 34 rows, 24 events in 13 countries, 25s
+participants chunk 1/8: 1038 rows, 538 events in 18 countries, 9s
+participants chunk 2/8: 471 rows, 221 events in 22 countries, 8s
+participants chunk 3/8: 1357 rows, 902 events in 15 countries, 9s
+participants chunk 4/8: 890 rows, 502 events in 18 countries, 9s
+participants chunk 5/8: 440 rows, 226 events in 20 countries, 9s
+participants chunk 6/8: 956 rows, 647 events in 16 countries, 9s
+participants chunk 7/8: 1293 rows, 896 events in 20 countries, 8s
+participants chunk 8/8: 4369 rows, 3009 events in 17 countries, 10s
+states chunk 1/8: 542 rows, 206 events in 19 countries, 12s
+states chunk 2/8: 602 rows, 265 events in 23 countries, 14s
+states chunk 3/8: 1877 rows, 741 events in 23 countries, 18s
+states chunk 4/8: 1122 rows, 344 events in 23 countries, 13s
+states chunk 5/8: 382 rows, 173 events in 23 countries, 10s
+states chunk 6/8: 903 rows, 299 events in 18 countries, 11s
+states chunk 7/8: 1037 rows, 323 events in 22 countries, 12s
+states chunk 8/8: 925 rows, 311 events in 20 countries, 14s
+applying filler rules...
+hidden by rule: {'dated in the future': 198, 'local election': 15129, 'party or internal vote': 32, 'minor election': 46627, 'minor museum': 5818, 'founding of a very recent minor institution': 6792}
+kept: 74660 events in 197 countries; failed chunks: 0

@@ -1,0 +1,125 @@
+@import "tailwindcss";
+@import "maplibre-gl/dist/maplibre-gl.css";
+
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+:root {
+  --paper: #f4ecdc;
+  --paper-2: #fbf6ea;
+  --paper-3: #e9dec8;
+  --ink: #1f2430;
+  --ink-2: #565447;
+  --line: #d5c7ab;
+  --bronze: #8a5a1f;
+  --bronze-soft: #b98a45;
+  --navy: #22365a;
+  --oxblood: #8c2f26;
+  --on-accent: #fbf6ea;
+  /* Category colours for charts; the map uses the same values from lib/categories.ts. */
+  --cat-war: #a3322a; --cat-politics: #2f5d9a; --cat-state: #7a4a9a; --cat-culture: #b07510;
+  --cat-health: #0f7b80; --cat-disaster: #8a6027; --cat-railways: #4f6475; --cat-city: #9a4f6b; --cat-other: #8a8270;
+  color-scheme: light;
+}
+
+[data-theme="dark"] {
+  --paper: #151a23;
+  --paper-2: #1c222d;
+  --paper-3: #272e3b;
+  --ink: #f3ecdc;
+  --ink-2: #bdb7a7;
+  --line: #3a4252;
+  --bronze: #d9a95f;
+  --bronze-soft: #a67c3b;
+  --navy: #9db6e0;
+  --oxblood: #e58c7d;
+  --on-accent: #11151d;
+  --cat-war: #ff7a66; --cat-politics: #7fa8ec; --cat-state: #c9a0f0; --cat-culture: #f2c14e;
+  --cat-health: #5fd0d4; --cat-disaster: #d6ad66; --cat-railways: #a9bccb; --cat-city: #f09ac0; --cat-other: #a09a8a;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-paper: var(--paper);
+  --color-paper-2: var(--paper-2);
+  --color-paper-3: var(--paper-3);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-line: var(--line);
+  --color-bronze: var(--bronze);
+  --color-bronze-soft: var(--bronze-soft);
+  --color-navy: var(--navy);
+  --color-oxblood: var(--oxblood);
+  --color-on-accent: var(--on-accent);
+  --font-serif: var(--font-newsreader), Georgia, serif;
+  --font-sans: var(--font-instrument), system-ui, sans-serif;
+  /* Readable minimums: the smallest text is 13px, body text 17px. */
+  --text-xs: 0.8125rem;
+  --text-xs--line-height: 1.25rem;
+  --text-sm: 0.9375rem;
+  --text-sm--line-height: 1.45rem;
+  --text-base: 1.0625rem;
+  --text-base--line-height: 1.65rem;
+}
+
+html,
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans);
+}
+
+:focus-visible {
+  outline: 2px solid var(--bronze);
+  outline-offset: 2px;
+}
+
+.eyebrow {
+  font-size: 0.8rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--bronze);
+  font-weight: 600;
+}
+
+/* Slow fade so a newly selected event reads as a change across all panels. */
+.fade-in {
+  animation: fade-in 0.45s ease both;
+}
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+.maplibregl-popup-content {
+  background: var(--paper-2);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  font-family: var(--font-sans);
+  padding: 8px 12px;
+  box-shadow: 0 8px 24px rgb(0 0 0 / 0.18);
+}
+.maplibregl-popup-anchor-bottom .maplibregl-popup-tip { border-top-color: var(--paper-2); }
+.maplibregl-popup-anchor-top .maplibregl-popup-tip { border-bottom-color: var(--paper-2); }
+.maplibregl-ctrl-attrib { font-size: 11px; }
+/* MapLibre forces its controls visible, which would leak through a hidden mobile tab. */
+.invisible .maplibregl-ctrl,
+.invisible .maplibregl-ctrl-attrib-inner { visibility: hidden !important; }
+[data-theme="dark"] .maplibregl-ctrl-attrib { background: rgb(17 21 29 / 0.8); color: var(--ink-2); }
+[data-theme="dark"] .maplibregl-ctrl-attrib a { color: var(--ink-2); }
+[data-theme="dark"] .maplibregl-ctrl-group { background: var(--paper-3); }
+[data-theme="dark"] .maplibregl-ctrl-group button span { filter: invert(1); }
+
+/* Hover card on the country atlas. */
+.tw-hover { pointer-events: none; }
+.tw-hover .maplibregl-popup-content { padding: 6px 10px; }
+.tw-hover-date { font-size: 13px; color: var(--ink-2); }
+.tw-hover-title { font-family: var(--font-serif, Georgia, serif); font-size: 16px; line-height: 1.3; }
