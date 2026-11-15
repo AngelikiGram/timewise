@@ -1,6 +1,6 @@
 # Development status
 
-Last updated: 2026-11-12. **TIMEWISE 2.0 Phase 1 (correct the existing interface) is done. Phase 2 is partly done:** the database, API, Europeana connector, review screen and a worldwide Wikidata import (all 197 countries, unreviewed) work. Phases 3–6 aren't started. This isn't production-ready.
+Last updated: 2026-11-15. **TIMEWISE 2.0 Phase 1 (correct the existing interface) is done. Phase 2 is partly done:** the database, API, Europeana connector, review screen and a worldwide Wikidata import (all 197 countries, unreviewed) work. Phases 3–6 aren't started. This isn't production-ready.
 
 ## Checks on 2026-11-10
 
@@ -273,6 +273,110 @@ Tests: atlas and coverage specs pass on the new build (22). The admin and archiv
 **Limits:** everything imported is unreviewed. "Best documented" means most Wikipedia languages, which favours famous and European topics. Continents and countries are present-day groupings. Wikipedia summaries and Wikidata connections are shown as their editors wrote them.
 
 Tests: 25 unit, 61 Python, 67 of 69 browser tests on the new build; the two world-map hover tests pass alone and are the known flake under full-suite load. Admin and archival specs need the API's port 3000 origin and weren't run.
+
+## Redesign: discovery, stories, challenges and collections (2026-11-15)
+
+Built from the second pasted redesign brief, in its order A to E. The site is static (GitHub Pages), so everything personal is kept in the reader's browser and says so.
+
+**A. Data presentation and navigation: implemented and tested.**
+- Country attribution fixed. The overview tagged each event with the alphabetically first country it was imported for (American Revolutionary War → Albania, Spanish Civil War → Andorra, Second World War → Afghanistan). `overview.attribute()` now gives every copy `nc` (countries it is filed under) and `home` (the one country whose outline contains it). From 5 countries an event is "Multiple regions (N countries)"; from 15 it isn't pinned to a point. The Spanish Civil War is now Spain; the world wars, the Cold War and COVID-19 read as multiple regions. 9,049 multi-country copies across 60,486 events.
+- Dates that disagree: 21 records whose name gives another year than their date (e.g. "1988 Malian parliamentary election" dated 1998) carry `titleYear` and show a warning. Limited to dated categories; "228 Incident" and street addresses are excluded.
+- Wording: constitutions read "… adopted"; 4,571 museum records that are really buildings, camps or objects lose "Founding of" and are labelled "Date it came into being". Universities, monasteries and museums keep "Founding of".
+- `python -m timewise_api.overview` (from `apps/api`) reruns all of this from the exported files without the database; the database export runs it too. Tests: `tests/py/test_overview.py`.
+- Navigation is Discover · World Map · Stories · Challenges · My Collection, with the current section underlined and old addresses mapped to their section (`/history`, `/explore` → World Map; `/journeys` → Stories; `/learn` → Challenges). Global search sits in the header on every page, with a visible scope (Everything, Checked, World records, Places). It covers the checked collection and a new 10,250-event world index (`public/data/index.json`, loaded on first use).
+- Internal fields such as `manual-curation-v1` no longer appear in reader views. The review status is a compact badge (Imported, Source-checked, Expert-reviewed) whose explanation opens on click.
+- "Report an issue" opens a pre-filled GitHub issue (public; needs a GitHub account).
+
+**B. Home page and map explorer: implemented and tested.**
+- Home page:
+  - one headline and three actions (Follow a story, Explore the world, Play today's challenge)
+  - search with its scope, and "Continue your journey" when progress exists
+  - the detective case, today's challenge, and "Meanwhile, elsewhere…" by year
+  - browsing by period, theme and region, and a compact trust section
+
+  Methods, coverage and the planned questions moved to `/about`.
+- `/atlas` is now the world map (the 6,000 best-documented events). The coverage map and country table moved to `/atlas/countries`.
+  - Desktop: a collapsible filter sidebar, a dominant map, one event panel and a synchronized timeline. Focus mode hides everything but the map.
+  - Phones: a full-width map, with filters and the list in a drawer and event details in an expandable bottom sheet.
+- Map:
+  - clusters at wide zooms
+  - a letter in each point naming its category, so colour is never the only cue
+  - the selected event marked on both the map and the timeline
+  - "Fit results", a collapsible key, and a "Today's map, not historical borders" label
+  - a loading state, and a fallback with a retry when the base map fails
+- Timeline:
+  - buckets by century, decade or year, depending on the span shown
+  - date presets, a typed year range, and Wider and Reset controls
+  - chart labels saying they count records, not importance
+  - the range, themes, event and comparison kept in the URL
+- The event panel runs in this order:
+  1. title, date, place and image (the credit expands)
+  2. what happened
+  3. why it matters, using only Wikidata's own part-of, cause and effect statements
+  4. connected events, then "Meanwhile, elsewhere"
+  5. a private note
+  6. one "Sources and evidence" section
+
+  Exact, approximate, range and longer-process dates are labelled.
+
+**C. Stories, challenges and progress: implemented and tested.**
+- `/stories`: story cards showing place, period, minutes, difficulty, progress and the learning question. The authoring structure is in `apps/web/src/lib/stories.ts`.
+- The story player:
+  - saves the last step and offers to resume with a banner
+  - opens with an intro and a chapter list
+  - defaults to the shorter story view, with the evidence one tap away
+  - lets each step be saved and annotated
+  - ends with a timeline recap, a then-and-now slider (Austria-Hungary 1914 against Austria 1920, community-digitized and labelled coarse), a short challenge and the next story
+
+  The duplicated "All claims in this chapter" block is gone.
+- `/challenges`: 16 challenges in five formats (put in order, find it on the map, date the image, match the source, what does it establish), all built from the checked collection (`lib/challenges.ts`).
+  - The order is shuffled, and challenge mode hides dates.
+  - Practice mode gives hints and isn't scored.
+  - Every answer is explained, with its source.
+  - Arrow buttons replace dragging, and the map task has a list alternative.
+  - XP is earned once per challenge and once per daily challenge, never in practice.
+  - There's a daily challenge and a review list of past mistakes.
+- The older story activities (`/learn`) no longer show dates before the answer is checked.
+
+**D. Meanwhile, elsewhere and a detective case: implemented and tested.**
+- For any event, the panel shows:
+  - one well-documented event from each other continent, within a window that depends on the period (25 years in antiquity, down to 2 years after 1800)
+  - how far apart the two are
+  - a side-by-side timeline against a chosen continent, and a share link
+  - a note that a shared date is a coincidence, not a connection
+
+  The events are chosen automatically from imported records, not curated, and are never linked as causes.
+- The detective case "The case of the missing opening day" (`/challenges/case/ringstrasse`) has:
+  - three exhibits from checked claims: the 1857 decree, the 1865 opening with the 1858 stretch, and today's street drawn from OpenStreetMap
+  - four explanations, including "it depends on what counts"
+  - an evidence-based verdict on each explanation
+
+**E. Collections and monetization foundations: implemented and tested.**
+- `/collection` holds saved events, named collections shown as timelines, notes, story progress, places explored, topics to revisit, and XP. A collection can be shared as a link that carries its contents (nothing is uploaded), and all the data can be downloaded and loaded again.
+- `/plans` shows the proposed Explorer (free) and Timewise Passport (€4.99/month or €39/year; story packs €5–9) plans, marked "Nothing is for sale". There is no payment code. "Tell us you're interested" opens a public GitHub issue. The prices are constants in the page.
+
+**Planned, not built:**
+- accounts and cross-device sync
+- a working interest-registration backend (GitHub issues stand in for now)
+- more stories and cases, each of which needs sourced claims first
+- friend challenges
+- everyday-life collections and cause-and-consequence diagrams, which have no sourced content yet
+- curated "meanwhile" pairs
+- a then-and-now slider for Vienna's walls, which needs a georeferenced historical plan with known rights
+
+The curated `/explore` workspace keeps its earlier layout.
+
+**Limits:** imported records are unreviewed, and "best documented" favours famous and European topics. Progress lives in one browser. Reporting an issue needs a GitHub account.
+
+**Tests:**
+- Typecheck clean; 33 unit tests and 65 Python tests pass.
+- Browser tests ran on a static build without the API. In the last full run, 93 of 100 passed.
+- Of the 7 failures, 4 passed after test fixes: the phone list moved into a drawer, and some pages loaded slowly under parallel runs.
+- Still failing:
+  - the two archival-material tests, which need the local API that a static build doesn't have
+  - the world-map hover test, the known flake under load
+- The admin specs weren't run.
+- Screenshots were checked on desktop and phone, in light and dark. They caught a zero-height map (MapLibre sets its container to `position: relative`) and a 37px overflow on phones; both are fixed.
 
 ## Historical Journeys
 

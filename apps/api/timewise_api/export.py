@@ -148,10 +148,14 @@ def export_imported() -> dict:
                 FROM imported_events WHERE region_id = :r AND workflow <> 'rejected' ORDER BY date_start, id"""), {"r": region_id, "b": boundary})
             events = [_compact({**r._mapping, "start": _iso(r.start), "end": _iso(r.end)}) for r in rows]
             by_region[region_id] = events
-            (out / f"{region_id}.json").write_text(json.dumps({"events": events}, ensure_ascii=False), "utf8")
             config = json.loads((ROOT / f"data/source-configs/regions/{region_id}.json").read_text("utf8"))
             regions.append({"id": region_id, "label": config["label"], "iso": config.get("iso", "AT" if region_id == "austria" else None),
                             "note": config.get("note"), "imported": len(events), "continent": config.get("continent")})
+    from .overview import attribute, write_overviews
+    # Before writing: every country file says how many countries share each event, and which is its home.
+    attribute(regions, by_region)
+    for region_id, events in by_region.items():
+        (out / f"{region_id}.json").write_text(json.dumps({"events": events}, ensure_ascii=False), "utf8")
     frames = write_outlines({r["id"] for r in regions})
     for r in regions:
         r["bbox"] = frames.get(r["id"])
@@ -162,7 +166,6 @@ def export_imported() -> dict:
     (ROOT / "data/generated/regions.json").write_text(listing, "utf8")
     # The /explore picker reads the same list at runtime.
     (ROOT / "apps/web/public/data/regions.json").write_text(listing, "utf8")
-    from .overview import write_overviews
     write_overviews(regions, by_region)
     return {r["id"]: r["imported"] for r in regions}
 

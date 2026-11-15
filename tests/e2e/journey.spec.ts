@@ -38,7 +38,7 @@ test("a shape appears only once time reaches it", async ({ page }) => {
 
 test("any statement opens its evidence", async ({ page }) => {
   await page.goto(URL);
-  await page.getByRole("button", { name: "Inspect evidence" }).first().click();
+  await page.getByText(/^Inspect evidence/).first().click();
   await expect(page.getByTestId("claim").first()).toContainText("March Revolution");
   await expect(page.getByRole("link", { name: /Revolution 1848 ↗/ })).toHaveAttribute("href", /geschichtewiki/);
 });

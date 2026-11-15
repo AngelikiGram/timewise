@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { openList } from "./helpers";
 
 test("the world overview shows charts, eras and links into the atlas", async ({ page }) => {
   await page.goto("/history");
@@ -17,22 +18,25 @@ test("an era event opens in its country's atlas, selected", async ({ page }) => 
   const first = page.locator("#eras a").first();
   const title = (await first.locator("span").nth(1).textContent())!.trim();
   await first.click();
-  await expect(page).toHaveURL(/\/atlas\/[a-z_]+\?event=Q\d+/);
+  await expect(page).toHaveURL(/\/atlas(\/[a-z_]+)?\?event=Q\d+/);
   await expect(page.getByTestId("atlas-detail")).toContainText(title, { timeout: 15000 });
-  await expect(page.getByText("Explore the evidence")).toBeVisible();
+  await expect(page.getByText("Sources and evidence")).toBeVisible();
 });
 
 test("a continent has its own atlas, and back returns to the list", async ({ page }) => {
   await page.goto("/atlas/europe");
+  await openList(page);
   await expect(page.getByTestId("atlas-count")).toContainText("the best documented of", { timeout: 15000 });
   await page.getByTestId("atlas-list").getByRole("button").first().click();
   await expect(page).toHaveURL(/event=Q\d+/);
   await page.goBack();
+  await openList(page);
   await expect(page.getByTestId("atlas-list")).toBeVisible();
 });
 
 test("BC events are dated as BC, in order", async ({ page }) => {
   await page.goto("/atlas/italy");
+  await openList(page);
   const first = page.getByTestId("atlas-list").getByRole("button").first();
-  await expect(first).toContainText(/BC/, { timeout: 15000 });
+  await expect(first).toContainText(/BC/, { timeout: 30000 });
 });

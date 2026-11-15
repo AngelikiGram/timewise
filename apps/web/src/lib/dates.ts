@@ -53,3 +53,23 @@ export function formatImportedDate(start: string, end: string | undefined, preci
   if (end && yearOf(end) !== year) return `${first} – ${formatYear(yearOf(end))}`;
   return first;
 }
+
+export type DateForm = "exact" | "approximate" | "range" | "process";
+
+/** Which kind of date a record has, so it's never drawn or described as more certain than it is. */
+export function dateForm(start: string, end: string | undefined, precision: Precision): DateForm {
+  if (end && end !== start) return yearOf(end) - yearOf(start) >= 2 ? "process" : "range";
+  return precision === "day" ? "exact" : "approximate";
+}
+
+export const DATE_FORM_LABEL: Record<DateForm, string> = {
+  exact: "Exact date",
+  approximate: "Approximate date",
+  range: "Date range",
+  process: "Longer process",
+};
+
+/** "Known to the year", for approximate dates. */
+export function precisionNote(precision: Precision): string {
+  return precision === "day" ? "Known to the day" : `Known to the ${precision}`;
+}

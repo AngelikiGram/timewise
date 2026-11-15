@@ -10,7 +10,7 @@ async function pointOf(page: Page, lngLat: [number, number]) {
 }
 
 test("the world map shows coverage, explains a country on hover, and opens its atlas", async ({ page, isMobile }) => {
-  await page.goto("/atlas");
+  await page.goto("/atlas/countries");
   await expect(page.getByTestId("coverage-map")).toHaveAttribute("data-ready", "true", { timeout: 30000 });
   expect((await page.getByTestId("coverage-map").boundingBox())!.height).toBeGreaterThan(200);
   await expect(page.getByTestId("coverage-legend")).toContainText("None yet");
@@ -26,7 +26,7 @@ test("the world map shows coverage, explains a country on hover, and opens its a
 
 test("territories that aren't in the country list are drawn and say so", async ({ page, isMobile }) => {
   test.skip(isMobile, "hover needs a mouse");
-  await page.goto("/atlas");
+  await page.goto("/atlas/countries");
   await expect(page.getByTestId("coverage-map")).toHaveAttribute("data-ready", "true", { timeout: 30000 });
   const greenland = await pointOf(page, [-42, 72]);
   await page.mouse.move(greenland.x, greenland.y);
@@ -35,7 +35,7 @@ test("territories that aren't in the country list are drawn and say so", async (
 });
 
 test("the table lists the same countries and links to their atlas", async ({ page }) => {
-  await page.goto("/atlas");
+  await page.goto("/atlas/countries");
   const table = page.getByTestId("coverage-table");
   await expect(table.getByRole("row").nth(1)).toBeVisible({ timeout: 15000 });
   await page.getByPlaceholder("Find a country").fill("austr");
@@ -45,11 +45,12 @@ test("the table lists the same countries and links to their atlas", async ({ pag
   expect(overflow).toBeLessThanOrEqual(0);
 });
 
-test("the header's Atlas link leads to the world map", async ({ page }) => {
+test("the header's World Map link opens the world map", async ({ page }) => {
   await page.goto("/");
-  await page.getByRole("navigation").getByRole("link", { name: "Atlas" }).click();
+  await page.getByRole("navigation", { name: "Main" }).filter({ visible: true }).getByRole("link", { name: "World Map" }).click();
   await expect(page).toHaveURL(/\/atlas$/);
-  await expect(page.getByTestId("coverage-map")).toBeVisible();
+  await expect(page.getByTestId("history-map")).toHaveAttribute("data-ready", "true", { timeout: 30000 });
+  await expect(page.getByRole("link", { name: "World Map" }).filter({ visible: true })).toHaveAttribute("aria-current", "page");
 });
 
 test("a country's atlas opens on that country, with its present-day border", async ({ page }) => {

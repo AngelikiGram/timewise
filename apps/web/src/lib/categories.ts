@@ -25,3 +25,8 @@ export const CATEGORY_COLORS: Record<Appearance, Record<string, string>> = {
 export const CATEGORY_ORDER = ["war", "state", "politics", "culture", "health", "disaster", "railways", "city"];
 
 export const categoryVar = (c: string) => `var(--cat-${CATEGORY_ORDER.includes(c) ? c : "other"})`;
+
+/** A letter for each category, drawn inside map points and beside legend swatches, so colour is never the only cue. */
+export const CATEGORY_GLYPH: Record<string, string> = {
+  war: "W", politics: "P", state: "S", culture: "C", health: "H", disaster: "D", railways: "R", city: "U",
+};

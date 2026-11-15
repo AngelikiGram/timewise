@@ -26,4 +26,4 @@ export function continentView(id: string) {
 }
 
 /** An event opens in the atlas of the country it was imported for. */
-export const atlasFor = (e: OverviewEvent) => (e.country ? `/atlas/${e.country}?event=${e.id}` : "/atlas");
+export const atlasFor = (e: OverviewEvent) => (e.country ? `/atlas/${e.country}?event=${e.id}` : `/atlas?event=${e.id}`);

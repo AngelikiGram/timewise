@@ -11,6 +11,12 @@ import { ClaimCard } from "./EvidencePanel";
 import { CoverageNote } from "./MapLayers";
 import { SiteHeader } from "./SiteHeader";
 import { LearningModeToggle } from "./learning/LearningModeToggle";
+import { ChallengePlayer } from "./challenges/ChallengePlayer";
+import { CompareSlider } from "./visuals";
+import { NoteField, SaveButton } from "./ui";
+import { challengeById } from "@/lib/challenges";
+import { saveStoryStep, useProgress, type StoryProgress } from "@/lib/progress";
+import { storyById, STORIES } from "@/lib/stories";
 
 const toIso = (ms: number) => new Date(ms).toISOString().slice(0, 10);
 
@@ -29,7 +35,15 @@ export function JourneyPlayer({ id }: { id: string }) {
   const [position, setPosition] = useState<Position>({ chapter: 0, beat: 0 });
   const [finished, setFinished] = useState(false);
   const [wide, setWide] = useState(false);
-  const [viewMode, setViewMode] = useState<"compact" | "narrative">("compact");
+  const [viewMode, setViewMode] = useState<"compact" | "narrative">("narrative");
+  const progress = useProgress();
+  // Progress as it was when the page opened: saving the first step mustn't hide where the reader had got to.
+  const [saved, setSaved] = useState<StoryProgress | undefined>(undefined);
+  const [firstVisit, setFirstVisit] = useState(false);
+  const moved = useRef(false);
+  void progress;
+  const [hadParams, setHadParams] = useState(true);
+  const story = storyById.get(id);
 
   useEffect(() => {
     const query = window.matchMedia("(min-width: 1024px)");
@@ -54,6 +68,16 @@ export function JourneyPlayer({ id }: { id: string }) {
     useAtlas.getState().init(eventsByDate, collection.investigations[0].range.start);
     useAtlas.getState().setThemes([]);
     setPosition(readPosition(journey));
+    const params = new URLSearchParams(window.location.search).has("chapter");
+    setHadParams(params);
+    moved.current = params;
+    try {
+      const before = (JSON.parse(localStorage.getItem("tw-progress-v1") ?? "{}") as { stories?: Record<string, StoryProgress> }).stories?.[journey.id];
+      setSaved(before);
+      setFirstVisit(!before);
+    } catch {
+      setFirstVisit(true);
+    }
     hydrated.current = true;
     return () => cancelAnimationFrame(tween.current);
   }, [journey]);
@@ -84,9 +108,15 @@ export function JourneyPlayer({ id }: { id: string }) {
     url.searchParams.set("chapter", chapter.id);
     url.searchParams.set("step", String(position.beat + 1));
     window.history.replaceState(null, "", url);
-  }, [chapter.id, position.beat]);
+    if (moved.current) saveStoryStep(journey.id, chapter.id, position.beat + 1, false, beatsBefore + 1);
+  }, [chapter.id, position.beat, journey.id, beatsBefore]);
+
+  useEffect(() => {
+    if (finished) saveStoryStep(journey.id, chapter.id, position.beat + 1, true, totalBeats);
+  }, [finished, journey.id, chapter.id, totalBeats, position.beat]);
 
   const goTo = useCallback((p: Position) => {
+    moved.current = true;
     setFinished(false);
     setPosition((current) => {
       if (current.chapter !== p.chapter) scroller.current?.scrollTo({ top: 0 });
@@ -153,17 +183,74 @@ export function JourneyPlayer({ id }: { id: string }) {
           className="relative z-10 min-h-0 flex-1 overflow-y-auto border-t border-line bg-paper lg:absolute lg:bottom-16 lg:left-4 lg:top-4 lg:w-[460px] lg:border lg:shadow-[0_18px_50px_-24px_rgb(0_0_0/0.5)]"
         >
           {finished ? (
-            <div className="fade-in p-6" data-testid="journey-closing">
-              <p className="eyebrow">Journey's end</p>
-              <h1 className="mt-2 font-serif text-3xl leading-tight">{journey.title.en}</h1>
-              <p className="mt-4 leading-relaxed">{journey.closing.en}</p>
-              <div className="mt-6 flex flex-wrap gap-3">
-                <Link href="/explore" className="rounded-sm bg-navy px-4 py-2 text-sm font-medium text-on-accent dark:bg-bronze">Explore the atlas freely</Link>
-                <button type="button" onClick={() => goTo({ chapter: 0, beat: 0 })} className="rounded-sm border border-line px-4 py-2 text-sm hover:border-bronze hover:text-bronze">Start again</button>
+            <div className="fade-in space-y-6 p-5 sm:p-6" data-testid="journey-closing">
+              <div>
+                <p className="eyebrow">Journey&rsquo;s end</p>
+                <h1 className="mt-2 font-serif text-3xl leading-tight">{journey.title.en}</h1>
+              </div>
+              <section aria-labelledby="recap">
+                <h2 id="recap" className="font-serif text-xl">What you followed</h2>
+                <ol className="mt-3 space-y-2 border-l-2 border-bronze/50 pl-4">
+                  {journey.chapters.map((c) => (
+                    <li key={c.id} className="relative">
+                      <span aria-hidden className="absolute -left-[1.4rem] top-1.5 h-2.5 w-2.5 rounded-full bg-bronze" />
+                      <span className="block text-xs text-ink-2">{formatWhen(eventById.get(c.eventIds[0])!.when)}</span>
+                      <button type="button" onClick={() => goTo({ chapter: journey.chapters.indexOf(c), beat: 0 })} className="text-left font-medium hover:text-bronze">{c.question.en}</button>
+                      <span className="block text-sm text-ink-2">{c.summary.en}</span>
+                    </li>
+                  ))}
+                </ol>
+              </section>
+              <section aria-labelledby="then-now">
+                <h2 id="then-now" className="font-serif text-xl">Before and after</h2>
+                <p className="mb-3 mt-1 text-sm text-ink-2">Slide to compare the empire in 1914 with the republic in 1920.</p>
+                <CompareSlider beforeId="b-ah-1914" afterId="b-at-1920" beforeLabel="1914" afterLabel="1920" title="Austria-Hungary in 1914 and the Republic of Austria in 1920" />
+              </section>
+              <p className="rounded-md bg-paper-3 p-3 text-sm leading-relaxed">{journey.closing.en}</p>
+              <section aria-labelledby="check-yourself">
+                <h2 id="check-yourself" className="mb-3 font-serif text-xl">Check yourself</h2>
+                <ChallengePlayer challenge={challengeById.get("order-1848-1867")!} />
+              </section>
+              {story && story.next.length > 0 && (
+                <section aria-labelledby="next-stories">
+                  <h2 id="next-stories" className="font-serif text-xl">Next</h2>
+                  <ul className="mt-2 space-y-2">
+                    {STORIES.filter((s) => story.next.includes(s.id)).map((s) => (
+                      <li key={s.id}>
+                        <Link href={s.href} className="card block p-4">
+                          <span className="text-xs text-ink-2">{s.kind === "case" ? "Detective case" : "Story"} · {s.minutes} min</span>
+                          <span className="block font-serif text-lg leading-snug">{s.title}</span>
+                          <span className="text-sm text-ink-2">{s.question}</span>
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              )}
+              <div className="flex flex-wrap gap-3">
+                <Link href="/atlas" className="btn btn-primary">Explore the world map</Link>
+                <button type="button" onClick={() => goTo({ chapter: 0, beat: 0 })} className="btn btn-secondary">Start again</button>
               </div>
             </div>
           ) : (
             <div key={chapter.id} className="fade-in p-5 sm:p-6">
+              {atStart && !hadParams && saved && !saved.finished && saved.chapterId !== chapter.id && (
+                <div className="mb-4 flex flex-wrap items-center justify-between gap-2 rounded-md border border-bronze/60 bg-paper-2 p-3 text-sm" data-testid="resume">
+                  <span>You were reading “{journey.chapters.find((c) => c.id === saved.chapterId)?.question.en}”.</span>
+                  <button type="button" className="btn btn-sm btn-primary" onClick={() => { const c = journey.chapters.findIndex((x) => x.id === saved.chapterId); if (c >= 0) goTo({ chapter: c, beat: Math.min(saved.step - 1, journey.chapters[c].eventIds.length - 1) }); }}>Resume</button>
+                </div>
+              )}
+              {atStart && story && (
+                <details className="mb-4 rounded-md border border-line bg-paper-2" open={firstVisit}>
+                  <summary className="cursor-pointer px-3 py-2 text-sm font-semibold">About this story · {story.minutes} min · {journey.chapters.length} chapters</summary>
+                  <div className="px-3 pb-3 text-sm">
+                    <p className="text-ink-2">{story.intro}</p>
+                    <p className="mt-2"><strong>The question:</strong> {story.question}</p>
+                    <ol className="mt-2 list-decimal space-y-0.5 pl-5 text-ink-2">{journey.chapters.map((c) => <li key={c.id}>{c.question.en}</li>)}</ol>
+                    <p className="mt-2 text-ink-2">Use Next, the arrow keys or the chapter bar below. Your place is saved in this browser.</p>
+                  </div>
+                </details>
+              )}
               {/* Chapter header with view mode toggle */}
               <div className="flex items-start justify-between gap-4 mb-4">
                 <div className="flex-1 min-w-0">
@@ -178,7 +265,7 @@ export function JourneyPlayer({ id }: { id: string }) {
                     className={`px-3 py-1.5 text-xs rounded-sm border transition-colors ${viewMode === "compact" ? "bg-navy text-on-accent border-navy" : "bg-paper border-line hover:border-bronze hover:text-bronze"}`}
                     aria-pressed={viewMode === "compact"}
                   >
-                    Compact
+                    Evidence
                   </button>
                   <button
                     type="button"
@@ -186,7 +273,7 @@ export function JourneyPlayer({ id }: { id: string }) {
                     className={`px-3 py-1.5 text-xs rounded-sm border transition-colors ${viewMode === "narrative" ? "bg-navy text-on-accent border-navy" : "bg-paper border-line hover:border-bronze hover:text-bronze"}`}
                     aria-pressed={viewMode === "narrative"}
                   >
-                    Narrative
+                    Story
                   </button>
                 </div>
               </div>
@@ -235,28 +322,17 @@ export function JourneyPlayer({ id }: { id: string }) {
                     {event.placeNote && <p className="mt-2 text-sm text-ink-2">{event.placeNote}</p>}
                   </section>
 
-                  {/* Related claims in chapter (expandable) */}
-                  {chapterClaims.length > currentEventClaims.length && (
-                    <details className="border border-line rounded-sm bg-paper-2">
-                      <summary className="p-3 cursor-pointer font-medium text-sm flex items-center justify-between">
-                        <span>All claims in this chapter ({chapterClaims.length})</span>
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="text-ink-2"><path d="M4 6l4 4 4-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                      </summary>
-                      <div className="px-3 pb-3 space-y-2">
-                        {chapterClaims.map((claim) => (
-                          <ClaimCard key={claim.id} claim={claim} compact={true} />
-                        ))}
-                      </div>
-                    </details>
-                  )}
-
                   {/* Chapter summary at last beat */}
                   {position.beat === chapter.eventIds.length - 1 && (
                     <p className="mt-5 bg-paper-3 p-3 text-sm leading-relaxed border-l-3 border-bronze">{chapter.summary.en}</p>
                   )}
 
+                  <div className="flex flex-wrap items-center gap-2">
+                    <SaveButton id={event.id} title={event.title.en} href={`/journeys/${journey.id}?chapter=${chapter.id}&step=${position.beat + 1}`} start={event.when.start} context={journey.title.en} />
+                    <Link href={`/explore?event=${event.id}`} className="btn btn-sm btn-ghost">Go deeper on this event →</Link>
+                  </div>
+                  <NoteField id={event.id} title={event.title.en} href={`/journeys/${journey.id}?chapter=${chapter.id}&step=${position.beat + 1}`} />
                   <LearningModeToggle journeyId={journey.id} chapterId={chapter.id} lang="en" />
-                  <Link href={`/explore?event=${event.id}`} className="mt-4 inline-block text-sm text-bronze underline-offset-2 hover:underline">Go deeper on this event →</Link>
                 </div>
               ) : (
                 /* NARRATIVE MODE: Original prose segments with evidence inspection */
@@ -293,8 +369,12 @@ export function JourneyPlayer({ id }: { id: string }) {
                   </section>
 
                   {position.beat === chapter.eventIds.length - 1 && <p className="mt-5 bg-paper-3 p-3 text-sm leading-relaxed">{chapter.summary.en}</p>}
+                  <div className="flex flex-wrap items-center gap-2">
+                    <SaveButton id={event.id} title={event.title.en} href={`/journeys/${journey.id}?chapter=${chapter.id}&step=${position.beat + 1}`} start={event.when.start} context={journey.title.en} />
+                    <Link href={`/explore?event=${event.id}`} className="btn btn-sm btn-ghost">Go deeper on this event →</Link>
+                  </div>
+                  <NoteField id={event.id} title={event.title.en} href={`/journeys/${journey.id}?chapter=${chapter.id}&step=${position.beat + 1}`} />
                   <LearningModeToggle journeyId={journey.id} chapterId={chapter.id} lang="en" />
-                  <Link href={`/explore?event=${event.id}`} className="mt-4 inline-block text-sm text-bronze underline-offset-2 hover:underline">Go deeper on this event →</Link>
                 </div>
               )}
             </div>

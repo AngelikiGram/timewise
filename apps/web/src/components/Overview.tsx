@@ -6,7 +6,7 @@ import { SiteHeader } from "./SiteHeader";
 
 export type OverviewEvent = {
   id: string; title: { en?: string; de?: string }; description?: string; category: string; start: string; end?: string;
-  precision: Precision; url: string; links?: number; country?: string;
+  precision: Precision; url: string; links?: number; country?: string; nc?: number;
 };
 export type OverviewData = {
   id: string; label: string; countries: number; events: number; located: number; earliest: number | null;
@@ -78,7 +78,7 @@ export function Overview({ data, countries, tabs, mapHref, atlasFor }: {
     <>
       <SiteHeader />
       <main className="bg-paper">
-        <nav aria-label="Continents" className="sticky top-0 z-10 border-b border-line bg-paper-2/95 backdrop-blur">
+        <nav aria-label="Continents" className="border-b border-line bg-paper-2">
           <ul className="mx-auto flex max-w-6xl gap-1 overflow-x-auto px-4 py-2 sm:px-6">
             {tabs.map((t) => (
               <li key={t.id}>
@@ -141,7 +141,7 @@ export function Overview({ data, countries, tabs, mapHref, atlasFor }: {
                 </li>
               ))}
             </ul>
-            {countries.length > topCountries.length && <p className="mt-3 text-sm text-ink-2">And {countries.length - topCountries.length} more countries, all in the <Link href="/atlas" className="text-bronze underline underline-offset-2">atlas</Link>.</p>}
+            {countries.length > topCountries.length && <p className="mt-3 text-sm text-ink-2">And {countries.length - topCountries.length} more countries, all in the <Link href="/atlas/countries" className="text-bronze underline underline-offset-2">country list</Link>.</p>}
           </div>
         </section>
 
@@ -160,7 +160,7 @@ export function Overview({ data, countries, tabs, mapHref, atlasFor }: {
                   {era.top.map((e) => (
                     <li key={e.id} className="border-l-[3px] pl-4" style={{ borderColor: categoryVar(e.category) }}>
                       <Link href={atlasFor(e)} className="group block">
-                        <span className="text-sm text-ink-2">{formatImportedDate(e.start, e.end, e.precision)}{e.country ? ` · ${countryName.get(e.country) ?? ""}` : ""}</span>
+                        <span className="text-sm text-ink-2">{formatImportedDate(e.start, e.end, e.precision)}{e.country ? ` · ${countryName.get(e.country) ?? ""}` : e.nc && e.nc > 1 ? ` · Multiple regions (${e.nc} countries)` : ""}</span>
                         <span className="mt-0.5 block font-serif text-xl leading-snug group-hover:text-bronze">{titleOf(e)}</span>
                         {e.description && <span className="mt-1 block text-[0.95rem] leading-snug text-ink-2 first-letter:uppercase">{e.description}</span>}
                       </Link>

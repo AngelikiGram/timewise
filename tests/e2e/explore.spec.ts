@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { mainSearch } from "./helpers";
 
 const isMobile = (name: string) => name === "mobile";
 
@@ -7,8 +8,8 @@ test("search leads to an event with map, timeline and source in step", async ({ 
   page.on("pageerror", (e) => errors.push(e.message));
 
   await page.goto("/");
-  await page.getByRole("combobox").fill("Ödenburg");
-  await page.getByRole("option").first().click();
+  await mainSearch(page).fill("Ödenburg");
+  await page.getByTestId("search-results").getByRole("option").first().click();
   await expect(page).toHaveURL(/event=sopron-1921/);
   await expect(page.getByTestId("timeline-year")).toHaveText("1921");
   if (isMobile(info.project.name)) await page.getByRole("tab", { name: "Evidence" }).click();

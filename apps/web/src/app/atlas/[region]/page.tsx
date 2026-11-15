@@ -1,13 +1,9 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import regionsFile from "@data/generated/regions.json";
-import continentsFile from "@data/generated/continents.json";
 import { HistoryAtlas } from "@/components/HistoryAtlas";
+import { atlasRegions as regions } from "../regions";
 
 type Props = { params: Promise<{ region: string }> };
-
-// Countries, plus each continent as a merged map of its countries' events.
-const regions = [...continentsFile.continents, ...regionsFile.regions];
 
 export const generateStaticParams = () => regions.map((r) => ({ region: r.id }));
 

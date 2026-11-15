@@ -1,22 +1,9 @@
 import type { Metadata } from "next";
-import { RegionSelector } from "@/components/RegionSelector";
-import { SiteHeader } from "@/components/SiteHeader";
-import { asset } from "@/lib/paths";
+import { HistoryAtlas } from "@/components/HistoryAtlas";
+import { atlasRegions, world } from "./regions";
 
-export const metadata: Metadata = { title: "Atlas · TIMEWISE" };
+export const metadata: Metadata = { title: "World Map · TIMEWISE", description: "Explore where and when history happened, on a map with a timeline." };
 
-// Every country at once: how much has been imported where, and a way into each country's atlas.
-export default function AtlasIndexPage() {
-  // Prefetch regions data on mount
-  if (typeof window !== "undefined") {
-    fetch(asset("/data/regions.json"), { priority: "high" }).catch(() => {});
-  }
-  return (
-    <div className="min-h-dvh bg-paper">
-      <SiteHeader />
-      <main>
-        <RegionSelector />
-      </main>
-    </div>
-  );
+export default function WorldMapPage() {
+  return <HistoryAtlas region={world} regions={atlasRegions} />;
 }

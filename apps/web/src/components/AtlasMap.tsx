@@ -133,6 +133,7 @@ export function AtlasMap({
   const container = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
   const [ready, setReady] = useState(false);
+  const [geoReady, setGeoReady] = useState(false);
   // Shown once recoloured, without waiting for every tile, so slow tiles don't leave a blank panel.
   const [styled, setStyled] = useState(false);
   const [failed, setFailed] = useState(false);
@@ -188,17 +189,18 @@ export function AtlasMap({
         setStyled(true);
         setLoading(false);
 
-        // Defer historical geometry layers to next idle period for faster initial paint
-        const scheduleHistoricalLayers = () => {
-          if ("requestIdleCallback" in window) {
-            (window as unknown as { requestIdleCallback: (cb: () => void) => number }).requestIdleCallback(() => {
-              if (!cancelled) addHistoricalLayers(m, themeRef.current);
-            });
-          } else {
-            setTimeout(() => { if (!cancelled) addHistoricalLayers(m, themeRef.current); }, 0);
-          }
+        // Historical geometry layers wait for an idle moment, for a faster first paint, but never more than
+        // half a second: an animation can keep the page busy. Once added, the filters are applied again.
+        const addHistorical = () => {
+          if (cancelled || m.getLayer("tw-geo-solid")) return;
+          addHistoricalLayers(m, themeRef.current);
+          setGeoReady(true);
         };
-        scheduleHistoricalLayers();
+        if ("requestIdleCallback" in window) {
+          (window as unknown as { requestIdleCallback: (cb: () => void, o: { timeout: number }) => number }).requestIdleCallback(addHistorical, { timeout: 500 });
+        } else {
+          setTimeout(addHistorical, 0);
+        }
 
         m.addSource("tw-events", { type: "geojson", data: toGeoJSON(initialEvents.current) });
         m.addLayer({ id: "tw-halo", type: "circle", source: "tw-events", filter: ["==", ["get", "id"], ""], paint: { "circle-radius": 16, "circle-color": PALETTE.light.accent, "circle-opacity": 0.3 } });
@@ -327,6 +329,8 @@ export function AtlasMap({
       ? ["all", [">=", compDateNum, ["get", "from"]], ["<=", compDateNum, ["get", "to"]]]
       : ["==", ["get", "id"], ""]; // Never matches
 
+    // The historical layers may not be added yet; this effect runs again when they are (geoReady).
+    if (!m.getLayer("tw-geo-solid")) return;
     const shown = ["all", ["in", ["get", "layer"], ["literal", on]], ["any", time, compTime, isLinked]] as unknown as maplibregl.ExpressionSpecification;
     const polygons: maplibregl.ExpressionSpecification = ["==", ["geometry-type"], "Polygon"];
     const lines: maplibregl.ExpressionSpecification = ["==", ["geometry-type"], "LineString"];
@@ -376,7 +380,7 @@ export function AtlasMap({
       m.setPaintProperty(id, "text-halo-color", p.halo);
     }
     for (const id of ["tw-points", "tw-halo", "tw-selected-label"]) m.setLayoutProperty(id, "visibility", layers.points ? "visible" : "none");
-  }, [ready, theme, date, comparisonDate, comparisonMode, selectedId, layers, boundaryOpacity]);
+  }, [ready, geoReady, theme, date, comparisonDate, comparisonMode, selectedId, layers, boundaryOpacity]);
 
   useEffect(() => {
     const m = mapRef.current;
