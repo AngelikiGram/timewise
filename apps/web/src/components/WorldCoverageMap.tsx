@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { PALETTE } from "./AtlasMap";
 import { useAppearance, type Appearance } from "./ThemeToggle";
+import { asset } from "@/lib/paths";
 
 export type CoverageRegion = { id: string; label: { en: string }; imported: number; curated?: boolean };
 
@@ -89,7 +90,7 @@ export function WorldCoverageMap({ regions }: { regions: CoverageRegion[] }) {
       observer.observe(container.current);
       // Not "load", which waits for every tile: slow tiles shouldn't hold back the coverage layers.
       m.once("style.load", async () => {
-        const world = await fetch("/data/world-countries.json").then((r) => r.json());
+        const world = await fetch(asset("/data/world-countries.json")).then((r) => r.json());
         if (cancelled) return;
         m.addImage("no-data", hatch(t));
         m.addSource("countries", { type: "geojson", data: world });

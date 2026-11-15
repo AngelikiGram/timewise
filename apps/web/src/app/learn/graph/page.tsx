@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo, useCallback } from "react";
 import { EventGraph } from "@/components/learn/EventGraph";
 import { buildEventGraph, applyForceLayout, applyTimelineLayout, applyGeoLayout, type GraphFilters, type EventGraph as EventGraphType, type GraphNode } from "@/lib/event-graph";
 import { useSearchParams } from "next/navigation";
+import Link from "next/link";
 
 export default function GraphPage({ searchParams }: { searchParams: Promise<{ event?: string; timeStart?: string; timeEnd?: string; themes?: string; countries?: string; layout?: string }> }) {
   const [graph, setGraph] = useState<EventGraphType | null>(null);
@@ -102,11 +103,11 @@ export default function GraphPage({ searchParams }: { searchParams: Promise<{ ev
         <div className="max-w-full mx-auto px-4">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 py-3">
             <div className="flex items-center gap-4">
-              <a href="/learn" className="p-2 text-ink-2 hover:text-bronze transition-colors" aria-label="Back to Learning Hub">
+              <Link href="/learn" className="p-2 text-ink-2 hover:text-bronze transition-colors" aria-label="Back to Learning Hub">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M19 12H5M12 19l-7-7 7-7"/>
                 </svg>
-              </a>
+              </Link>
               <div>
                 <h1 className="font-serif text-xl sm:text-2xl text-ink">Event Graph</h1>
                 <p className="text-sm text-ink-2">Explore connections between historical events</p>

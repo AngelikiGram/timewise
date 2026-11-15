@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { SiteHeader } from "@/components/SiteHeader";
-import { API_URL, RELATION_LABELS, type Relation } from "@/lib/api";
+import { API_URL, HAS_API, RELATION_LABELS, type Relation } from "@/lib/api";
 
 type Link = { claim_id: string; relation: Relation; note: string; statement: string };
 type ArchiveRecord = {
@@ -152,6 +152,18 @@ export default function AdminPage() {
       setError((e as Error).message);
     }
   };
+
+  if (!HAS_API) {
+    return (
+      <>
+        <SiteHeader />
+        <main className="mx-auto max-w-md px-4 py-16">
+          <h1 className="font-serif text-3xl">Record review</h1>
+          <p className="mt-3 leading-relaxed text-ink-2">Reviewing records needs the TIMEWISE API and its database, which aren&rsquo;t part of this public site. It works on a local copy started with <code>npm run api</code>.</p>
+        </main>
+      </>
+    );
+  }
 
   if (!key) {
     return (

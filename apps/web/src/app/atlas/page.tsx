@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { RegionSelector } from "@/components/RegionSelector";
 import { SiteHeader } from "@/components/SiteHeader";
+import { asset } from "@/lib/paths";
 
 export const metadata: Metadata = { title: "Atlas · TIMEWISE" };
 
@@ -8,7 +9,7 @@ export const metadata: Metadata = { title: "Atlas · TIMEWISE" };
 export default function AtlasIndexPage() {
   // Prefetch regions data on mount
   if (typeof window !== "undefined") {
-    fetch("/data/regions.json", { priority: "high" }).catch(() => {});
+    fetch(asset("/data/regions.json"), { priority: "high" }).catch(() => {});
   }
   return (
     <div className="min-h-dvh bg-paper">

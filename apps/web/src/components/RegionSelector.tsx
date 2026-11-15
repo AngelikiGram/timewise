@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { WorldCoverageMap } from "./WorldCoverageMap";
+import { asset } from "@/lib/paths";
 
 interface Region {
   id: string;
@@ -35,8 +36,8 @@ function prefetchRegionData(regionId: string) {
   if (prefetchedRegions.has(regionId)) return;
   prefetchedRegions.add(regionId);
   // Prefetch both events and boundary data
-  fetch(`/data/regions/${regionId}.json`, { priority: "low" }).catch(() => {});
-  fetch(`/data/regions/${regionId}.boundary.json`, { priority: "low" }).catch(() => {});
+  fetch(asset(`/data/regions/${regionId}.json`), { priority: "low" }).catch(() => {});
+  fetch(asset(`/data/regions/${regionId}.boundary.json`), { priority: "low" }).catch(() => {});
 }
 
 export function RegionSelector({ currentRegion }: RegionSelectorProps) {
@@ -50,7 +51,7 @@ export function RegionSelector({ currentRegion }: RegionSelectorProps) {
   useEffect(() => {
     async function loadRegions() {
       try {
-        const res = await fetch("/data/regions.json");
+        const res = await fetch(asset("/data/regions.json"));
         const data: RegionsData = await res.json();
         setRegions(data.regions);
       } catch (e) {

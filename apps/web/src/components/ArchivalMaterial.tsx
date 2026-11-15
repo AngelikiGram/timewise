@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { API_URL, RELATION_LABELS, type Relation } from "@/lib/api";
+import { API_URL, HAS_API, RELATION_LABELS, type Relation } from "@/lib/api";
 
 type Item = {
   id: number; title: string; creator: string | null; date_text: string | null; institution: string | null; url: string | null;
@@ -15,6 +15,7 @@ export function ArchivalMaterial({ eventId }: { eventId: string }) {
   useEffect(() => {
     let current = true;
     setItems([]);
+    if (!HAS_API) return;
     fetch(`${API_URL}/events/${encodeURIComponent(eventId)}/archive`)
       .then((r) => (r.ok ? r.json() : []))
       .then((rows) => current && setItems(rows))

@@ -12,6 +12,7 @@ import { EventStory } from "./EventStory";
 import { CATEGORY_COLORS, CATEGORY_LABELS, CATEGORY_ORDER } from "@/lib/categories";
 import { byDate, centuryLabel, centuryOf, formatImportedDate, yearOf } from "@/lib/dates";
 import { remember } from "@/lib/recent";
+import { asset } from "@/lib/paths";
 
 type Region = { id: string; label: { en: string }; note?: string; imported: number; bbox?: number[] | null; kind?: string; continent?: string | null };
 
@@ -125,7 +126,7 @@ export function HistoryAtlas({ region, regions }: { region: Region; regions: Reg
       setTotal(cached.total);
       return;
     }
-    fetch(`/data/regions/${region.id}.json`)
+    fetch(asset(`/data/regions/${region.id}.json`))
       .then((r) => (r.ok ? r.json() : Promise.reject()))
       .then((d) => {
         const data = { events: d.events, total: d.total ?? null };
@@ -328,7 +329,7 @@ export function HistoryAtlas({ region, regions }: { region: Region; regions: Reg
       const geometry = boundaryCache.get(region.id);
       (m.getSource("outline") as GeoJSONSource | undefined)?.setData(geometry ? { type: "Feature", properties: {}, geometry } : { type: "FeatureCollection", features: [] });
     } else {
-      fetch(`/data/regions/${region.id}.boundary.json`)
+      fetch(asset(`/data/regions/${region.id}.boundary.json`))
         .then((r) => (r.ok ? r.json() : null))
         .then((geometry) => {
           if (stale || !mapRef.current) return;
