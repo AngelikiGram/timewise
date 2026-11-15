@@ -1,7 +1,7 @@
 "use client";
 
 import type { HistoricalEvent } from "@timewise/historical-schemas";
-import { scaleTime } from "d3-scale";
+import { scaleUtc } from "d3-scale";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { collection, endOf, eventsByDate, formatWhen, placeLabel, temporalForm, toMs } from "@/lib/collection";
 import { fold } from "@/lib/search";
@@ -51,7 +51,9 @@ export function Timeline({ range }: { range: { start: string; end: string } }) {
   const rowH = Math.max(MIN_ROW_H, (size.height - DENSITY_H - AXIS_H) / tracks.length);
   const rowY = (i: number) => DENSITY_H + i * rowH;
   const axisY = DENSITY_H + tracks.length * rowH;
-  const x = useMemo(() => scaleTime().domain([new Date(view[0]), new Date(view[1])]).range([gutter, Math.max(gutter + 1, size.width - PAD_R)]), [view, gutter, size.width]);
+  // UTC, like the dates themselves. A local-time scale put its ticks at local midnight, which in Vienna is
+  // the previous day in UTC, so the labels differed between the build server and the browser.
+  const x = useMemo(() => scaleUtc().domain([new Date(view[0]), new Date(view[1])]).range([gutter, Math.max(gutter + 1, size.width - PAD_R)]), [view, gutter, size.width]);
   const px = useCallback((iso: string) => x(new Date(toMs(iso))), [x]);
 
   const clamp = useCallback(
@@ -298,7 +300,7 @@ export function Timeline({ range }: { range: { start: string; end: string } }) {
             </pattern>
           </defs>
 
-          <text x={0} y={DENSITY_H - 4} fontSize={9} fill="var(--ink-2)">{size.width < 560 ? "Records" : "Records in collection"}</text>
+          <text x={0} y={DENSITY_H - 4} fontSize={12} fill="var(--ink-2)">{size.width < 560 ? "Records" : "Records in collection"}</text>
           <g clipPath="url(#tl-plot)" className="cursor-ew-resize">
             <rect x={gutter} y={0} width={size.width} height={DENSITY_H} fill="transparent" />
             {density.map((count, i) => {
@@ -336,7 +338,7 @@ export function Timeline({ range }: { range: { start: string; end: string } }) {
               );
             })}
             {x.ticks(size.width < 560 ? 3 : 5).map((t) => (
-              <text key={t.getTime()} x={x(t)} y={axisY + 28} fontSize={10} textAnchor="middle" fill="var(--ink-2)">{t.getUTCFullYear()}</text>
+              <text key={t.getTime()} x={x(t)} y={axisY + 28} fontSize={12} textAnchor="middle" fill="var(--ink-2)">{t.getUTCFullYear()}</text>
             ))}
 
             {rows.map(({ track, bars, groups }, i) => {
@@ -379,7 +381,7 @@ export function Timeline({ range }: { range: { start: string; end: string } }) {
                         >
                           <title>{`${g.items.length} records, click to zoom: ${label}`}</title>
                           <circle cx={g.cx} cy={cy} r={8} fill={hasSelected ? "var(--oxblood)" : "var(--navy)"} pointerEvents="all" />
-                          <text x={g.cx} y={cy + 3.5} fontSize={10} fontWeight={600} textAnchor="middle" fill="var(--on-accent)">{g.items.length}</text>
+                          <text x={g.cx} y={cy + 3.5} fontSize={12} fontWeight={600} textAnchor="middle" fill="var(--on-accent)">{g.items.length}</text>
                         </g>
                       );
                     }
