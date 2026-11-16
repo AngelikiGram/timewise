@@ -13,6 +13,8 @@ export type StoryItem = {
   conflict?: boolean; lng?: number; lat?: number; loc?: "event" | "place" | "area"; url: string; links?: number; checked?: boolean; inside?: boolean; country?: string;
   /** Countries Wikidata ties it to, when more than one. */
   nc?: number;
+  /** Records merged into this entry, kept as provenance. */
+  also?: { id: string; title: string; source: "wikidata" | "checked" }[];
   multi?: boolean;
   /** The year its name gives, when that disagrees with its recorded date. */
   titleYear?: number;
@@ -226,6 +228,9 @@ export function EventStory({ item, when, place, href, onBack, onPick, known, con
                 {data?.summary && <p><strong>Summary:</strong> <a href={data.summary.url} target="_blank" rel="noopener noreferrer" className="link">Wikipedia, {data.summary.title} ↗</a></p>}
                 {item.nc && item.nc > 1 && <p><strong>Countries:</strong> Wikidata ties this to {item.nc} present-day countries{item.multi ? ", so TIMEWISE lists it under multiple regions rather than one" : ""}.</p>}
               </>
+            )}
+            {item.also && item.also.length > 0 && (
+              <p data-testid="merged-records"><strong>Merged records:</strong> this entry combines {item.also.length + 1} records of the same event, so it appears once. Also recorded as {item.also.map((a, i) => <span key={a.id}>{i > 0 && ", "}<a href={`https://www.wikidata.org/wiki/${a.id}`} target="_blank" rel="noopener noreferrer" className="link">{a.title} ({a.id}) ↗</a></span>)}.</p>
             )}
             <p><strong>Date:</strong> {when}. {form ? `${DATE_FORM_LABEL[form]}${item.precision ? `, ${precisionNote(item.precision).toLowerCase()}` : ""}.` : ""}</p>
             <p><strong>Location:</strong> {item.lng === undefined || item.multi ? (item.multi ? "It spans several regions, so it isn't pinned to one point." : "No location given, so it isn't on the map.") : `${item.lat!.toFixed(2)}°, ${item.lng.toFixed(2)}°. ${item.loc ? LOCATION_NOTE[item.loc] : ""}`}</p>

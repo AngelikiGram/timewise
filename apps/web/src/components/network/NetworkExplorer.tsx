@@ -10,17 +10,17 @@ import { createCollection, update } from "@/lib/progress";
 import { fetchNodeFacts, fetchRecord, GROUPS, isQid, labelsFor, searchWikidata, type Group, type Link as RecordLink, type NodeFacts, type RecordData, type SearchResult } from "@/lib/record";
 import { STORIES } from "@/lib/stories";
 import { CONTINENT_LABELS, loadIndex, loadRegions, type IndexEvent } from "@/lib/world-index";
-import { GROUP_ORDER, NetworkGraph } from "./NetworkGraph";
+import { ConnectionCards, GROUP_ORDER } from "./ConnectionCards";
+import { Icon } from "../icons";
 import { LinkDetail, RecordCard } from "./RecordPanel";
 import { MapView, TimelineView } from "./views";
 
 type View = "network" | "timeline" | "map";
 const VIEWS: { id: View; label: string }[] = [
-  { id: "network", label: "Network" },
+  { id: "network", label: "Connections" },
   { id: "timeline", label: "Timeline" },
   { id: "map", label: "Map" },
 ];
-const MAX_NODES = 30;
 
 function RecordSearch({ onPick, autoFocus = false }: { onPick: (id: string) => void; autoFocus?: boolean }) {
   const [q, setQ] = useState("");
@@ -223,7 +223,6 @@ export function NetworkExplorer() {
     if (country && f?.country !== country) return false;
     return true;
   }), [all, off, contextual, facts, yFrom, yTo, country]);
-  const shown = filtered.slice(0, MAX_NODES);
   const selectedLink = all.find((l) => l.target === selected);
   const filtering = off.size > 0 || !contextual || from || to || country;
   const sequenceNext = record?.links.find((l) => l.relation === "followed by" || l.relation === "replaced by");
@@ -266,6 +265,25 @@ export function NetworkExplorer() {
         </div>
       </div>
 
+
+      {/* The path so far, with one step back and a way to start over. */}
+      <nav className="mt-3 flex flex-wrap items-center gap-2 rounded-lg border border-line bg-paper-2 px-3 py-2" aria-label="Your path" data-testid="network-path">
+        <button type="button" className="btn btn-ghost btn-sm" disabled={trail.length < 2} onClick={() => open(trail[trail.length - 2])} aria-label="Back one step"><Icon name="back" size={16} /> Back</button>
+        <button type="button" className="btn btn-ghost btn-sm" disabled={trail.length < 2} onClick={() => go({ id: trail[0], path: null })} aria-label="Start over from the first record"><Icon name="reset" size={16} /> Reset</button>
+        <ol className="flex min-w-0 flex-1 flex-wrap items-center gap-1 text-sm">
+          {trail.map((t, i) => (
+            <li key={t} className="inline-flex min-w-0 items-center gap-1">
+              {i > 0 && <Icon name="forward" size={14} className="shrink-0 text-ink-2" />}
+              {t === id ? <span className="max-w-[16rem] truncate font-semibold" aria-current="step">{labels[t] ?? t}</span> : <button type="button" className="link max-w-[12rem] truncate" onClick={() => open(t)}>{labels[t] ?? t}</button>}
+            </li>
+          ))}
+        </ol>
+        <span className="flex flex-wrap gap-2">
+          {trail.length > 1 && <button type="button" className="btn btn-secondary btn-sm" onClick={() => share("path")}>{copied === "path" ? "Link copied" : "Share path"}</button>}
+          {trail.length > 1 && <button type="button" className="btn btn-secondary btn-sm" onClick={savePath}>{copied === "saved" ? "Saved to My Collection" : "Save path"}</button>}
+        </span>
+      </nav>
+
       {/* Filters: kind of link, period, country. */}
       <div className="relative -mx-4 mt-3 flex items-center gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 [&>*]:shrink-0" data-testid="network-filters">
         {GROUP_ORDER.filter((g) => all.some((l) => l.group === g)).map((g) => {
@@ -273,7 +291,7 @@ export function NetworkExplorer() {
           return (
             <button key={g} type="button" className="chip" aria-pressed={!off.has(g)} onClick={() => setOff((s) => { const t = new Set(s); if (t.has(g)) t.delete(g); else t.add(g); return t; })}>
               <span aria-hidden className={`inline-block h-0 w-4 border-t-2 ${GROUPS[g].documented ? "border-navy" : "border-dashed border-bronze"}`} />
-              {GROUPS[g].label} <span className="tabular-nums text-ink-2">{n}</span>
+              {GROUPS[g].label} <span className="tabular-nums opacity-70">{n}</span>
             </button>
           );
         })}
@@ -320,7 +338,7 @@ export function NetworkExplorer() {
             <>
               <div className="flex flex-wrap items-baseline justify-between gap-2 px-1">
                 <p className="text-sm text-ink-2" data-testid="network-count">
-                  {shown.length} of {all.length} links shown{filtered.length > MAX_NODES && ` (the first ${MAX_NODES}; the rest are in the list)`}
+                  {filtered.length} of {all.length} connections
                   {(from || to) && " · records without a date are hidden while a period is set"}
                 </p>
                 <p className="flex flex-wrap items-center gap-3 text-xs text-ink-2">
@@ -328,11 +346,11 @@ export function NetworkExplorer() {
                   <span className="inline-flex items-center gap-1"><span aria-hidden className="inline-block w-5 border-t-2 border-dashed border-bronze" />contextual</span>
                 </p>
               </div>
-              {view === "network" && <NetworkGraph record={record} links={shown} facts={facts} selected={selected} onSelect={select} onOpen={(l) => open(l.target)} />}
+              {view === "network" && <ConnectionCards record={record} links={filtered} facts={facts} selected={selected} onStep={(l) => (isQid(l.target) ? open(l.target) : l.href && router.push(l.href))} onDetails={select} />}
               {view === "timeline" && <TimelineView record={record} links={filtered} facts={facts} selected={selected} onSelect={select} loading={factsState === "loading"} />}
               {view === "map" && <MapView record={record} links={filtered} facts={facts} selected={selected} onSelect={select} loading={factsState === "loading"} />}
               {factsState === "failed" && <p className="mt-2 text-xs text-ink-2">Dates and places of the linked records couldn&rsquo;t be loaded from the Wikidata Query Service, so the period and country filters have nothing to work with.</p>}
-              <p className="mt-2 px-1 text-xs text-ink-2">Select a record to see why it&rsquo;s connected; double-click it, or press Enter twice, to explore from there.</p>
+              <p className="mt-3 px-1 text-xs text-ink-2">{view === "network" ? "Choose a card to step to that record. “Why” explains the link and its source." : "Choose a record to see why it’s connected."}</p>
             </>
           )}
         </section>
@@ -353,48 +371,8 @@ export function NetworkExplorer() {
           ) : (
             <p className="text-sm text-ink-2">{status === "failed" ? "Nothing to show yet." : "Loading…"}</p>
           )}
-          {status === "ready" && filtered.length > 0 && (
-            <details className="mt-4 rounded-md border border-line p-3" data-testid="all-connections" open={filtered.length > MAX_NODES || undefined}>
-              <summary className="cursor-pointer font-semibold">All connections, as a list ({filtered.length})</summary>
-              {GROUP_ORDER.filter((g) => filtered.some((l) => l.group === g)).map((g) => (
-                <div key={g} className="mt-3">
-                  <p className="text-xs font-semibold uppercase tracking-wider text-ink-2">{GROUPS[g].label}{!GROUPS[g].documented && " · contextual"}</p>
-                  <ul className="mt-1 grid gap-0.5">
-                    {filtered.filter((l) => l.group === g).map((l) => (
-                      <li key={l.target}>
-                        <button type="button" aria-pressed={selected === l.target} onClick={() => select(l.target)} className={`flex w-full items-baseline justify-between gap-2 rounded px-2 py-1 text-left text-sm hover:bg-paper-3 ${selected === l.target ? "bg-paper-3 font-semibold" : ""}`}>
-                          <span>{l.label} <span className="text-ink-2">· {l.relation}</span></span>
-                          {facts[l.target]?.year !== undefined && <span className="shrink-0 tabular-nums text-xs text-ink-2">{formatYear(facts[l.target].year!)}</span>}
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-            </details>
-          )}
         </aside>
       </div>
-
-      {/* The path so far. */}
-      <section className="mt-4 rounded-lg border border-line bg-paper-2 p-3" aria-label="Your path" data-testid="network-path">
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="eyebrow mr-1">Your path</span>
-          <ol className="flex min-w-0 flex-wrap items-center gap-1 text-sm">
-            {trail.map((t, i) => (
-              <li key={t} className="inline-flex items-center gap-1">
-                {i > 0 && <span aria-hidden className="text-ink-2">→</span>}
-                {t === id ? <span className="font-semibold" aria-current="true">{labels[t] ?? t}</span> : <button type="button" className="link" onClick={() => open(t)}>{labels[t] ?? t}</button>}
-              </li>
-            ))}
-          </ol>
-          <span className="ml-auto flex flex-wrap gap-2">
-            {trail.length > 1 && <button type="button" className="btn btn-secondary btn-sm" onClick={() => share("path")}>{copied === "path" ? "Link copied" : "Share path"}</button>}
-            {trail.length > 1 && <button type="button" className="btn btn-secondary btn-sm" onClick={savePath}>{copied === "saved" ? "Saved to My Collection" : "Save path as a collection"}</button>}
-          </span>
-        </div>
-        {trail.length < 2 && <p className="mt-1 text-xs text-ink-2">Open a connected record and the path builds up here, ready to share or save.</p>}
-      </section>
 
       <p className="mt-3 text-xs text-ink-2" data-testid="network-coverage">
         <strong className="text-ink">Connected sources:</strong> Wikidata (read live, crowd-edited, CC0), Wikipedia summaries (CC BY-SA 4.0), Wikimedia Commons images (each with its own licence), the hand-checked TIMEWISE collection (Austria, 1844–1921) and the TIMEWISE world index ({`${(10250).toLocaleString("en")}`} events). Coverage varies by source and region; none of it is complete. <Link href="/about" className="link">How TIMEWISE handles sources</Link>

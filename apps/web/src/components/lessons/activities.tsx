@@ -39,8 +39,8 @@ export function MiniMap({ points, label, className = "" }: { points: MapPoint[];
             const [x, y] = px(p.lng, p.lat);
             return (
               <g key={i}>
-                <circle cx={x} cy={y} r={p.answer ? 8 : 5} fill={p.answer ? "var(--bronze)" : "var(--navy)"} stroke="var(--paper-2)" strokeWidth={2} />
-                <text x={x + 11} y={y + 4} className={`text-[15px] ${p.answer ? "fill-ink font-semibold" : "fill-ink-2"}`} paintOrder="stroke" stroke="var(--paper)" strokeWidth={4} strokeLinejoin="round">{p.label}</text>
+                <circle cx={x} cy={y} r={p.answer ? 11 : 8} fill={p.answer ? "var(--bronze)" : "var(--navy)"} stroke="var(--paper-2)" strokeWidth={2} />
+                <text x={x + 14} y={y + 7} className={`text-[22px] ${p.answer ? "fill-ink font-semibold" : "fill-ink-2"}`} paintOrder="stroke" stroke="var(--paper)" strokeWidth={4} strokeLinejoin="round">{p.label}</text>
               </g>
             );
           })}

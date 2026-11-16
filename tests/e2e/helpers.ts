@@ -7,4 +7,4 @@ export async function openList(page: Page) {
 }
 
 /** The search box in the page body (the header has a compact one too). */
-export const mainSearch = (page: Page) => page.getByRole("main").getByRole("combobox", { name: /Search events/ });
+export const mainSearch = (page: Page) => page.getByRole("main").getByRole("combobox", { name: /^Search history in/ });

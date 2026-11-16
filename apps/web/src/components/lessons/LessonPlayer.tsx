@@ -7,6 +7,36 @@ import { finishLesson, logAnswer, readProgress, saveLessonStep, useProgress } fr
 import { lessonHref, loadLesson, nextInPath, pathById, SKILLS, type LearnCard, type Lesson, type Skill } from "@/lib/lessons";
 import { CreditedImage, ReviewBadge, SaveButton } from "../ui";
 import { ActivityView, MiniMap, Sources, type Answer } from "./activities";
+import { formatYear } from "@/lib/dates";
+
+/** Where and when the lesson's records are: a small map and a timeline, before the first card. */
+function Overview({ cards }: { cards: LearnCard[] }) {
+  const placed = cards.filter((c) => c.point);
+  const dated = cards.filter((c) => c.year !== undefined).sort((a, b) => a.year! - b.year!);
+  const lo = dated[0]?.year ?? 0;
+  const hi = dated[dated.length - 1]?.year ?? 0;
+  const span = Math.max(1, hi - lo);
+  return (
+    <div className="mt-5 grid gap-4 sm:grid-cols-2" data-testid="lesson-overview">
+      {placed.length > 0 && <MiniMap points={placed.map((c, i) => ({ label: String(i + 1), lng: c.point![0], lat: c.point![1], answer: true }))} label={`Map of the lesson's ${placed.length} records`} />}
+      {dated.length > 1 && (
+        <figure className="flex flex-col justify-center">
+          <div className="relative mx-3 h-16" role="img" aria-label={`Timeline from ${formatYear(lo)} to ${formatYear(hi)}`}>
+            <span aria-hidden className="absolute inset-x-0 top-1/2 h-0.5 -translate-y-1/2 rounded bg-line" />
+            {dated.map((c) => {
+              const n = cards.indexOf(c) + 1;
+              return <span key={c.id} aria-hidden className="absolute top-1/2 grid h-7 w-7 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border-2 border-paper bg-bronze text-xs font-semibold text-paper" style={{ left: `${((c.year! - lo) / span) * 100}%` }}>{n}</span>;
+            })}
+          </div>
+          <figcaption className="flex justify-between text-xs tabular-nums text-ink-2"><span>{formatYear(lo)}</span><span>{formatYear(hi)}</span></figcaption>
+        </figure>
+      )}
+      <ol className="grid gap-1 text-sm sm:col-span-2">
+        {cards.map((c, i) => <li key={c.id} className="flex gap-2"><span className="grid h-5 w-5 shrink-0 place-items-center rounded-full bg-bronze text-[11px] font-semibold text-paper">{i + 1}</span><span className="min-w-0">{c.title} <span className="text-ink-2">· {c.where ?? "no location"}</span></span></li>)}
+      </ol>
+    </div>
+  );
+}
 
 function Card({ card, review }: { card: LearnCard; review: Lesson["review"] }) {
   return (
@@ -166,7 +196,8 @@ export function LessonPlayer() {
             <p className="eyebrow">{path?.title ?? "Lesson"}</p>
             <h1 className="mt-2 font-serif text-4xl leading-tight" tabIndex={-1} data-step-heading>{lesson.title}</h1>
             <div className="mt-3"><ReviewBadge level={lesson.review === "source_checked" ? "source_checked" : "imported"} /></div>
-            <p className="mt-4 text-lg leading-relaxed">{lesson.intro}</p>
+            <p className="mt-4 leading-relaxed text-ink-2">{lesson.intro}</p>
+            <Overview cards={lesson.cards} />
             <ul className="mt-5 grid gap-1 text-ink-2">
               <li>About {lesson.minutes} minutes</li>
               <li>{lesson.cards.length} records to read, then {lesson.activities.length} questions</li>

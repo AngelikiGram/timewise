@@ -3,7 +3,7 @@
 // Two kinds of path, never mixed:
 // - The checked path is built from the hand-checked Austria collection. Every card and every answer comes
 //   from a curated event or a sourced claim, and links to that source.
-// - Region and period paths are built from imported Wikidata records (the TIMEWISE continent files), and
+// - Region, topic, place and period journeys are built from imported Wikidata records (the TIMEWISE region files), and
 //   are labelled unreviewed. Their cards use only Wikidata's own title, date, place and short description,
 //   and a cause-and-consequence question appears only when a Wikidata statement documents one.
 //
@@ -14,6 +14,7 @@ import { formatImportedDate, formatYear, yearOf, type Precision } from "./dates"
 import { asset } from "./paths";
 import { fetchRecord } from "./record";
 import { CONTINENT_LABELS, loadRegions } from "./world-index";
+import catalog from "./journey-catalog.json";
 
 export type Skill = "chronology" | "geography" | "evidence" | "cause";
 export const SKILLS: Record<Skill, { label: string; help: string }> = {
@@ -35,6 +36,8 @@ export type LearnCard = {
   id: string;
   title: string;
   when: string;
+  /** For placing it on the lesson's timeline. */
+  year?: number;
   where?: string;
   point?: [number, number];
   summary?: string;
@@ -61,7 +64,8 @@ export type Lesson = {
 };
 
 export type LessonStub = { id: string; title: string; minutes: number; skills: Skill[]; milestone?: string };
-export type PathDef = { id: string; title: string; kind: "question" | "region" | "period"; blurb: string; review: Review; lessons: LessonStub[] };
+export type IconKey = "map" | "timeline" | "place" | "war" | "politics" | "culture" | "state" | "checked";
+export type PathDef = { id: string; title: string; kind: "question" | "region" | "period" | "topic" | "place"; blurb: string; why: string; difficulty: "Easy" | "Medium"; icon: IconKey; review: Review; lessons: LessonStub[] };
 
 const src = (id: string): SourceRef => {
   const s = sourceById.get(id)!;
@@ -84,6 +88,9 @@ export const CHECKED_PATH: PathDef = {
   title: inv.question.en,
   kind: "question",
   blurb: "Six short lessons from railways to a new republic. Every statement is checked against a linked source.",
+  why: "Written from the hand-checked Austria collection: one lesson per chapter of its investigation, using every event and claim in that chapter.",
+  difficulty: "Medium",
+  icon: "checked",
   review: "source_checked",
   lessons: inv.chapters.map((c, i) => {
     const events = chapterEvents(c.id);
@@ -110,6 +117,7 @@ function checkedLesson(id: string): Lesson | null {
       id: e.id,
       title: e.title.en,
       when: formatWhen(e.when),
+      year: yearOf(e.when.start),
       where: p ? p.label.en : e.noPlaceReason ? "No single location" : undefined,
       point: p ? [p.lng, p.lat] : undefined,
       summary: e.summary.en,
@@ -210,69 +218,126 @@ function checkedLesson(id: string): Lesson | null {
   };
 }
 
-// ---------------------------------------------------------------- imported paths
+// ---------------------------------------------------------------- generated journeys
+//
+// Built from imported Wikidata records by fixed rules. journey-catalog.json (written by
+// scripts/journey_catalog.py) lists only the journeys with enough records. Every lesson says how its
+// records were chosen, and is labelled imported, not checked by hand.
 
-const CENTURIES = [15, 16, 17, 18, 19];
 export const centuryName = (c: number) => `${c * 100}s`;
 const CONTINENTS = Object.keys(CONTINENT_LABELS);
+const TOPIC_LABEL: Record<string, string> = { war: "Wars and battles", politics: "Politics", culture: "Culture and institutions", state: "States and empires" };
+const IMPORTED_SKILLS: Skill[] = ["chronology", "geography", "evidence", "cause"];
+const REGION_CATALOG = catalog.region as Record<string, number[]>;
+const TOPIC_CATALOG = catalog.topic as Record<string, number[]>;
+const PLACE_CATALOG = catalog.place as Record<string, { label: string; centuries: number[] }>;
 
-const regionPath = (ct: string): PathDef => ({
-  id: `region-${ct}`,
-  title: `${CONTINENT_LABELS[ct]} through five centuries`,
-  kind: "region",
-  blurb: `Four well-documented events per century, from imported Wikidata records. Not checked by hand.`,
-  review: "imported",
-  lessons: CENTURIES.map((c) => ({ id: `w-${ct}-${c}`, title: `${CONTINENT_LABELS[ct]} in the ${centuryName(c)}`, minutes: 3, skills: ["chronology", "geography", "evidence", "cause"] })),
+const stub = (id: string, title: string, skills = IMPORTED_SKILLS): LessonStub => ({ id, title, minutes: 3, skills });
+const regionPath = (ct: string, centuries: number[]): PathDef => ({
+  id: `region-${ct}`, kind: "region", review: "imported", difficulty: "Easy", icon: "map",
+  title: `${CONTINENT_LABELS[ct]} through the centuries`,
+  blurb: "One short lesson per century.",
+  why: "Each lesson takes the four records of that century and continent written about in the most Wikipedia languages, from four different countries, each with a year or exact date and a Wikidata description.",
+  lessons: centuries.map((c) => stub(`w-${ct}-${c}`, `${CONTINENT_LABELS[ct]} in the ${centuryName(c)}`)),
 });
 const periodPath = (c: number): PathDef => ({
-  id: `period-${c}`,
+  id: `period-${c}`, kind: "period", review: "imported", difficulty: "Easy", icon: "timeline",
   title: `The ${centuryName(c)} around the world`,
-  kind: "period",
-  blurb: `One lesson per continent, from imported Wikidata records. Not checked by hand.`,
-  review: "imported",
-  lessons: CONTINENTS.map((ct) => ({ id: `w-${ct}-${c}`, title: `${CONTINENT_LABELS[ct]} in the ${centuryName(c)}`, minutes: 3, skills: ["chronology", "geography", "evidence", "cause"] })),
+  blurb: "One lesson per continent.",
+  why: `Each lesson takes the four records of the ${centuryName(c)} on one continent written about in the most Wikipedia languages, from four different countries.`,
+  lessons: CONTINENTS.filter((ct) => REGION_CATALOG[ct]?.includes(c)).map((ct) => stub(`w-${ct}-${c}`, `${CONTINENT_LABELS[ct]} in the ${centuryName(c)}`)),
+});
+const topicPath = (key: string, centuries: number[]): PathDef => {
+  const cut = key.indexOf("-");
+  const topic = key.slice(0, cut);
+  const ct = key.slice(cut + 1);
+  return {
+    id: `topic-${key}`, kind: "topic", review: "imported", difficulty: "Medium", icon: topic as IconKey,
+    title: `${TOPIC_LABEL[topic]} in ${CONTINENT_LABELS[ct]}`,
+    blurb: "One lesson per century.",
+    why: `Each lesson takes the four records filed under "${TOPIC_LABEL[topic].toLowerCase()}" in that century and continent, written about in the most Wikipedia languages, from four different countries.`,
+    lessons: centuries.map((c) => stub(`t-${topic}-${ct}-${c}`, `${TOPIC_LABEL[topic]}, ${CONTINENT_LABELS[ct]}, ${centuryName(c)}`)),
+  };
+};
+const placePath = (country: string, label: string, centuries: number[]): PathDef => ({
+  id: `place-${country}`, kind: "place", review: "imported", difficulty: "Medium", icon: "place",
+  title: `${label} through the centuries`,
+  blurb: `One lesson per century, inside today's ${label}.`,
+  why: `Each lesson takes the four records located inside today's ${label} in that century, written about in the most Wikipedia languages. Today's borders are used only to sort records.`,
+  lessons: centuries.map((c) => stub(`p-${country}-${c}`, `${label} in the ${centuryName(c)}`, ["chronology", "evidence", "cause"])),
 });
 
-export const PATHS: PathDef[] = [CHECKED_PATH, ...CONTINENTS.map(regionPath), ...[18, 19].map(periodPath)];
+export const PATHS: PathDef[] = [
+  CHECKED_PATH,
+  ...Object.entries(REGION_CATALOG).map(([ct, cs]) => regionPath(ct, cs)),
+  ...Object.entries(TOPIC_CATALOG).map(([k, cs]) => topicPath(k, cs)),
+  ...Object.entries(PLACE_CATALOG).map(([k, v]) => placePath(k, v.label, v.centuries)),
+  ...[17, 18, 19].map(periodPath),
+];
 export const pathById = (id: string) => PATHS.find((p) => p.id === id);
 
-type RegionEvent = { id: string; title: { en?: string; de?: string }; description?: string; category: string; start: string; end?: string; precision: Precision; lng?: number; lat?: number; links: number; home?: string; multi?: boolean; url: string };
-const continentCache = new Map<string, Promise<RegionEvent[]>>();
-function loadContinent(ct: string) {
-  if (!continentCache.has(ct)) {
-    continentCache.set(ct, fetch(asset(`/data/regions/${ct}.json`)).then((r) => (r.ok ? r.json() : Promise.reject(new Error(`${ct} ${r.status}`)))).then((d: { events: RegionEvent[] }) => d.events));
-    continentCache.get(ct)!.catch(() => continentCache.delete(ct));
+type RegionEvent = { id: string; title: { en?: string; de?: string }; description?: string; category: string; start: string; end?: string; precision: Precision; lng?: number; lat?: number; links: number; home?: string; multi?: boolean; inside?: boolean; url: string };
+const fileCache = new Map<string, Promise<RegionEvent[]>>();
+function loadRegionFile(id: string) {
+  if (!fileCache.has(id)) {
+    fileCache.set(id, fetch(asset(`/data/regions/${id}.json`)).then((r) => (r.ok ? r.json() : Promise.reject(new Error(`${id} ${r.status}`)))).then((d: { events: RegionEvent[] }) => d.events));
+    fileCache.get(id)!.catch(() => fileCache.delete(id));
   }
-  return continentCache.get(ct)!;
+  return fileCache.get(id)!;
 }
 
-/** Four events of one century: well documented, dated to the year or better, each from a different country. */
-export function pickEvents(events: RegionEvent[], century: number, n = 4): RegionEvent[] {
+/**
+ * Four records of one century: well documented, dated to the year or better, with a description.
+ * From four different countries, unless `sameCountry` (place journeys), where they must lie inside it.
+ */
+export function pickEvents(events: RegionEvent[], century: number, n = 4, opts: { category?: string; sameCountry?: boolean } = {}): RegionEvent[] {
   const eligible = events
     .filter((e) => e.title.en && e.description && e.description.length >= 20 && e.home && !e.multi && e.lng !== undefined && ["day", "month", "year"].includes(e.precision) && !e.start.startsWith("-"))
-    .filter((e) => Math.floor(yearOf(e.start) / 100) === century)
+    .filter((e) => Math.floor(yearOf(e.start) / 100) === century && (!opts.category || e.category === opts.category) && (!opts.sameCountry || e.inside))
     .sort((a, b) => b.links - a.links);
   const out: RegionEvent[] = [];
   for (const e of eligible) {
-    if (out.some((o) => o.home === e.home || o.description === e.description || o.title.en === e.title.en)) continue;
+    if (out.some((o) => (!opts.sameCountry && o.home === e.home) || o.description === e.description || o.title.en === e.title.en)) continue;
     out.push(e);
     if (out.length === n) break;
   }
   return out;
 }
 
+type Spec = { file: string; century: number; title: string; why: string; category?: string; sameCountry?: boolean; overview: { label: string; href: string } };
+/** What a generated lesson id means: which data file, which century, which filter, and why. */
+export function parseLesson(id: string): Spec | null {
+  let m = id.match(/^w-([a-z_]+)-(\d+)$/);
+  if (m && CONTINENT_LABELS[m[1]]) {
+    const c = Number(m[2]);
+    const name = CONTINENT_LABELS[m[1]];
+    return { file: m[1], century: c, title: `${name} in the ${centuryName(c)}`, why: `the four records from ${name} in the ${centuryName(c)} written about in the most Wikipedia languages, each from a different country`, overview: { label: `Open the ${name} overview`, href: `/history/${m[1]}` } };
+  }
+  m = id.match(/^t-([a-z]+)-([a-z_]+)-(\d+)$/);
+  if (m && TOPIC_LABEL[m[1]] && CONTINENT_LABELS[m[2]]) {
+    const c = Number(m[3]);
+    const name = CONTINENT_LABELS[m[2]];
+    return { file: m[2], century: c, category: m[1], title: `${TOPIC_LABEL[m[1]]}, ${name}, ${centuryName(c)}`, why: `the four records filed under "${TOPIC_LABEL[m[1]].toLowerCase()}" from ${name} in the ${centuryName(c)} written about in the most Wikipedia languages, each from a different country`, overview: { label: `Open the ${name} map`, href: `/atlas/${m[2]}?cat=${m[1]}` } };
+  }
+  m = id.match(/^p-([a-z_]+)-(\d+)$/);
+  const place = m ? PLACE_CATALOG[m[1]] : undefined;
+  if (m && place) {
+    const c = Number(m[2]);
+    return { file: m[1], century: c, sameCountry: true, title: `${place.label} in the ${centuryName(c)}`, why: `the four records located inside today's ${place.label} in the ${centuryName(c)} written about in the most Wikipedia languages`, overview: { label: `Open the ${place.label} map`, href: `/atlas/${m[1]}?from=${c * 100}&to=${c * 100 + 99}` } };
+  }
+  return null;
+}
+
 async function importedLesson(id: string, pathId: string, signal?: AbortSignal): Promise<Lesson | null> {
-  const m = id.match(/^w-([a-z_]+)-(\d+)$/);
-  if (!m || !CONTINENT_LABELS[m[1]]) return null;
-  const [, ct, cs] = m;
-  const century = Number(cs);
-  const [events, regions] = await Promise.all([loadContinent(ct), loadRegions()]);
+  const spec = parseLesson(id);
+  if (!spec) return null;
+  const [events, regions] = await Promise.all([loadRegionFile(spec.file), loadRegions()]);
   const country = (k?: string) => regions.find((r) => r.id === k)?.label.en ?? k ?? "unknown";
-  const picked = pickEvents(events, century);
-  const title = `${CONTINENT_LABELS[ct]} in the ${centuryName(century)}`;
-  const base = { id, pathId, title, minutes: 3, review: "imported" as const, related: [{ label: `Open the ${CONTINENT_LABELS[ct]} overview`, href: `/history/${ct}` }] };
+  const picked = pickEvents(events, spec.century, 4, { category: spec.category, sameCountry: spec.sameCountry });
+  const title = spec.title;
+  const base = { id, pathId, title, minutes: 3, review: "imported" as const, related: [spec.overview] };
   if (picked.length < 4) {
-    return { ...base, intro: "", cards: [], activities: [], gaps: [`Fewer than four well-documented, dated records from different countries are available for ${title.toLowerCase()}, so this lesson can't be built honestly.`] };
+    return { ...base, intro: "", cards: [], activities: [], gaps: [`Fewer than four suitable records are available for ${title}, so this lesson can't be built honestly.`] };
   }
   const seed = hash(id);
   const wd = (e: RegionEvent): SourceRef => ({ label: `Wikidata: ${e.title.en}`, url: e.url });
@@ -281,6 +346,7 @@ async function importedLesson(id: string, pathId: string, signal?: AbortSignal):
     id: e.id,
     title: e.title.en!,
     when: when(e),
+    year: yearOf(e.start),
     where: country(e.home),
     point: [e.lng!, e.lat!],
     summary: e.description,
@@ -300,32 +366,36 @@ async function importedLesson(id: string, pathId: string, signal?: AbortSignal):
       sources: byDate.map(wd),
     },
   ];
-  const g = picked[seed % 4];
-  activities.push({
-    kind: "choice",
-    skill: "geography",
-    prompt: `Where did this take place: ${g.title.en}?`,
-    options: shuffle(picked, seed).map((e) => ({ id: e.home!, label: country(e.home) })),
-    answer: g.home!,
-    explanation: `Wikidata gives its location as ${g.lat!.toFixed(2)}°, ${g.lng!.toFixed(2)}°, which TIMEWISE files under ${country(g.home)}. Borders then weren't today's.`,
-    sources: [wd(g)],
-    map: picked.map((e) => ({ label: country(e.home), lng: e.lng!, lat: e.lat!, answer: e.id === g.id })),
-  });
+  if (!spec.sameCountry) {
+    const g = picked[seed % 4];
+    activities.push({
+      kind: "choice",
+      skill: "geography",
+      prompt: `Where did this take place: ${g.title.en}?`,
+      options: shuffle(picked, seed).map((e) => ({ id: e.home!, label: country(e.home) })),
+      answer: g.home!,
+      explanation: `Wikidata gives its location as ${g.lat!.toFixed(2)}°, ${g.lng!.toFixed(2)}°, which TIMEWISE files under today's ${country(g.home)}. Borders then weren't today's.`,
+      sources: [wd(g)],
+      map: picked.map((e) => ({ label: country(e.home), lng: e.lng!, lat: e.lat!, answer: e.id === g.id })),
+    });
+  }
   const r = picked[(seed >>> 2) % 4];
   activities.push({
     kind: "choice",
     skill: "evidence",
     prompt: "Which record does Wikidata describe like this?",
-    context: `“${r.description}”`,
+    context: `"${r.description}"`,
     options: shuffle(picked, seed + 5).map((e) => ({ id: e.id, label: e.title.en! })),
     answer: r.id,
     explanation: `That's Wikidata's own short description of ${r.title.en}. Descriptions are written by Wikidata's volunteers and are not checked by TIMEWISE.`,
     sources: [wd(r)],
   });
 
-  // Cause and consequence: only from a documented Wikidata statement.
+  // Follow a documented connection: only from a Wikidata statement of cause or effect.
   const gaps: string[] = [];
+  if (spec.sameCountry) gaps.push("All four records are in one country, so there's no geography question.");
   let found = false;
+  let unreachable = false;
   for (const e of picked.slice(0, 2)) {
     try {
       const rec = await fetchRecord(e.id, signal);
@@ -339,23 +409,24 @@ async function importedLesson(id: string, pathId: string, signal?: AbortSignal):
         prompt: verb,
         options: shuffle([{ id: link.target, label: link.label }, ...decoys.map((d) => ({ id: d.id, label: d.title.en! }))], seed + 7),
         answer: link.target,
-        explanation: `A Wikidata statement links ${e.title.en} to ${link.label} as "${link.relation}". ${link.references ? `It gives ${link.references} reference${link.references > 1 ? "s" : ""}.` : "It gives no reference, so treat it with care."} The other options are events from this lesson that no statement connects this way.`,
-        sources: [{ label: `The statement on Wikidata`, url: `https://www.wikidata.org/wiki/${link.statementOn}#${link.prop}` }],
+        explanation: `A Wikidata statement links ${e.title.en} to ${link.label} as "${link.relation}". ${link.references ? `It gives ${link.references} reference${link.references > 1 ? "s" : ""}.` : "It gives no reference, so treat it with care."} The other options are records from this lesson that no statement connects this way.`,
+        sources: [{ label: "The statement on Wikidata", url: `https://www.wikidata.org/wiki/${link.statementOn}#${link.prop}` }],
         note: "A documented link in crowd-edited data, not a TIMEWISE judgement.",
       });
       found = true;
       break;
     } catch (err) {
       if ((err as Error).name === "AbortError") throw err;
+      unreachable = true;
       gaps.push("Wikidata couldn't be reached, so the cause-and-consequence question was left out.");
       break;
     }
   }
-  if (!found && !gaps.length) gaps.push("Wikidata records no causes or effects for these events, so there's no cause-and-consequence question.");
+  if (!found && !unreachable) gaps.push("Wikidata records no causes or effects for these records, so there's no cause-and-consequence question.");
 
   return {
     ...base,
-    intro: `Four of the best-documented events from ${title.replace(" in the ", " in the ")}, each from a different country. They're imported from Wikidata and not checked by hand, and "best-documented" favours famous topics.`,
+    intro: `Assembled automatically from ${spec.why}. Imported from Wikidata, not checked by hand; "written about in more languages" favours famous topics.`,
     cards,
     activities,
     gaps,

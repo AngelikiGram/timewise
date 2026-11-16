@@ -4,6 +4,7 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { StoryCard } from "@/components/StoryCard";
 import { ReviewBadge } from "@/components/ui";
 import { STORIES } from "@/lib/stories";
+import { JourneyCatalog } from "@/components/lessons/JourneyCatalog";
 
 export const metadata: Metadata = { title: "Stories · TIMEWISE", description: "Guided journeys and detective cases, built on sourced claims." };
 
@@ -32,8 +33,13 @@ export default function StoriesPage() {
             </div>
           </li>
         </ul>
+        <section className="mt-14" aria-labelledby="journeys">
+          <h2 id="journeys" className="font-serif text-3xl">Short journeys</h2>
+          <p className="mt-1 max-w-2xl text-ink-2">Three-minute lessons with a map, a timeline and a few questions. Most are assembled automatically from imported records and labelled that way.</p>
+          <div className="mt-4"><JourneyCatalog /></div>
+        </section>
         <p className="mt-10 text-sm text-ink-2">
-          New stories need sourced claims before they can be published, so the library grows slowly. <Link href="/about" className="link">How stories are made</Link>.
+          Authored stories need sourced claims before they can be published, so that library grows slowly. <Link href="/about" className="link">How stories are made</Link>.
         </p>
       </main>
     </>

@@ -2,10 +2,11 @@
 
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { CHECKED_PATH, lessonHref, PATHS, pathById, SKILLS, type PathDef, type Skill } from "@/lib/lessons";
-import { today, totalXp, useProgress, type Progress } from "@/lib/progress";
+import { today, toggleBookmark, totalXp, useProgress, type Progress } from "@/lib/progress";
 import { ReviewBadge } from "../ui";
+import { JourneyCatalog } from "./JourneyCatalog";
 
 const DAY = 86400000;
 const iso = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
@@ -69,6 +70,25 @@ function Skills({ p }: { p: Progress }) {
 }
 
 /** A winding path of lessons with milestones; any lesson can be opened, the suggested one stands out. */
+/** Save the journey to My Collection, or copy a link to it. */
+function PathActions({ path }: { path: PathDef }) {
+  const p = useProgress();
+  const id = `path:${path.id}`;
+  const [copied, setCopied] = useState(false);
+  const share = async () => {
+    const url = `${window.location.origin}${window.location.pathname}?path=${path.id}`;
+    try { await navigator.clipboard.writeText(url); setCopied(true); setTimeout(() => setCopied(false), 2500); } catch { window.prompt("Copy this link", url); }
+  };
+  return (
+    <div className="mt-2 flex flex-wrap gap-2">
+      <button type="button" className="btn btn-secondary btn-sm" aria-pressed={!!p.bookmarks[id]} onClick={() => toggleBookmark({ id, title: path.title, href: `/learn?path=${path.id}`, context: `${path.lessons.length} lessons` })} data-testid="save-journey">
+        {p.bookmarks[id] ? "Saved" : "Save journey"}
+      </button>
+      <button type="button" className="btn btn-ghost btn-sm" onClick={share}>{copied ? "Link copied" : "Share"}</button>
+    </div>
+  );
+}
+
 function PathMap({ path, p }: { path: PathDef; p: Progress }) {
   const suggested = path.lessons.find((l) => !p.lessons[l.id]?.finished)?.id;
   const done = path.lessons.filter((l) => p.lessons[l.id]?.finished).length;
@@ -76,9 +96,14 @@ function PathMap({ path, p }: { path: PathDef; p: Progress }) {
     <section aria-labelledby="path-title" data-testid="path-map">
       <div className="flex flex-wrap items-end justify-between gap-2">
         <div>
-          <p className="eyebrow">{path.kind === "question" ? "A question" : path.kind === "region" ? "A region" : "A period"}</p>
+          <p className="eyebrow">{{ question: "A question", region: "A region", period: "A period", topic: "A topic", place: "A place" }[path.kind]} · {path.difficulty}</p>
           <h2 id="path-title" className="mt-1 font-serif text-3xl leading-tight">{path.title}</h2>
           <p className="mt-1 max-w-xl text-ink-2">{path.blurb}</p>
+          <details className="mt-1 max-w-xl text-sm text-ink-2">
+            <summary className="cursor-pointer hover:text-ink">How these records were chosen</summary>
+            <p className="mt-1">{path.why}</p>
+          </details>
+          <PathActions path={path} />
         </div>
         <div className="text-right">
           <ReviewBadge level={path.review === "source_checked" ? "source_checked" : "imported"} />
@@ -129,11 +154,6 @@ export function LearnHome() {
   const step = useMemo(() => nextStep(p), [p]);
   const reviewable = p.mistakes.filter((m) => m.activity).length;
   const started = Object.keys(p.lessons).length > 0;
-  const groups: { label: string; kind: PathDef["kind"] }[] = [
-    { label: "By question", kind: "question" },
-    { label: "By region", kind: "region" },
-    { label: "By period", kind: "period" },
-  ];
 
   return (
     <div className="mx-auto max-w-6xl px-4 pb-16 pt-8 sm:px-6">
@@ -170,32 +190,12 @@ export function LearnHome() {
         </aside>
       </div>
 
-      <section className="mt-14" aria-labelledby="choose">
-        <h2 id="choose" className="font-serif text-3xl">Choose a path</h2>
-        <p className="mt-1 max-w-2xl text-ink-2">
-          The question path is checked by hand against sources. Region and period paths use imported Wikidata records: real, but unreviewed, and they favour well-documented topics. No path covers everything.
-        </p>
-        {groups.map((g) => (
-          <div key={g.kind} className="mt-6">
-            <h3 className="text-sm font-semibold uppercase tracking-wider text-ink-2">{g.label}</h3>
-            <ul className="mt-2 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {PATHS.filter((x) => x.kind === g.kind).map((x) => {
-                const done = x.lessons.filter((l) => p.lessons[l.id]?.finished).length;
-                return (
-                  <li key={x.id}>
-                    <button type="button" onClick={() => { router.push(`/learn?path=${x.id}`, { scroll: false }); document.getElementById("path-title")?.scrollIntoView({ behavior: "smooth", block: "start" }); }} aria-current={x.id === path.id ? "true" : undefined} className={`card card-link block h-full w-full p-4 text-left ${x.id === path.id ? "border-bronze" : ""}`} data-testid="path-card">
-                      <span className="flex items-start justify-between gap-2">
-                        <span className="font-serif text-lg leading-tight">{x.title}</span>
-                        <span className={`badge shrink-0 ${x.review === "source_checked" ? "" : "border-dashed"}`}>{x.review === "source_checked" ? "Checked" : "Imported"}</span>
-                      </span>
-                      <span className="mt-1 block text-sm text-ink-2">{x.lessons.length} lessons · {done} done</span>
-                    </button>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-        ))}
+      <section className="mt-14" aria-labelledby="choose" id="choose-section">
+        <h2 id="choose" className="font-serif text-3xl">Choose a journey</h2>
+        <p className="mt-1 max-w-2xl text-ink-2">By question, topic, period, region or place. No journey covers everything.</p>
+        <div className="mt-4">
+          <JourneyCatalog current={path.id} onPick={(id) => { router.push(`/learn?path=${id}`, { scroll: false }); document.getElementById("path-title")?.scrollIntoView({ behavior: "smooth", block: "start" }); }} />
+        </div>
       </section>
 
       <section className="mt-14 grid gap-4 md:grid-cols-2">

@@ -12,11 +12,13 @@ test("the five sections are reachable, and the current one is marked", async ({ 
 
 test("search says where it looks, and finds world records", async ({ page }) => {
   await page.goto("/");
-  await expect(page.getByRole("main").getByTestId("search-scope")).toHaveValue("all");
+  await expect(page.getByRole("main").getByTestId("search-scope")).toHaveValue("indexed");
+  await expect(page.getByRole("main").getByTestId("search-scope").locator("option")).not.toContainText(["Everything"]);
   await mainSearch(page).fill("Waterloo");
   await expect(page.getByRole("main").getByTestId("search-results")).toContainText("Battle of Waterloo", { timeout: 15000 });
+  await expect(page.getByRole("main").getByTestId("search-status")).toContainText("in indexed records");
   await page.getByRole("main").getByTestId("search-scope").selectOption("checked");
-  await expect(page.getByRole("main").getByText(/Nothing in the checked collection matches/)).toBeVisible();
+  await expect(page.getByRole("main").getByTestId("search-status")).toContainText("No results in checked only");
 });
 
 test("a multi-country war is labelled as multiple regions, not one country", async ({ page }) => {

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { collection, eventsByDate, formatWhen } from "@/lib/collection";
+import { dedupe, type MergedRef } from "@/lib/dedupe";
 import { fold } from "@/lib/search";
 import { useAppearance, type Appearance } from "./ThemeToggle";
 import { applyBasemapPalette, PALETTE, STYLE_URL } from "./AtlasMap";
@@ -46,7 +47,21 @@ type Item = {
   nopin?: boolean;
   titleYear?: number;
   incept?: boolean;
+  /** Other records merged into this display entry (Wikidata twins, or the imported record of a checked event). */
+  also?: MergedRef[];
 };
+
+/** Why a record is on a country map: it happened inside, it is tied to the country but located elsewhere, it spans several countries, or it has no location. */
+export type Scope = "here" | "associated" | "multi" | "unlocated";
+export const scopeOf = (e: Pick<Item, "multi" | "inside" | "lng">): Scope => (e.multi ? "multi" : e.lng === undefined ? "unlocated" : e.inside === false ? "associated" : "here");
+const SCOPE_LABEL: Record<Scope, string> = { here: "Happened here", associated: "Linked, but located elsewhere", multi: "Spans several countries", unlocated: "No location" };
+const SCOPE_HELP: Record<Scope, string> = {
+  here: "The record’s location lies inside today’s borders.",
+  associated: "Wikidata ties it to this country (often through an earlier state), but its location is outside today’s borders.",
+  multi: "Wikidata ties it to five or more countries, so it isn’t pinned to one point.",
+  unlocated: "Wikidata gives no location, so it can’t be placed.",
+};
+const LOC_LABEL: Record<string, string> = { event: "exact point", place: "at its named place", area: "centre of an area" };
 
 const colorOf = (theme: Appearance, category: string) => CATEGORY_COLORS[theme][category] ?? PALETTE[theme].marker;
 const PAGE = 80;
@@ -109,7 +124,8 @@ export function HistoryAtlas({ region, regions }: { region: Region; regions: Reg
   const [range, setRange] = useState<[number, number] | null>(null);
   const [categories, setCategories] = useState<string[]>([]);
   const [source, setSource] = useState<"all" | "checked">("all");
-  const [insideOnly, setInsideOnly] = useState(false);
+  const [scopes, setScopes] = useState<Scope[]>(["here"]);
+  const [stack, setStack] = useState<Item[] | null>(null);
   const [inView, setInView] = useState(false);
   const [bounds, setBounds] = useState<[number, number, number, number] | null>(null);
   const [sort, setSort] = useState<"date" | "notable">("date");
@@ -140,6 +156,8 @@ export function HistoryAtlas({ region, regions }: { region: Region; regions: Reg
     if (q.has("from") && q.has("to") && Number.isFinite(from) && Number.isFinite(to)) setRange([Math.min(from, to), Math.max(from, to)]);
     const cats = q.get("cat")?.split(",").filter((c) => CATEGORY_LABELS[c]);
     if (cats?.length) setCategories(cats);
+    const sc = q.get("scope")?.split(",").filter((x): x is Scope => x in SCOPE_LABEL);
+    if (sc?.length) setScopes(sc);
     markExplored(region.id, region.label.en, region.id === "world" ? "/atlas" : `/atlas/${region.id}`);
   }, [region.id, region.label.en]);
   const hydrated = useRef(false);
@@ -150,8 +168,10 @@ export function HistoryAtlas({ region, regions }: { region: Region; regions: Reg
     else { url.searchParams.delete("from"); url.searchParams.delete("to"); }
     if (categories.length) url.searchParams.set("cat", categories.join(","));
     else url.searchParams.delete("cat");
+    if (scopes.length === 1 && scopes[0] === "here") url.searchParams.delete("scope");
+    else url.searchParams.set("scope", scopes.join(","));
     window.history.replaceState(window.history.state, "", url);
-  }, [range, categories]);
+  }, [range, categories, scopes]);
   useEffect(() => {
     setYearFrom(range ? String(range[0]) : "");
     setYearTo(range ? String(range[1]) : "");
@@ -180,8 +200,8 @@ export function HistoryAtlas({ region, regions }: { region: Region; regions: Reg
 
   const all = useMemo(() => {
     const checked = region.id === collection.region.id || region.id === "europe" || isWorld ? checkedAsItems() : [];
-    const ids = new Set(checked.map((c) => c.id));
-    return [...checked, ...(imported ?? []).filter((e) => !ids.has(e.id))].sort(byDate);
+    // One entry per event: Wikidata twins and the imported records of checked events are merged, with provenance kept.
+    return dedupe([...checked, ...(imported ?? [])]).sort(byDate);
   }, [imported, region.id, isWorld]);
 
   /** On a country map, a multi-country event is pinned only in its own country; elsewhere it is list-only. */
@@ -189,8 +209,9 @@ export function HistoryAtlas({ region, regions }: { region: Region; regions: Reg
 
   const beforeRange = useMemo(() => {
     const q = fold(query.trim());
-    return all.filter((e) => (source === "all" || e.checked) && (!insideOnly || e.inside) && (!categories.length || categories.includes(e.category)) && (!q || fold(`${e.title.en} ${e.title.de ?? ""} ${e.description ?? ""}`).includes(q)));
-  }, [all, source, insideOnly, categories, query]);
+    return all.filter((e) => (source === "all" || e.checked) && (!isCountry || scopes.includes(scopeOf(e))) && (!categories.length || categories.includes(e.category)) && (!q || fold(`${e.title.en} ${e.title.de ?? ""} ${e.description ?? ""}`).includes(q)));
+  }, [all, source, isCountry, scopes, categories, query]);
+  const scopeCounts = useMemo(() => { const c: Record<Scope, number> = { here: 0, associated: 0, multi: 0, unlocated: 0 }; for (const e of all) c[scopeOf(e)]++; return c; }, [all]);
   const filtered = useMemo(() => {
     if (!range) return beforeRange;
     return beforeRange.filter((e) => { const [a, b] = spanOf(e); return b >= range[0] && a <= range[1]; });
@@ -227,6 +248,11 @@ export function HistoryAtlas({ region, regions }: { region: Region; regions: Reg
     return out;
   }, [view, bucket, range, filtered, beforeRange]);
   const maxBar = Math.max(1, ...bars.map((b) => b.count));
+  /** Record marks under the bars once the range is narrow enough to tell them apart: the best documented first. */
+  const marks = useMemo(() => {
+    if (!view || view[1] - view[0] > 120) return [];
+    return [...filtered].filter((e) => { const y = yearOf(e.start); return y >= view[0] && y <= view[1]; }).sort((a, b) => (b.checked ? 1e6 : b.links ?? 0) - (a.checked ? 1e6 : a.links ?? 0)).slice(0, 40);
+  }, [view, filtered]);
   const usedCategories = useMemo(() => [...new Set(all.map((e) => e.category))].sort((a, b) => CATEGORY_ORDER.indexOf(a) - CATEGORY_ORDER.indexOf(b)), [all]);
   const onMap = filtered.filter(pinned).length;
 
@@ -296,6 +322,10 @@ export function HistoryAtlas({ region, regions }: { region: Region; regions: Reg
         m.addLayer({ id: "h-glyphs", type: "symbol", source: "h", filter: single, minzoom: 5.5, layout: {
           "text-field": ["get", "glyph"], "text-font": ["Noto Sans Regular"], "text-size": ["interpolate", ["linear"], ["zoom"], 6, 8, 10, 10], "text-allow-overlap": true, "text-ignore-placement": true,
         } });
+        // "+2": more records at exactly this spot, so the overlap is visible.
+        m.addLayer({ id: "h-stack", type: "symbol", source: "h", filter: ["all", single, [">", ["get", "stack"], 1]], layout: {
+          "text-field": ["concat", "+", ["to-string", ["-", ["get", "stack"], 1]]], "text-font": ["Noto Sans Regular"], "text-size": 11, "text-offset": [1.1, -1.1], "text-allow-overlap": true, "text-ignore-placement": true,
+        }, paint: { "text-halo-width": 2 } });
         m.addLayer({ id: "h-selected", type: "circle", source: "h", filter: ["==", ["get", "id"], ""], paint: { "circle-radius": 15, "circle-color": "rgba(0,0,0,0)", "circle-stroke-width": 3 } });
         for (const [id, minzoom, minLinks] of LABEL_TIERS) {
           m.addLayer({ id, type: "symbol", source: "h", minzoom, filter: ["all", single, [">=", ["get", "links"], minLinks]], layout: {
@@ -309,13 +339,22 @@ export function HistoryAtlas({ region, regions }: { region: Region; regions: Reg
         m.on("click", "h-clusters", async (e) => {
           const f = e.features?.[0];
           if (!f) return;
-          const zoom = await (m.getSource("h") as GeoJSONSource).getClusterExpansionZoom(f.properties.cluster_id);
+          const src = m.getSource("h") as GeoJSONSource;
+          const zoom = await src.getClusterExpansionZoom(f.properties.cluster_id);
+          // Records at one spot never separate by zooming: list them instead.
+          if (zoom > 16) {
+            const leaves = await src.getClusterLeaves(f.properties.cluster_id, 200, 0);
+            stackRef.current(leaves.map((l) => itemsRef.current.get(l.properties?.id)).filter(Boolean) as Item[]);
+            return;
+          }
           m.easeTo({ center: (f.geometry as GeoJSON.Point).coordinates as [number, number], zoom: zoom + 0.2 });
         });
         m.on("click", "h-points", (e) => {
-          const id = e.features?.[0]?.properties.id;
-          const item = id && itemsRef.current.get(id);
-          if (item) selectRef.current(item, false);
+          // Everything drawn under the pointer, so overlapping records can each be chosen.
+          const box: [[number, number], [number, number]] = [[e.point.x - 6, e.point.y - 6], [e.point.x + 6, e.point.y + 6]];
+          const ids = [...new Set(m.queryRenderedFeatures(box, { layers: ["h-points"] }).map((f) => f.properties.id as string))];
+          const items = ids.map((id) => itemsRef.current.get(id)).filter(Boolean) as Item[];
+          if (items.length) stackRef.current(items);
         });
         for (const layer of ["h-points", "h-clusters"]) {
           m.on("mouseenter", layer, () => { m.getCanvas().style.cursor = "pointer"; });
@@ -366,6 +405,8 @@ export function HistoryAtlas({ region, regions }: { region: Region; regions: Reg
     m.setPaintProperty("h-clusters", "circle-stroke-color", p.halo);
     m.setPaintProperty("h-cluster-count", "text-color", p.markerStroke);
     m.setPaintProperty("h-selected", "circle-stroke-color", p.accent);
+    m.setPaintProperty("h-stack", "text-color", theme === "dark" ? "#ebe4d4" : "#2a2418");
+    m.setPaintProperty("h-stack", "text-halo-color", p.halo);
     for (const [id] of LABEL_TIERS) {
       m.setPaintProperty(id, "text-color", theme === "dark" ? "#ebe4d4" : "#2a2418");
       m.setPaintProperty(id, "text-halo-color", p.halo);
@@ -383,11 +424,15 @@ export function HistoryAtlas({ region, regions }: { region: Region; regions: Reg
   useEffect(() => {
     const m = mapRef.current;
     if (!ready || !m) return;
+    const onMap = filtered.filter(pinned);
+    const spot = (e: Item) => `${e.lng!.toFixed(4)},${e.lat!.toFixed(4)}`;
+    const perSpot = new Map<string, number>();
+    for (const e of onMap) perSpot.set(spot(e), (perSpot.get(spot(e)) ?? 0) + 1);
     (m.getSource("h") as GeoJSONSource).setData({
       type: "FeatureCollection",
-      features: filtered.filter(pinned).map((e) => ({
+      features: onMap.map((e) => ({
         type: "Feature",
-        properties: { id: e.id, category: e.category, glyph: CATEGORY_GLYPH[e.category] ?? "", title: e.title.en ?? e.title.de ?? "", links: e.checked ? 40 : e.links ?? 0, inside: e.inside !== false },
+        properties: { stack: perSpot.get(spot(e)) ?? 1, id: e.id, category: e.category, glyph: CATEGORY_GLYPH[e.category] ?? "", title: e.title.en ?? e.title.de ?? "", links: e.checked ? 40 : e.links ?? 0, inside: e.inside !== false },
         geometry: { type: "Point", coordinates: [e.lng!, e.lat!] },
       })),
     });
@@ -420,6 +465,7 @@ export function HistoryAtlas({ region, regions }: { region: Region; regions: Reg
   // The selected event is in the URL, so it can be shared, and back and forward move between events.
   const select = (item: Item, fly = true) => {
     setSelected(item);
+    setStack(null);
     setDrawer(false);
     setSheetFull(false);
     remember({ id: item.id, title: item.title.en ?? item.title.de ?? "", href: hrefFor(item), context: region.label.en, start: item.start });
@@ -438,6 +484,15 @@ export function HistoryAtlas({ region, regions }: { region: Region; regions: Reg
   };
   const selectRef = useRef(select);
   selectRef.current = select;
+  /** Several distinct records under one click: offer them as a list instead of picking one silently. */
+  const showStack = (items: Item[]) => {
+    if (items.length === 1) return select(items[0], false);
+    setSelected(null);
+    setStack(items);
+    setDrawer(false);
+  };
+  const stackRef = useRef(showStack);
+  stackRef.current = showStack;
   const closeEvent = () => {
     setSelected(null);
     const url = new URL(window.location.href);
@@ -552,13 +607,26 @@ export function HistoryAtlas({ region, regions }: { region: Region; regions: Reg
           ))}
         </div>
       </div>
+      {isCountry && (
+        <fieldset data-testid="scope-filter">
+          <legend className="text-xs font-semibold uppercase tracking-wider text-ink-2">What to include</legend>
+          <div className="mt-1.5 grid gap-1">
+            {(Object.keys(SCOPE_LABEL) as Scope[]).map((sc) => (
+              <label key={sc} className="flex items-start gap-2 text-sm" title={SCOPE_HELP[sc]}>
+                <input type="checkbox" className="mt-1 accent-[var(--bronze)]" checked={scopes.includes(sc)} onChange={() => setScopes(scopes.includes(sc) ? scopes.filter((x) => x !== sc) : [...scopes, sc])} />
+                <span><span className="font-medium">{SCOPE_LABEL[sc]}</span> <span className="tabular-nums text-ink-2">{scopeCounts[sc].toLocaleString("en")}</span><span className="block text-xs text-ink-2">{SCOPE_HELP[sc]}</span></span>
+              </label>
+            ))}
+          </div>
+          <p className="mt-1 text-xs text-ink-2">Borders are today&rsquo;s, used to sort records, not to show where borders ran at the time.</p>
+        </fieldset>
+      )}
       <div className="flex flex-wrap gap-1.5">
         {all.some((e) => e.checked) && <button type="button" aria-pressed={source === "checked"} onClick={() => setSource(source === "all" ? "checked" : "all")} className="chip !min-h-8 !text-[0.8rem]">Hand-checked only</button>}
-        {isCountry && <button type="button" aria-pressed={insideOnly} title={region.note} onClick={() => setInsideOnly(!insideOnly)} className="chip !min-h-8 !text-[0.8rem]">Inside present-day {region.label.en}</button>}
         <button type="button" aria-pressed={inView} onClick={() => setInView(!inView)} className="chip !min-h-8 !text-[0.8rem]">Only what&rsquo;s on the map</button>
       </div>
-      {(categories.length > 0 || source !== "all" || insideOnly || inView || query || range) && (
-        <button type="button" onClick={() => { setCategories([]); setSource("all"); setInsideOnly(false); setInView(false); setQuery(""); setRange(null); }} className="link text-sm">Clear all filters</button>
+      {(categories.length > 0 || source !== "all" || inView || query || range || scopes.join() !== "here") && (
+        <button type="button" onClick={() => { setCategories([]); setSource("all"); setScopes(["here"]); setInView(false); setQuery(""); setRange(null); }} className="link text-sm">Clear all filters</button>
       )}
     </div>
   );
@@ -587,6 +655,8 @@ export function HistoryAtlas({ region, regions }: { region: Region; regions: Reg
                   {e.checked && <span className="font-semibold text-navy">✓ Checked</span>}
                   {placeOf(e) && <span>· {placeOf(e)}</span>}
                   {!pinned(e) && !e.multi && <span>· not on the map</span>}
+                  {pinned(e) && e.loc && <span>· {LOC_LABEL[e.loc]}</span>}
+                  {e.also?.length ? <span>· merged from {e.also.length + 1} records</span> : null}
                   {e.titleYear !== undefined && <span className="font-semibold text-oxblood">· dates disagree</span>}
                 </span>
                 <span className="block font-serif text-[1.05rem] leading-snug">{e.title.en ?? e.title.de}</span>
@@ -618,27 +688,54 @@ export function HistoryAtlas({ region, regions }: { region: Region; regions: Reg
           <button type="button" onClick={() => setTimelineOpen(!timelineOpen)} aria-expanded={timelineOpen} className="btn btn-sm btn-ghost !min-h-8 lg:hidden">{timelineOpen ? "Less" : "More"}</button>
         </div>
       </div>
-      <div className="relative mt-1.5 flex h-14 items-end gap-px" role="group" aria-label="Narrow by period: each bar is a period">
+      <div className="relative mt-1.5 flex h-14 items-end gap-px" role="group" aria-label={`Records per ${bucket === 100 ? "century" : bucket === 10 ? "decade" : "year"} in this dataset. Choose a bar to ${bucket === 1 ? "list its records" : "zoom into it"}.`}>
         {bars.map((b) => {
           const on = selYear !== null && selYear >= b.bucket && selYear < b.bucket + bucket;
+          const chosen = range !== null && range[0] === b.bucket && range[1] === b.bucket + bucket - 1;
+          const bar = (
+            <span className={`flex w-full flex-col-reverse overflow-hidden rounded-t-sm ${on ? "outline outline-2 outline-offset-1 outline-oxblood" : ""}`} style={{ height: `${b.count ? Math.max(6, Math.sqrt(b.count / maxBar) * 100) : 2}%` }}>
+              {b.count ? b.byCat.map(([c, n]) => <span key={c} className="block w-full" style={{ flexGrow: n, background: colorOf(theme, c) }} />) : <span className="block h-full w-full bg-line" />}
+            </span>
+          );
+          const label = `${bucketLabel(b.bucket, bucket)}: ${b.count.toLocaleString("en")} record${b.count === 1 ? "" : "s"} in this dataset`;
+          // An empty period isn't a control, so it isn't drawn as one.
+          if (!b.count) return <span key={b.bucket} aria-hidden className="flex h-full min-w-0 flex-1 items-end">{bar}</span>;
           return (
             <button
               key={b.bucket}
               type="button"
-              disabled={!b.count || bucket === 1}
               data-century={bucket === 100 ? b.bucket : undefined}
-              aria-label={`${bucketLabel(b.bucket, bucket)}: ${b.count} events`}
-              title={`${bucketLabel(b.bucket, bucket)}: ${b.count.toLocaleString("en")} events`}
-              onClick={() => setRange([b.bucket, b.bucket + bucket - 1])}
-              className="group relative flex h-full min-w-0 flex-1 items-end disabled:cursor-default"
+              data-bucket={b.bucket}
+              aria-label={`${label}. ${bucket === 1 ? "List them" : "Zoom in"}.`}
+              aria-pressed={chosen}
+              title={`${label} (not a measure of how eventful it was). ${bucket === 1 ? "Click to list them." : "Click to zoom in."}`}
+              onClick={() => { setRange([b.bucket, b.bucket + bucket - 1]); if (bucket === 1) setDrawer(true); }}
+              className={`group relative flex h-full min-w-0 flex-1 cursor-pointer items-end rounded-t-sm outline-none hover:bg-paper-3 focus-visible:ring-2 focus-visible:ring-bronze ${chosen ? "bg-bronze-soft/50" : ""}`}
             >
-              <span className={`flex w-full flex-col-reverse overflow-hidden rounded-t-sm group-hover:opacity-80 ${on ? "outline outline-2 outline-offset-1 outline-oxblood" : ""}`} style={{ height: `${b.count ? Math.max(6, Math.sqrt(b.count / maxBar) * 100) : 2}%` }}>
-                {b.count ? b.byCat.map(([c, n]) => <span key={c} className="block w-full" style={{ flexGrow: n, background: colorOf(theme, c) }} />) : <span className="block h-full w-full bg-line" />}
-              </span>
+              {bar}
             </button>
           );
         })}
       </div>
+      {marks.length > 0 && (
+        <div className="relative mt-1 h-5" role="group" aria-label="The best-documented records in this range: choose one to open it" data-testid="timeline-records">
+          {marks.map((e) => {
+            const x = ((yearOf(e.start) - view![0]) / Math.max(1, view![1] - view![0] + 1)) * 100;
+            return (
+              <button
+                key={e.id}
+                type="button"
+                onClick={() => select(e)}
+                aria-label={`${e.title.en ?? e.title.de}, ${dateOf(e)}`}
+                title={`${e.title.en ?? e.title.de} · ${dateOf(e)}`}
+                aria-pressed={selected?.id === e.id}
+                className={`absolute top-0 h-5 w-2 -translate-x-1/2 cursor-pointer rounded-sm outline-none hover:scale-y-125 focus-visible:ring-2 focus-visible:ring-bronze ${selected?.id === e.id ? "bg-oxblood" : ""}`}
+                style={{ left: `${Math.min(99.5, Math.max(0.5, x))}%`, background: selected?.id === e.id ? undefined : colorOf(theme, e.category) }}
+              />
+            );
+          })}
+        </div>
+      )}
       {bars.length > 0 && <div className="mt-0.5 flex justify-between text-xs tabular-nums text-ink-2"><span>{bucketLabel(bars[0].bucket, bucket)}</span>{selYear !== null && <span className="font-semibold text-oxblood">Selected: {formatYear(selYear)}</span>}<span>{bucketLabel(bars[bars.length - 1].bucket, bucket)}</span></div>}
       <div className={`${timelineOpen ? "flex" : "hidden"} mt-2 flex-wrap items-center gap-1.5 lg:flex`}>
         {PRESETS.map((p) => (
@@ -653,7 +750,7 @@ export function HistoryAtlas({ region, regions }: { region: Region; regions: Reg
           <button type="submit" className="btn btn-sm btn-secondary !min-h-8">Go</button>
         </form>
       </div>
-      <p className={`${timelineOpen ? "block" : "hidden"} mt-1 text-xs text-ink-2 lg:block`}>Negative years are BC. Click a bar to zoom into it.</p>
+      <p className={`${timelineOpen ? "block" : "hidden"} mt-1 text-xs text-ink-2 lg:block`}>Negative years are BC. A bar counts records in this dataset, not how eventful history was: click one to zoom in, or at single years to list its records. Marks below the bars are records; click one to open it.</p>
     </div>
   );
 
@@ -764,6 +861,27 @@ export function HistoryAtlas({ region, regions }: { region: Region; regions: Reg
         </main>
 
         {/* Right: the selected event (a bottom sheet on phones) */}
+        {stack && !selected && !focus && (
+          <aside aria-label="Records at this spot" data-testid="atlas-stack" className="sheet fixed inset-x-0 bottom-0 z-30 flex max-h-[60dvh] flex-col rounded-t-2xl border-t border-line bg-paper shadow-[0_-12px_40px_-12px_rgb(0_0_0/0.4)] lg:static lg:z-auto lg:max-h-none lg:w-[440px] lg:shrink-0 lg:rounded-none lg:border-l lg:border-t-0 lg:shadow-none">
+            <div className="flex items-start justify-between gap-2 border-b border-line px-4 py-3">
+              <div>
+                <p className="font-serif text-xl">{stack.length} records here</p>
+                <p className="text-xs text-ink-2">Different records drawn at the same spot, often because Wikidata gives only the town or area. Choose one.</p>
+              </div>
+              <button type="button" className="btn btn-ghost btn-icon" onClick={() => setStack(null)} aria-label="Close the list">✕</button>
+            </div>
+            <ul className="min-h-0 flex-1 overflow-y-auto">
+              {[...stack].sort(byDate).map((e) => (
+                <li key={e.id} className="border-b border-line">
+                  <button type="button" onClick={() => select(e, false)} className="flex w-full gap-3 px-4 py-2.5 text-left hover:bg-paper-3">
+                    <span className="pt-1">{dot(e.category, e.inside === false)}</span>
+                    <span className="min-w-0 flex-1"><span className="block text-xs text-ink-2">{dateOf(e)}</span><span className="block font-serif leading-snug">{e.title.en ?? e.title.de}</span></span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </aside>
+        )}
         {selected && !focus && (
           <aside
             aria-label="Selected event"

@@ -21,9 +21,9 @@ test("a place from the checked collection links to its sourced events, labelled 
 test("every link says why, and branching builds a shareable path", async ({ page }) => {
   await page.goto("/connections?id=Q2269"); // Industrial Revolution
   await expect(page.getByTestId("record-card")).toContainText("Industrial Revolution", { timeout: 30000 });
-  const documented = page.locator('[data-testid="network-graph"] [data-documented="true"]').first();
+  const documented = page.locator('[data-testid="connection-cards"] [data-card][data-documented="true"]').first();
   await expect(documented).toBeVisible();
-  await documented.dispatchEvent("click");
+  await documented.getByRole("button", { name: /^Why is/ }).click();
   const detail = page.getByTestId("link-detail");
   await expect(detail).toContainText("Why they’re connected");
   await expect(detail).toContainText("Documented");
@@ -38,13 +38,13 @@ test("every link says why, and branching builds a shareable path", async ({ page
 
 test("contextual links are drawn and explained differently from documented ones", async ({ page }) => {
   await page.goto("/connections?id=Q2269");
-  const contextual = page.locator('[data-testid="network-graph"] [data-documented="false"]').first();
+  const contextual = page.locator('[data-testid="connection-cards"] [data-card][data-documented="false"]').first();
   await expect(contextual).toBeVisible({ timeout: 30000 });
-  await contextual.dispatchEvent("click");
+  await contextual.getByRole("button", { name: /^Why is/ }).click();
   await expect(page.getByTestId("link-detail")).toContainText("Contextual");
   await expect(page.getByTestId("link-detail")).toContainText("No relationship between them is documented");
   await page.getByLabel("Contextual links").uncheck();
-  await expect(page.locator('[data-testid="network-graph"] [data-documented="false"]')).toHaveCount(0);
+  await expect(page.locator('[data-testid="connection-cards"] [data-card][data-documented="false"]')).toHaveCount(0);
 });
 
 test("the timeline and map views use the same links", async ({ page }) => {
@@ -67,4 +67,26 @@ test("without Wikidata, the explorer says so and offers to retry", async ({ page
 test("an imported event leads into the explorer", async ({ page }) => {
   await page.goto("/atlas/austria?event=Q178510");
   await expect(page.getByTestId("explore-connections")).toHaveAttribute("href", /\/connections\?id=Q178510/, { timeout: 20000 });
+});
+
+test("choosing a card steps to it, and Back returns one step", async ({ page }) => {
+  await page.goto("/connections?id=Q2269");
+  const card = page.locator('[data-testid="connection-cards"] [data-card][data-documented="true"]').first();
+  await expect(card).toBeVisible({ timeout: 30000 });
+  const target = await card.getAttribute("data-card");
+  await card.locator("button").first().click();
+  await expect(page).toHaveURL(new RegExp(`id=${target}`));
+  await expect(page.getByTestId("focus-card")).toBeVisible({ timeout: 30000 });
+  await page.getByRole("button", { name: "Back one step" }).click();
+  await expect(page).toHaveURL(/id=Q2269/);
+  await expect(page.getByTestId("focus-card")).toContainText("Industrial Revolution", { timeout: 30000 });
+});
+
+test("cards don't overflow or clip on a phone", async ({ page }, info) => {
+  test.skip(info.project.name !== "mobile", "phone layout");
+  await page.goto("/connections?id=Q2269");
+  await expect(page.getByTestId("focus-card")).toBeVisible({ timeout: 30000 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(0);
+  const clipped = await page.locator("[data-card]").evaluateAll((els) => els.filter((e) => e.scrollWidth > e.clientWidth + 1).length);
+  expect(clipped).toBe(0);
 });

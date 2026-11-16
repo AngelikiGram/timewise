@@ -35,7 +35,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <link key={i} rel={link.rel} as={link.as} href={link.href} crossOrigin={link.crossOrigin} />
         ))}
       </head>
-      <body className="antialiased">{children}</body>
+      <body className="antialiased lg:pl-[88px]">{children}</body>
     </html>
   );
 }

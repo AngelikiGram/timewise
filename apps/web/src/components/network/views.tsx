@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { formatYear } from "@/lib/dates";
 import { asset } from "@/lib/paths";
 import { GROUPS, yearOfIso, type Link, type NodeFacts, type RecordData } from "@/lib/record";
-import { GROUP_ORDER } from "./NetworkGraph";
+import { GROUP_ORDER } from "./ConnectionCards";
 
 function useWidth<T extends HTMLElement>() {
   const ref = useRef<T>(null);

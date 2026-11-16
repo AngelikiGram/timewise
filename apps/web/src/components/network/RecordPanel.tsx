@@ -5,7 +5,7 @@ import { useMemo, useState } from "react";
 import { formatYear } from "@/lib/dates";
 import { GROUPS, KIND_LABEL, propertyUrl, statementUrl, type Link as RecordLink, type NodeFacts, type RecordData } from "@/lib/record";
 import { CreditedImage, SaveButton } from "../ui";
-import { GROUP_ORDER } from "./NetworkGraph";
+import { GROUP_ORDER } from "./ConnectionCards";
 
 const explorerHref = (id: string) => `/connections?id=${id}`;
 

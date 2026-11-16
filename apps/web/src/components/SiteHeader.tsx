@@ -7,6 +7,7 @@ import { BASE_PATH } from "@/lib/paths";
 import { useProgress } from "@/lib/progress";
 import { SearchBox } from "./SearchBox";
 import { ThemeToggle } from "./ThemeToggle";
+import { Icon, type IconName } from "./icons";
 
 export function Wordmark() {
   return (
@@ -18,12 +19,12 @@ export function Wordmark() {
 
 /** The sections, and the older addresses that belong to each. */
 export const SECTIONS = [
-  { id: "discover", label: "Discover", href: "/", match: (p: string) => p === "/" },
-  { id: "learn", label: "Learn", href: "/learn", match: (p: string) => p.startsWith("/learn") || p.startsWith("/challenges") },
-  { id: "explore", label: "Explore", href: "/connections", match: (p: string) => p.startsWith("/connections") },
-  { id: "map", label: "World Map", href: "/atlas", match: (p: string) => p.startsWith("/atlas") || p.startsWith("/history") || p.startsWith("/explore") },
-  { id: "stories", label: "Stories", href: "/stories", match: (p: string) => p.startsWith("/stories") || p.startsWith("/journey") },
-  { id: "collection", label: "My Collection", href: "/collection", match: (p: string) => p.startsWith("/collection") },
+  { id: "discover", icon: "compass" as IconName, label: "Discover", href: "/", match: (p: string) => p === "/" },
+  { id: "learn", icon: "book" as IconName, label: "Learn", href: "/learn", match: (p: string) => p.startsWith("/learn") || p.startsWith("/challenges") },
+  { id: "explore", icon: "network" as IconName, label: "Explore", href: "/connections", match: (p: string) => p.startsWith("/connections") },
+  { id: "map", icon: "map" as IconName, label: "World Map", href: "/atlas", match: (p: string) => p.startsWith("/atlas") || p.startsWith("/history") || p.startsWith("/explore") },
+  { id: "stories", icon: "timeline" as IconName, label: "Stories", href: "/stories", match: (p: string) => p.startsWith("/stories") || p.startsWith("/journey") },
+  { id: "collection", icon: "bookmark" as IconName, label: "My Collection", href: "/collection", match: (p: string) => p.startsWith("/collection") },
 ] as const;
 
 export function currentSection(pathname: string) {
@@ -32,7 +33,7 @@ export function currentSection(pathname: string) {
   return SECTIONS.find((s) => s.match(path))?.id;
 }
 
-export function SiteHeader({ children }: { children?: React.ReactNode }) {
+export function SiteHeader({ children, search = true }: { children?: React.ReactNode; search?: boolean }) {
   const pathname = usePathname() ?? "/";
   const active = currentSection(pathname);
   const [searching, setSearching] = useState(false);
@@ -40,25 +41,27 @@ export function SiteHeader({ children }: { children?: React.ReactNode }) {
   const saved = Object.keys(progress.bookmarks).length;
 
   return (
-    <header className="sticky top-0 z-30 shrink-0 border-b border-line bg-paper-2/95 backdrop-blur">
+    <header className="sticky top-0 z-30 shrink-0 border-b border-line bg-paper-2/95 backdrop-blur lg:-ml-[88px] lg:w-[calc(100%+88px)]">
       <div className="flex h-14 items-center gap-3 px-4 sm:px-6">
         <Wordmark />
-        <nav aria-label="Main" className="ml-2 hidden items-center gap-1 lg:flex">
+        {/* On wide screens the sections sit in a quiet rail on the left, icon above label. */}
+        <nav aria-label="Main" className="fixed bottom-0 left-0 top-14 z-20 hidden w-[88px] flex-col gap-1 border-r border-line bg-paper-2 px-2 pt-4 lg:flex">
           {SECTIONS.map((s) => (
             <Link
               key={s.id}
               href={s.href}
               aria-current={active === s.id ? "page" : undefined}
-              className={`relative whitespace-nowrap rounded-md px-2.5 py-2 text-[0.95rem] xl:px-3 font-medium transition-colors hover:bg-paper-3 hover:text-ink ${active === s.id ? "text-ink after:absolute after:inset-x-2.5 after:-bottom-[9px] after:h-0.5 after:rounded-full after:bg-bronze" : "text-ink-2"}`}
+              className={`relative flex flex-col items-center gap-1 rounded-xl px-1 py-2.5 text-center text-xs font-medium leading-tight transition-colors ${active === s.id ? "bg-bronze text-paper shadow-sm" : "text-ink-2 hover:bg-paper-3 hover:text-ink"}`}
             >
+              <Icon name={s.icon} size={22} />
               {s.label}
-              {s.id === "collection" && saved > 0 && <span className="ml-1.5 rounded-full bg-paper-3 px-1.5 text-xs tabular-nums text-ink-2">{saved}</span>}
+              {s.id === "collection" && saved > 0 && <span className={`absolute right-1.5 top-1.5 rounded-full px-1.5 text-[10px] tabular-nums ${active === s.id ? "bg-paper/30" : "bg-paper-3"}`}>{saved}</span>}
             </Link>
           ))}
         </nav>
-        <div className="min-w-0 flex-1">{children}</div>
-        {!children && (
-          <div className="hidden w-full max-w-sm md:block">
+        <div className="min-w-0 flex-1 lg:flex-none">{children}</div>
+        {!children && search && (
+          <div className="hidden w-full max-w-xl md:block lg:mx-auto">
             <SearchBox size="compact" placeholder="Search history…" />
           </div>
         )}
@@ -67,11 +70,11 @@ export function SiteHeader({ children }: { children?: React.ReactNode }) {
           onClick={() => setSearching(!searching)}
           aria-expanded={searching}
           aria-label="Search"
-          className={`btn btn-ghost btn-icon md:hidden ${children ? "hidden" : ""}`}
+          className={`btn btn-ghost btn-icon ml-auto md:hidden ${children || !search ? "hidden" : ""}`}
         >
           <svg aria-hidden viewBox="0 0 20 20" className="h-5 w-5"><circle cx="8.5" cy="8.5" r="5.5" fill="none" stroke="currentColor" strokeWidth="1.8" /><path d="m13 13 4.5 4.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></svg>
         </button>
-        <ThemeToggle />
+        <div className="ml-auto md:ml-0 lg:ml-auto"><ThemeToggle /></div>
       </div>
       {searching && (
         <div className="border-t border-line px-4 py-2 md:hidden">

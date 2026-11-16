@@ -1,0 +1,420 @@
+{
+ "region": {
+  "europe": [
+   15,
+   16,
+   17,
+   18,
+   19
+  ],
+  "asia": [
+   15,
+   16,
+   17,
+   18,
+   19
+  ],
+  "africa": [
+   15,
+   16,
+   17,
+   18,
+   19
+  ],
+  "north_america": [
+   15,
+   16,
+   17,
+   18,
+   19
+  ],
+  "south_america": [
+   15,
+   16,
+   17,
+   18,
+   19
+  ],
+  "oceania": [
+   18,
+   19
+  ]
+ },
+ "topic": {
+  "war-europe": [
+   15,
+   16,
+   17,
+   18,
+   19
+  ],
+  "politics-europe": [
+   15,
+   16,
+   17,
+   18,
+   19
+  ],
+  "culture-europe": [
+   15,
+   16,
+   17,
+   18,
+   19
+  ],
+  "state-europe": [
+   15,
+   16,
+   17,
+   18,
+   19
+  ],
+  "war-asia": [
+   15,
+   16,
+   17,
+   18,
+   19
+  ],
+  "politics-asia": [
+   16,
+   17,
+   18,
+   19
+  ],
+  "culture-asia": [
+   16,
+   17,
+   18,
+   19
+  ],
+  "state-asia": [
+   15,
+   16,
+   17,
+   18,
+   19
+  ],
+  "war-africa": [
+   15,
+   16,
+   17,
+   18,
+   19
+  ],
+  "politics-africa": [
+   18,
+   19
+  ],
+  "culture-africa": [
+   18,
+   19
+  ],
+  "state-africa": [
+   15,
+   16,
+   18,
+   19
+  ],
+  "war-north_america": [
+   16,
+   17,
+   18,
+   19
+  ],
+  "politics-north_america": [
+   17,
+   18,
+   19
+  ],
+  "culture-north_america": [
+   17,
+   18,
+   19
+  ],
+  "state-north_america": [
+   18,
+   19
+  ],
+  "war-south_america": [
+   15,
+   18,
+   19
+  ],
+  "politics-south_america": [
+   17,
+   18,
+   19
+  ],
+  "culture-south_america": [
+   18,
+   19
+  ],
+  "state-south_america": [
+   18,
+   19
+  ],
+  "war-oceania": [
+   18,
+   19
+  ]
+ },
+ "place": {
+  "united_states": {
+   "label": "United States",
+   "centuries": [
+    16,
+    17,
+    18,
+    19,
+    20
+   ]
+  },
+  "germany": {
+   "label": "Germany",
+   "centuries": [
+    15,
+    16,
+    17,
+    18,
+    19,
+    20
+   ]
+  },
+  "france": {
+   "label": "France",
+   "centuries": [
+    15,
+    16,
+    17,
+    18,
+    19,
+    20
+   ]
+  },
+  "spain": {
+   "label": "Spain",
+   "centuries": [
+    15,
+    16,
+    17,
+    18,
+    19,
+    20
+   ]
+  },
+  "united_kingdom": {
+   "label": "United Kingdom",
+   "centuries": [
+    15,
+    16,
+    17,
+    18,
+    19,
+    20
+   ]
+  },
+  "italy": {
+   "label": "Italy",
+   "centuries": [
+    15,
+    16,
+    17,
+    18,
+    19,
+    20
+   ]
+  },
+  "india": {
+   "label": "India",
+   "centuries": [
+    15,
+    16,
+    17,
+    18,
+    19,
+    20
+   ]
+  },
+  "turkey": {
+   "label": "Turkey",
+   "centuries": [
+    15,
+    16,
+    17,
+    18,
+    19,
+    20
+   ]
+  },
+  "russia": {
+   "label": "Russia",
+   "centuries": [
+    15,
+    16,
+    17,
+    18,
+    19,
+    20
+   ]
+  },
+  "japan": {
+   "label": "Japan",
+   "centuries": [
+    15,
+    16,
+    18,
+    19,
+    20
+   ]
+  },
+  "china": {
+   "label": "People's Republic of China",
+   "centuries": [
+    15,
+    16,
+    17,
+    18,
+    19,
+    20
+   ]
+  },
+  "ukraine": {
+   "label": "Ukraine",
+   "centuries": [
+    16,
+    17,
+    18,
+    19,
+    20
+   ]
+  },
+  "poland": {
+   "label": "Poland",
+   "centuries": [
+    15,
+    16,
+    17,
+    18,
+    19,
+    20
+   ]
+  },
+  "greece": {
+   "label": "Greece",
+   "centuries": [
+    15,
+    16,
+    17,
+    18,
+    19,
+    20
+   ]
+  },
+  "austria": {
+   "label": "Austria",
+   "centuries": [
+    15,
+    16,
+    17,
+    18,
+    19,
+    20
+   ]
+  },
+  "indonesia": {
+   "label": "Indonesia",
+   "centuries": [
+    15,
+    16,
+    17,
+    18,
+    19,
+    20
+   ]
+  },
+  "portugal": {
+   "label": "Portugal",
+   "centuries": [
+    16,
+    17,
+    18,
+    19,
+    20
+   ]
+  },
+  "brazil": {
+   "label": "Brazil",
+   "centuries": [
+    16,
+    17,
+    18,
+    19,
+    20
+   ]
+  },
+  "switzerland": {
+   "label": "Switzerland",
+   "centuries": [
+    15,
+    16,
+    17,
+    18,
+    19,
+    20
+   ]
+  },
+  "netherlands": {
+   "label": "Kingdom of the Netherlands",
+   "centuries": [
+    15,
+    16,
+    17,
+    18,
+    19,
+    20
+   ]
+  },
+  "belgium": {
+   "label": "Belgium",
+   "centuries": [
+    15,
+    16,
+    17,
+    18,
+    19,
+    20
+   ]
+  },
+  "mexico": {
+   "label": "Mexico",
+   "centuries": [
+    15,
+    17,
+    18,
+    19,
+    20
+   ]
+  },
+  "canada": {
+   "label": "Canada",
+   "centuries": [
+    16,
+    17,
+    18,
+    19,
+    20
+   ]
+  },
+  "czech_republic": {
+   "label": "Czech Republic",
+   "centuries": [
+    16,
+    17,
+    18,
+    19,
+    20
+   ]
+  }
+ }
+}

@@ -193,3 +193,24 @@ body {
 @keyframes tw-pop { from { opacity: 0; } to { opacity: 1; } }
 .tw-pop { animation: tw-pop 0.35s ease-out both; }
 @media (prefers-reduced-motion: reduce) { .tw-pop { animation: none; } }
+
+/* Step headings receive focus so screen readers announce them; the visible ring isn't needed there. */
+[data-step-heading]:focus { outline: none; }
+
+/* Labelled bubbles on the home map: icon and a short name, on a paper pill. */
+.tw-bubble {
+  display: inline-flex; align-items: center; gap: 0.4rem; max-width: 13rem;
+  padding: 0.3rem 0.7rem 0.3rem 0.45rem; border-radius: 999px; cursor: pointer;
+  background: var(--paper-2); color: var(--ink); border: 1.5px solid var(--bronze);
+  font: 600 0.8rem/1.15 var(--font-instrument), system-ui, sans-serif;
+  box-shadow: 0 6px 18px -8px rgb(0 0 0 / 0.45);
+}
+.tw-bubble span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tw-bubble svg { color: var(--bronze); flex-shrink: 0; }
+.tw-bubble:hover, .tw-bubble:focus-visible { background: var(--paper-3); outline: 2px solid var(--bronze); outline-offset: 1px; }
+.tw-bubble-ctx { border-style: dashed; }
+.tw-bubble-focus { cursor: default; background: var(--bronze); color: var(--paper); border-color: var(--bronze); font-size: 0.9rem; padding: 0.4rem 0.85rem 0.4rem 0.55rem; max-width: 16rem; z-index: 2; }
+.tw-bubble-focus svg { color: var(--paper); }
+.tw-dot { width: 9px; height: 9px; border-radius: 999px; background: var(--paper-2); border: 2.5px solid var(--bronze); }
+.tw-dot-focus { width: 14px; height: 14px; background: var(--oxblood); border-color: var(--paper-2); box-shadow: 0 0 0 2px var(--oxblood); }
+@media (max-width: 639px) { .tw-bubble { max-width: 8.5rem; font-size: 0.72rem; } .tw-bubble-focus { max-width: 10rem; font-size: 0.8rem; } }

@@ -29,12 +29,13 @@ test("a century narrows the list and map", async ({ page }) => {
 });
 
 test("hand-checked events stay marked, and lead to their evidence", async ({ page }) => {
-  await page.goto("/atlas/austria");
+  // Every scope, so the checked events outside today's Austria count too.
+  await page.goto("/atlas/austria?scope=here,associated,multi,unlocated");
   await expect(page.locator('[data-century="1000"]')).toBeVisible({ timeout: 15000 });
   await openList(page);
   await page.getByRole("button", { name: "Hand-checked only" }).click();
   await expect(page.getByTestId("atlas-count")).toContainText("16 of");
-  await page.getByRole("button", { name: /The Southern Railway reaches Graz/ }).click();
+  await page.getByTestId("atlas-list").getByRole("button", { name: /The Southern Railway reaches Graz/ }).click();
   await expect(page.getByTestId("atlas-detail")).toContainText("Source-checked");
   await expect(page.getByRole("link", { name: /See its evidence/ })).toHaveAttribute("href", /event=graz-railway-1844/);
 });
@@ -67,7 +68,7 @@ test("a country's old explore address opens its atlas, with events coloured by c
 test("picking an event shows its context", async ({ page }) => {
   await page.goto("/atlas/austria");
   await openList(page);
-  await page.getByLabel("Order").selectOption("notable");
+  await page.getByRole("combobox", { name: /^Order/ }).selectOption("notable");
   await page.getByTestId("atlas-list").getByRole("button").first().click();
   await expect(page.getByTestId("atlas-detail")).toContainText("Around the same time");
 });
