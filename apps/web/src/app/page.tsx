@@ -1,7 +1,7 @@
 import Link from "next/link";
 import overview from "@data/generated/overview.json";
 import { ContinueLearning } from "@/components/ContinueLearning";
-import { DailyTeaser, MeanwhileYears } from "@/components/HomeWidgets";
+import { DailyTeaser, LearnCta, MeanwhileYears } from "@/components/HomeWidgets";
 import { SearchBox } from "@/components/SearchBox";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
@@ -60,13 +60,13 @@ export default function Home() {
               Discover where and when history <em className="text-bronze">happened.</em>
             </h1>
             <p className="mt-4 max-w-xl text-lg leading-relaxed text-ink-2">
-              Follow guided stories across a living map, compare what was happening around the world, and test yourself with short challenges. Every claim leads back to its source.
+              Learn a little history in a few minutes: short lessons, questions that explain themselves, and connections to follow. Every claim leads back to its source.
             </p>
             <div className="mt-6 flex flex-wrap gap-2.5">
-              <Link href={flagship.href} className="btn btn-primary !px-5 !py-3 text-base">Follow a story</Link>
-              <Link href="/connections" className="btn btn-secondary !px-5 !py-3 text-base">Explore connections</Link>
-              <Link href="/atlas" className="btn btn-secondary !px-5 !py-3 text-base">Explore the world</Link>
-              <Link href="/challenges#today" className="btn btn-secondary !px-5 !py-3 text-base">Play today&rsquo;s challenge</Link>
+              <LearnCta />
+              <Link href="/learn#choose" className="btn btn-secondary !px-5 !py-3 text-base">Choose a path</Link>
+              <Link href={flagship.href} className="btn btn-secondary !px-5 !py-3 text-base">Follow a story</Link>
+              <Link href="/connections" className="btn btn-ghost !px-4 !py-3 text-base">Explore connections</Link>
             </div>
             <div className="mt-6 max-w-xl">
               <SearchBox placeholder="Try “Waterloo”, “Japan” or “Vienna”" />

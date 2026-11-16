@@ -274,6 +274,60 @@ Tests: atlas and coverage specs pass on the new build (22). The admin and archiv
 
 Tests: 25 unit, 61 Python, 67 of 69 browser tests on the new build; the two world-map hover tests pass alone and are the known flake under full-suite load. Admin and archival specs need the API's port 3000 origin and weren't run.
 
+## Learning paths and lessons (2026-11-16)
+
+Built from the fourth pasted brief ("Duolingo-like… but centered on exploring real history"). **Learn** (`/learn`) replaces the older Learning Hub page. `/challenges` stays and now sits under Learn in the navigation. Its older activity pages (`/learn/activities/…`, `/learn/graph`) are still reachable but no longer linked from the Learn page.
+
+**Implemented and tested:**
+- **The core loop:**
+  1. pick a path
+  2. a short lesson with an intro, one card per record, then 3–4 questions
+  3. an explanation and its sources after every answer
+  4. a summary: score, XP, skills, what was learned, what the lesson couldn't cover, and the next lesson
+  5. links onward to the records' connections
+
+  A lesson's step is saved as you go. The Learn page and the home page offer "Continue: …", and leaving a lesson keeps your place.
+- **Paths** (`lib/lessons.ts`):
+  - **By question (checked):** "How did Austria change between 1844 and 1921?" has six lessons, one per chapter of the checked investigation, with milestone markers at the period boundaries.
+    - Every card is a curated event with its sourced claims, support status and source links.
+    - Questions are assembled from that data, not written: put in order; where did it happen (with a map of the options); which source supports this statement; what does the evidence establish (including the disputed Sopron vote).
+  - **By region:** each continent through five centuries, 1500s to 1900s.
+  - **By period:** the 1800s and the 1900s, one lesson per continent.
+  - Region and period lessons use imported Wikidata records and are labelled **Imported, not checked by hand**. Each picks four well-documented events of the century from four different countries, using Wikidata's own title, date, place and short description.
+    - Questions: order them; where did it happen; which record matches this description.
+    - A cause-and-consequence question appears only when a Wikidata statement documents a cause or effect. It links to the statement and gives its reference count.
+    - Where fewer than four suitable records exist, the lesson says so instead of padding.
+- **Skills:** chronology, geography, evidence, and cause and consequence. Each answer counts towards its skill, shown as correct out of attempted.
+- **Review** (`/learn/review`): missed lesson questions are stored with the question itself and asked again, with the explanation. A right answer clears them. Missed challenge answers are listed with a link back to the challenge.
+- **Return without pressure:** "This week" shows the days learned, with the note "Breaks never cost you progress". There is no streak to lose.
+  - XP is earned once per lesson, like the challenges, so replays can't farm it.
+  - Suggestions: the unfinished lesson; else the next lesson in the path last used; else the checked path.
+- **Home:** the first actions are "Start learning" (or "Continue: …"), "Choose a path", "Follow a story" and "Explore connections", above search.
+- **Accessibility and phones:**
+  - Each question is a radio group with a separate Check button. Ordering uses arrow buttons.
+  - Focus moves to each new step's heading, and feedback moves focus to Continue.
+  - Pages have no horizontal scroll on phones.
+- **States:** loading, a failed data file (with a retry), an unknown lesson, and "not enough records".
+
+**Limits:**
+- The checked material is small: 19 events and 27 claims, so six lessons.
+- The checked collection records no causes or effects, so its lessons ask no cause-and-consequence questions, and each says so.
+- Imported lessons favour famous topics and may contain Wikidata errors. Their descriptions are short and written by volunteers.
+- Progress lives in one browser.
+
+**Planned, not built:**
+- More checked paths, which need sourced claims first.
+- Comparing perspectives beyond the one disputed claim.
+- Adaptive scheduling for review; for now everything missed comes back.
+- Interest-based recommendations beyond "next in the path you used".
+- Accounts and sync.
+
+**Tests:**
+- Typecheck clean.
+- 47 unit tests pass, 6 new in `tests/unit/lessons.test.ts`. They check that lesson content comes only from curated events and claims, that every answer is among its options and has an explanation and a source, that ordering answers match the dates, that checked lessons ask no cause question, and that imported paths are labelled.
+- New browser tests in `tests/e2e/lessons.spec.ts` cover the learn page, a full checked lesson, resuming, review, an imported lesson and phone layout. They pass, except that the first check on `/learn` timed out once in 8 repeats while the page's JavaScript was still loading from the local test server.
+- Full browser run (2 workers): 112 passed and 6 failed. Four of the failures passed when rerun with one worker. The two archival-material tests need the local API and still fail.
+
 ## Connections explorer (2026-11-16)
 
 Built from the third pasted brief ("an interactive history explorer… not a dump of facts"). It's a new section, **Explore** (`/connections`), built into the existing site; every other page still works.

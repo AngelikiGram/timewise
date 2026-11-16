@@ -8,6 +8,8 @@ import { formatImportedDate, type Precision } from "@/lib/dates";
 import { useProgress } from "@/lib/progress";
 import { atlasHref, CONTINENT_LABELS, loadIndex, type IndexEvent } from "@/lib/world-index";
 import { pickMeanwhile } from "./Meanwhile";
+import { nextStep } from "./lessons/LearnHome";
+import { lessonHref } from "@/lib/lessons";
 
 /** Today's challenge, as a card. The day is the reader's own, so it's chosen in the browser. */
 export function DailyTeaser() {
@@ -67,5 +69,18 @@ export function MeanwhileYears() {
       )}
       <p className="mt-3 text-xs text-ink-2">Events from the same few years on different continents. A shared date is a coincidence in time, not a connection. Imported from Wikidata.</p>
     </div>
+  );
+}
+
+/** The first step on the home page: continue the unfinished lesson, or start one. */
+export function LearnCta() {
+  const p = useProgress();
+  const [step, setStep] = useState<ReturnType<typeof nextStep> | null>(null);
+  useEffect(() => setStep(nextStep(p)), [p]);
+  const resume = step?.resume;
+  return (
+    <Link href={step ? lessonHref(step.id, step.pathId) : "/learn"} className="btn btn-primary !px-5 !py-3 text-base" data-testid="learn-cta">
+      {resume ? `Continue: ${step!.title}` : Object.keys(p.lessons).length ? "Next lesson" : "Start learning"}
+    </Link>
   );
 }

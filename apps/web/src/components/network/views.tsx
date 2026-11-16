@@ -108,9 +108,9 @@ export function TimelineView({ record, links, facts, selected, onSelect, loading
   );
 }
 
-type Feature = { geometry: { type: "Polygon" | "MultiPolygon"; coordinates: number[][][] | number[][][][] } };
+export type Feature = { geometry: { type: "Polygon" | "MultiPolygon"; coordinates: number[][][] | number[][][][] } };
 let countries: Promise<Feature[]> | null = null;
-const loadCountries = () => (countries ??= fetch(asset("/data/world-countries.json")).then((r) => r.json()).then((d: { features: Feature[] }) => d.features));
+export const loadCountries = () => (countries ??= fetch(asset("/data/world-countries.json")).then((r) => r.json()).then((d: { features: Feature[] }) => d.features));
 
 /** Linked records with coordinates on today's map. A simple projection, enough to see where links lead. */
 export function MapView({ record, links, facts, selected, onSelect, loading }: {

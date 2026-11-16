@@ -19,8 +19,12 @@ export type Collection = { id: string; name: string; itemIds: string[]; createdA
 /** step: the step within the chapter (as in the URL); done: steps reached in the whole story. */
 export type StoryProgress = { chapterId: string; step: number; done?: number; finished: boolean; updatedAt: string; visited: string[] };
 export type ChallengeResult = { id: string; score: number; max: number; at: string; mode: "challenge" | "practice"; xp: number };
-/** Something answered wrongly, to come back to. */
-export type Mistake = { challengeId: string; prompt: string; correct: string; at: string };
+/** Something answered wrongly, to come back to. Lesson mistakes keep the question, so it can be asked again. */
+export type Mistake = { challengeId: string; prompt: string; correct: string; at: string; activity?: unknown; skill?: string };
+/** A lesson's state: where the reader is, and how the last finished attempt went. */
+export type LessonProgress = { step: number; steps: number; finished: boolean; score?: number; max?: number; updatedAt: string; title: string; pathId: string };
+/** One answer, for skill progress. */
+export type SkillEntry = { skill: string; ok: boolean; at: string };
 
 export type Progress = {
   bookmarks: Record<string, SavedItem>;
@@ -31,10 +35,14 @@ export type Progress = {
   mistakes: Mistake[];
   /** Places and regions opened, for "explored". */
   explored: Record<string, { label: string; href: string; at: string }>;
+  lessons: Record<string, LessonProgress>;
+  skills: SkillEntry[];
+  /** Days (YYYY-MM-DD, local) with any lesson activity. Only used to show activity, never to take anything away. */
+  days: string[];
 };
 
 const KEY = "tw-progress-v1";
-const EMPTY: Progress = { bookmarks: {}, notes: {}, collections: [], stories: {}, results: [], mistakes: [], explored: {} };
+const EMPTY: Progress = { bookmarks: {}, notes: {}, collections: [], stories: {}, results: [], mistakes: [], explored: {}, lessons: {}, skills: [], days: [] };
 
 let cache: Progress | null = null;
 const listeners = new Set<() => void>();
@@ -58,6 +66,9 @@ function write(next: Progress) {
   }
   listeners.forEach((l) => l());
 }
+
+/** The saved progress, read now (for effects that run before the hook has the stored value). */
+export const readProgress = () => read();
 
 export function update(fn: (p: Progress) => Progress) {
   write(fn(read()));
@@ -157,6 +168,49 @@ export function recordResult(r: Omit<ChallengeResult, "at" | "xp">, xpFor: numbe
     };
   });
   return earned;
+}
+
+export const today = () => {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+};
+const markDay = (p: Progress): Progress => (p.days.includes(today()) ? p : { ...p, days: [...p.days, today()].slice(-120) });
+
+/** Where the reader is in a lesson, so it can be resumed. Finishing is kept once reached. */
+export function saveLessonStep(id: string, info: { step: number; steps: number; title: string; pathId: string }) {
+  update((p) => {
+    const before = p.lessons[id];
+    return markDay({ ...p, lessons: { ...p.lessons, [id]: { ...before, ...info, finished: !!before?.finished, updatedAt: now() } } });
+  });
+}
+
+/** One answered question: counts towards its skill, and a wrong answer goes to review with the question. */
+export function logAnswer(lessonId: string, skill: string, ok: boolean, review: { prompt: string; correct: string; activity: unknown }) {
+  update((p) => {
+    const at = now();
+    const others = p.mistakes.filter((m) => m.prompt !== review.prompt);
+    return markDay({
+      ...p,
+      skills: [...p.skills, { skill, ok, at }].slice(-600),
+      mistakes: ok ? others : [...others, { challengeId: lessonId, prompt: review.prompt, correct: review.correct, at, activity: review.activity, skill }].slice(-60),
+    });
+  });
+}
+
+/** A finished lesson. XP is earned once per lesson, like a challenge, so replays can't farm it. */
+export function finishLesson(id: string, score: number, max: number): number {
+  let xp = 0;
+  update((p) => {
+    const before = p.lessons[id];
+    const already = p.results.some((r) => r.id === `lesson:${id}` && r.xp > 0);
+    xp = already ? 0 : 10 + score * 2;
+    return markDay({
+      ...p,
+      lessons: { ...p.lessons, [id]: { ...before, step: before?.steps ?? 0, finished: true, score, max, updatedAt: now() } },
+      results: [...p.results, { id: `lesson:${id}`, score, max, mode: "challenge" as const, at: now(), xp }].slice(-200),
+    });
+  });
+  return xp;
 }
 
 export function clearMistake(prompt: string) {

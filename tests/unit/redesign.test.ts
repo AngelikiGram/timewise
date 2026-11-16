@@ -66,7 +66,8 @@ describe("dates and navigation", () => {
     expect(currentSection("/history/europe")).toBe("map");
     expect(currentSection("/explore")).toBe("map");
     expect(currentSection("/journeys/austria-1848-1921")).toBe("stories");
-    expect(currentSection("/learn")).toBe("challenges");
+    expect(currentSection("/learn")).toBe("learn");
+    expect(currentSection("/challenges/order-rails")).toBe("learn");
     expect(currentSection("/collection")).toBe("collection");
   });
 });

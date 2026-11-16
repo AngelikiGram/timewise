@@ -19,10 +19,10 @@ export function Wordmark() {
 /** The sections, and the older addresses that belong to each. */
 export const SECTIONS = [
   { id: "discover", label: "Discover", href: "/", match: (p: string) => p === "/" },
+  { id: "learn", label: "Learn", href: "/learn", match: (p: string) => p.startsWith("/learn") || p.startsWith("/challenges") },
   { id: "explore", label: "Explore", href: "/connections", match: (p: string) => p.startsWith("/connections") },
   { id: "map", label: "World Map", href: "/atlas", match: (p: string) => p.startsWith("/atlas") || p.startsWith("/history") || p.startsWith("/explore") },
   { id: "stories", label: "Stories", href: "/stories", match: (p: string) => p.startsWith("/stories") || p.startsWith("/journey") },
-  { id: "challenges", label: "Challenges", href: "/challenges", match: (p: string) => p.startsWith("/challenges") || p.startsWith("/learn") },
   { id: "collection", label: "My Collection", href: "/collection", match: (p: string) => p.startsWith("/collection") },
 ] as const;
 

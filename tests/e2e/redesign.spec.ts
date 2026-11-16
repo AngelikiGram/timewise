@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 import { mainSearch, openList } from "./helpers";
 
 test("the five sections are reachable, and the current one is marked", async ({ page }) => {
-  for (const [label, path] of [["Stories", "/stories"], ["Challenges", "/challenges"], ["My Collection", "/collection"]] as const) {
+  for (const [label, path] of [["Stories", "/stories"], ["Learn", "/challenges"], ["Learn", "/learn"], ["My Collection", "/collection"]] as const) {
     await page.goto(path);
     await expect(page.getByRole("link", { name: label, exact: true }).filter({ visible: true })).toHaveAttribute("aria-current", "page");
   }
