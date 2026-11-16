@@ -16,9 +16,10 @@ export function Wordmark() {
   );
 }
 
-/** The five sections, and the older addresses that belong to each. */
+/** The sections, and the older addresses that belong to each. */
 export const SECTIONS = [
   { id: "discover", label: "Discover", href: "/", match: (p: string) => p === "/" },
+  { id: "explore", label: "Explore", href: "/connections", match: (p: string) => p.startsWith("/connections") },
   { id: "map", label: "World Map", href: "/atlas", match: (p: string) => p.startsWith("/atlas") || p.startsWith("/history") || p.startsWith("/explore") },
   { id: "stories", label: "Stories", href: "/stories", match: (p: string) => p.startsWith("/stories") || p.startsWith("/journey") },
   { id: "challenges", label: "Challenges", href: "/challenges", match: (p: string) => p.startsWith("/challenges") || p.startsWith("/learn") },
@@ -48,7 +49,7 @@ export function SiteHeader({ children }: { children?: React.ReactNode }) {
               key={s.id}
               href={s.href}
               aria-current={active === s.id ? "page" : undefined}
-              className={`relative rounded-md px-3 py-2 text-[0.95rem] font-medium transition-colors hover:bg-paper-3 hover:text-ink ${active === s.id ? "text-ink after:absolute after:inset-x-3 after:-bottom-[9px] after:h-0.5 after:rounded-full after:bg-bronze" : "text-ink-2"}`}
+              className={`relative whitespace-nowrap rounded-md px-2.5 py-2 text-[0.95rem] xl:px-3 font-medium transition-colors hover:bg-paper-3 hover:text-ink ${active === s.id ? "text-ink after:absolute after:inset-x-2.5 after:-bottom-[9px] after:h-0.5 after:rounded-full after:bg-bronze" : "text-ink-2"}`}
             >
               {s.label}
               {s.id === "collection" && saved > 0 && <span className="ml-1.5 rounded-full bg-paper-3 px-1.5 text-xs tabular-nums text-ink-2">{saved}</span>}

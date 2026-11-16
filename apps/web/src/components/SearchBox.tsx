@@ -5,14 +5,16 @@ import { useEffect, useId, useMemo, useState } from "react";
 import { collection } from "@/lib/collection";
 import { formatYear, yearOf } from "@/lib/dates";
 import { fold, search, type SearchHit } from "@/lib/search";
+import { searchWikidata } from "@/lib/record";
 import { atlasHref, CONTINENT_LABELS, loadIndex, loadRegions, type IndexEvent, type RegionRow } from "@/lib/world-index";
 
-type Scope = "all" | "checked" | "world" | "places";
+type Scope = "all" | "checked" | "world" | "places" | "wikidata";
 const SCOPES: { id: Scope; label: string; help: string }[] = [
   { id: "all", label: "Everything", help: "Hand-checked stories, world records and places" },
   { id: "checked", label: "Checked", help: "Only the hand-checked Austria collection, with sources for every claim" },
   { id: "world", label: "World records", help: "The 10,000 best-documented events imported from Wikidata, not individually checked" },
   { id: "places", label: "Places", help: "Countries and continents with an atlas" },
+  { id: "wikidata", label: "All Wikidata", help: "Any event, person, place, invention or idea in Wikidata, searched live; opens in the connections explorer" },
 ];
 
 type Hit = { key: string; kind: string; label: string; detail: string; href: string };
@@ -58,7 +60,17 @@ export function SearchBox({ size = "large", placeholder, defaultScope = "all" }:
   const [index, setIndex] = useState<{ events: IndexEvent[]; regions: RegionRow[] } | null>(null);
   const [failed, setFailed] = useState(false);
   const large = size === "large";
-  const needsIndex = scope !== "checked";
+  const needsIndex = scope !== "checked" && scope !== "wikidata";
+  const [live, setLive] = useState<Hit[]>([]);
+
+  useEffect(() => {
+    if (scope !== "wikidata" || query.trim().length < 2) { setLive([]); return; }
+    const ac = new AbortController();
+    const t = setTimeout(() => {
+      searchWikidata(query.trim(), ac.signal).then((r) => setLive(r.map((h) => ({ key: `wd-${h.id}`, kind: "Wikidata", label: h.label, detail: h.description ?? "", href: `/connections?id=${h.id}` }))), () => setLive([]));
+    }, 250);
+    return () => { clearTimeout(t); ac.abort(); };
+  }, [scope, query]);
 
   useEffect(() => {
     if (!open || !needsIndex || index) return;
@@ -72,8 +84,8 @@ export function SearchBox({ size = "large", placeholder, defaultScope = "all" }:
       ? search(collection, query, scope === "checked" ? 8 : 4).map((h) => ({ key: `${h.kind}-${h.id}`, kind: KIND_LABEL[h.kind], label: h.label, detail: h.detail, href: h.href }))
       : [];
     const world = index ? searchIndex(index.events, index.regions, query, scope) : [];
-    return [...checked, ...world].slice(0, 10);
-  }, [query, scope, index]);
+    return [...checked, ...world, ...live].slice(0, 10);
+  }, [query, scope, index, live]);
 
   const loadingIndex = open && needsIndex && !index && !failed && query.trim().length >= 2 && hits.length === 0;
   const showEmpty = open && query.trim().length >= 2 && hits.length === 0 && !loadingIndex;

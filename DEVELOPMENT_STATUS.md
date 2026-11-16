@@ -1,6 +1,6 @@
 # Development status
 
-Last updated: 2026-11-15. **TIMEWISE 2.0 Phase 1 (correct the existing interface) is done. Phase 2 is partly done:** the database, API, Europeana connector, review screen and a worldwide Wikidata import (all 197 countries, unreviewed) work. Phases 3–6 aren't started. This isn't production-ready.
+Last updated: 2026-11-16. **TIMEWISE 2.0 Phase 1 (correct the existing interface) is done. Phase 2 is partly done:** the database, API, Europeana connector, review screen and a worldwide Wikidata import (all 197 countries, unreviewed) work. Phases 3–6 aren't started. This isn't production-ready.
 
 ## Checks on 2026-11-10
 
@@ -273,6 +273,60 @@ Tests: atlas and coverage specs pass on the new build (22). The admin and archiv
 **Limits:** everything imported is unreviewed. "Best documented" means most Wikipedia languages, which favours famous and European topics. Continents and countries are present-day groupings. Wikipedia summaries and Wikidata connections are shown as their editors wrote them.
 
 Tests: 25 unit, 61 Python, 67 of 69 browser tests on the new build; the two world-map hover tests pass alone and are the known flake under full-suite load. Admin and archival specs need the API's port 3000 origin and weren't run.
+
+## Connections explorer (2026-11-16)
+
+Built from the third pasted brief ("an interactive history explorer… not a dump of facts"). It's a new section, **Explore** (`/connections`), built into the existing site; every other page still works.
+
+**Implemented and tested:**
+- **Search** covers anything in Wikidata (events, people, places, inventions, ideas), searched live. The header search has a new "All Wikidata" scope, and every imported event panel links to "Explore connections".
+- **Network view.** The record sits in the middle with its links around it, grouped by kind: causes and effects, before and after, parts, people, places, ideas and works.
+  - Each line is labelled with its relation ("led to", "participant", "discoverer or inventor"…).
+  - **Documented** links come from Wikidata statements: about 40 properties on the record's own page, plus 7 kinds of statement on other pages that point to it (e.g. events a person took part in). Each keeps its property, a link to the statement, and the number of references Wikidata gives. "No reference" is said plainly.
+  - **Contextual** links are dashed, amber and labelled "same period" or "same country". They come from the TIMEWISE world index, and each one says no relationship is documented.
+  - **Checked** links: for a place in the hand-checked collection, its checked events, with sourced claims.
+  - Selecting a record shows why the two are connected and offers "Explore from here". A double-click or Enter branches directly.
+  - The same links are listed for keyboard and screen-reader use.
+- **Timeline and Map views** use the same links.
+  - Years, coordinates and countries come from the Wikidata Query Service.
+  - The map shows today's borders and says so.
+  - Records without a date or place are counted, not guessed.
+- **Filters:** kind of link, contextual links on or off, a year range and a country.
+- **Record panel:**
+  - kind and type, date at Wikidata's precision, and place
+  - the Commons image with its credit
+  - the Wikipedia summary, attributed (CC BY-SA 4.0, "not checked by TIMEWISE")
+  - context (part of, caused by), and significance, meaning only what Wikidata records as effects or successors ("TIMEWISE doesn't rank importance")
+  - connection counts
+  - "Sources and coverage", which shows the statement count, the share with references and the gaps (no date, no coordinates, no summary, no image), with a link to correct it on Wikidata
+- **Paths:**
+  - The trail of opened records is kept in the URL and can be shared, or saved to My Collection as a named collection.
+  - "Next in sequence" follows Wikidata's own followed-by statements.
+  - The start page lists the existing guided stories and the checked places.
+- **Connection challenge:** "Which of these does Wikidata link as 'led to'?", answered and explained from the statements. It's practice only: no XP, because the data is crowd-edited and changes.
+- **Fallbacks:** a loading state; an error with a retry when Wikidata can't be reached; and a note when dates can't be loaded.
+- **Phones:** the filters scroll in one row and the graph shortens its labels. There's no horizontal page scroll.
+
+**Limits:**
+- Everything in the explorer except the checked links is imported and unreviewed. Wikidata is crowd-edited, and some statements are wrong or unreferenced.
+- Links are capped at six per property and 30 drawn nodes (the rest are in the list).
+- "Same period" and "same country" draw only from the 10,250-event index.
+- The explorer needs a connection to Wikidata.
+
+**Planned, not built:**
+- **Comparing perspectives:** Wikidata doesn't hold perspectives, and the checked collection has only one disputed-claim case (the Sopron vote, in `/explore`). This needs sourced, attributed interpretations first.
+- **Inferred links** beyond shared period and country.
+- **Offline use:** this needs a snapshot of the linked records.
+
+**Tests:**
+- Typecheck clean; 41 unit tests pass (8 new, in `tests/unit/connections.test.ts`).
+- 7 new browser tests (`tests/e2e/connections.spec.ts`) pass on desktop and phone against live Wikidata. One of them blocks Wikidata and checks the error state.
+- Full browser run: 93 passed and 14 failed with two workers. Rerun with one worker, everything passed except:
+  - the two archival-material tests, which need the API
+  - the known coverage-hover flake
+  - a mobile story-map check that failed 2 of 3 repeats, in code this change doesn't touch
+- Admin specs weren't run.
+- Screenshots checked: desktop dark and light, and phone dark.
 
 ## Redesign: discovery, stories, challenges and collections (2026-11-15)
 

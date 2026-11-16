@@ -64,6 +64,7 @@ export default function Home() {
             </p>
             <div className="mt-6 flex flex-wrap gap-2.5">
               <Link href={flagship.href} className="btn btn-primary !px-5 !py-3 text-base">Follow a story</Link>
+              <Link href="/connections" className="btn btn-secondary !px-5 !py-3 text-base">Explore connections</Link>
               <Link href="/atlas" className="btn btn-secondary !px-5 !py-3 text-base">Explore the world</Link>
               <Link href="/challenges#today" className="btn btn-secondary !px-5 !py-3 text-base">Play today&rsquo;s challenge</Link>
             </div>

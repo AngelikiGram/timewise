@@ -138,6 +138,7 @@ export function EventStory({ item, when, place, href, onBack, onPick, known, con
       <div className="mt-4 flex flex-wrap items-center gap-2 px-5">
         <SaveButton id={item.id} title={title} href={href} start={item.start} context={place} />
         <button type="button" onClick={share} className="btn btn-sm btn-secondary" aria-live="polite">{copied ? "Link copied" : "Share"}</button>
+        {/^Q\d+$/.test(item.id) && <Link href={`/connections?id=${item.id}`} className="btn btn-sm btn-secondary" data-testid="explore-connections">Explore connections →</Link>}
       </div>
 
       <div className="space-y-7 px-5 pb-8 pt-6">
