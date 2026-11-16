@@ -137,6 +137,10 @@ export function HistoryAtlas({ region, regions }: { region: Region; regions: Reg
   const [drawer, setDrawer] = useState(false);
   const [sheetFull, setSheetFull] = useState(false);
   const [timelineOpen, setTimelineOpen] = useState(false);
+  // Brushing across the bars: drag to choose a span of periods at once.
+  const [brush, setBrush] = useState<[number, number] | null>(null);
+  const brushStart = useRef<number | null>(null);
+  const brushed = useRef(false);
   const [yearFrom, setYearFrom] = useState("");
   const [yearTo, setYearTo] = useState("");
   const container = useRef<HTMLDivElement>(null);
@@ -251,7 +255,15 @@ export function HistoryAtlas({ region, regions }: { region: Region; regions: Reg
   /** Record marks under the bars once the range is narrow enough to tell them apart: the best documented first. */
   const marks = useMemo(() => {
     if (!view || view[1] - view[0] > 120) return [];
-    return [...filtered].filter((e) => { const y = yearOf(e.start); return y >= view[0] && y <= view[1]; }).sort((a, b) => (b.checked ? 1e6 : b.links ?? 0) - (a.checked ? 1e6 : a.links ?? 0)).slice(0, 40);
+    const ranked = [...filtered].filter((e) => { const y = yearOf(e.start); return y >= view[0] && y <= view[1]; }).sort((a, b) => (b.checked ? 1e6 : b.links ?? 0) - (a.checked ? 1e6 : a.links ?? 0));
+    const placed: { e: Item; x: number }[] = [];
+    for (const e of ranked) {
+      const x = Math.min(99, Math.max(1, ((yearOf(e.start) - view[0]) / Math.max(1, view[1] - view[0] + 1)) * 100));
+      if (placed.some((q) => Math.abs(q.x - x) < 1.6)) continue;
+      placed.push({ e, x });
+      if (placed.length >= 30) break;
+    }
+    return placed;
   }, [view, filtered]);
   const usedCategories = useMemo(() => [...new Set(all.map((e) => e.category))].sort((a, b) => CATEGORY_ORDER.indexOf(a) - CATEGORY_ORDER.indexOf(b)), [all]);
   const onMap = filtered.filter(pinned).length;
@@ -688,7 +700,33 @@ export function HistoryAtlas({ region, regions }: { region: Region; regions: Reg
           <button type="button" onClick={() => setTimelineOpen(!timelineOpen)} aria-expanded={timelineOpen} className="btn btn-sm btn-ghost !min-h-8 lg:hidden">{timelineOpen ? "Less" : "More"}</button>
         </div>
       </div>
-      <div className="relative mt-1.5 flex h-14 items-end gap-px" role="group" aria-label={`Records per ${bucket === 100 ? "century" : bucket === 10 ? "decade" : "year"} in this dataset. Choose a bar to ${bucket === 1 ? "list its records" : "zoom into it"}.`}>
+      <div
+        className="relative mt-1.5 flex h-14 cursor-crosshair touch-none items-end gap-px"
+        role="group"
+        aria-label={`Records per ${bucket === 100 ? "century" : bucket === 10 ? "decade" : "year"} in this dataset. Choose a bar to ${bucket === 1 ? "list its records" : "zoom into it"}, or drag across several to choose a span.`}
+        data-testid="timeline-bars"
+        onPointerDown={(e) => {
+          const r = e.currentTarget.getBoundingClientRect();
+          brushStart.current = Math.min(bars.length - 1, Math.max(0, Math.floor(((e.clientX - r.left) / r.width) * bars.length)));
+          brushed.current = false;
+        }}
+        onPointerMove={(e) => {
+          if (brushStart.current === null || !(e.buttons & 1)) return;
+          const r = e.currentTarget.getBoundingClientRect();
+          const i = Math.min(bars.length - 1, Math.max(0, Math.floor(((e.clientX - r.left) / r.width) * bars.length)));
+          if (i !== brushStart.current || brushed.current) {
+            brushed.current = true;
+            setBrush([Math.min(i, brushStart.current), Math.max(i, brushStart.current)]);
+          }
+        }}
+        onPointerUp={() => {
+          if (brushed.current && brush) setRange([bars[brush[0]].bucket, bars[brush[1]].bucket + bucket - 1]);
+          brushStart.current = null;
+          setBrush(null);
+        }}
+        onPointerLeave={() => { if (brushStart.current !== null && brushed.current && brush) setRange([bars[brush[0]].bucket, bars[brush[1]].bucket + bucket - 1]); brushStart.current = null; setBrush(null); }}
+      >
+        {brush && <span aria-hidden className="pointer-events-none absolute inset-y-0 z-10 rounded border-2 border-bronze bg-bronze/15" style={{ left: `${(brush[0] / bars.length) * 100}%`, width: `${((brush[1] - brush[0] + 1) / bars.length) * 100}%` }} />}
         {bars.map((b) => {
           const on = selYear !== null && selYear >= b.bucket && selYear < b.bucket + bucket;
           const chosen = range !== null && range[0] === b.bucket && range[1] === b.bucket + bucket - 1;
@@ -709,7 +747,7 @@ export function HistoryAtlas({ region, regions }: { region: Region; regions: Reg
               aria-label={`${label}. ${bucket === 1 ? "List them" : "Zoom in"}.`}
               aria-pressed={chosen}
               title={`${label} (not a measure of how eventful it was). ${bucket === 1 ? "Click to list them." : "Click to zoom in."}`}
-              onClick={() => { setRange([b.bucket, b.bucket + bucket - 1]); if (bucket === 1) setDrawer(true); }}
+              onClick={() => { if (brushed.current) { brushed.current = false; return; } setRange([b.bucket, b.bucket + bucket - 1]); if (bucket === 1) setDrawer(true); }}
               className={`group relative flex h-full min-w-0 flex-1 cursor-pointer items-end rounded-t-sm outline-none hover:bg-paper-3 focus-visible:ring-2 focus-visible:ring-bronze ${chosen ? "bg-bronze-soft/50" : ""}`}
             >
               {bar}
@@ -718,25 +756,31 @@ export function HistoryAtlas({ region, regions }: { region: Region; regions: Reg
         })}
       </div>
       {marks.length > 0 && (
-        <div className="relative mt-1 h-5" role="group" aria-label="The best-documented records in this range: choose one to open it" data-testid="timeline-records">
-          {marks.map((e) => {
-            const x = ((yearOf(e.start) - view![0]) / Math.max(1, view![1] - view![0] + 1)) * 100;
-            return (
-              <button
-                key={e.id}
-                type="button"
-                onClick={() => select(e)}
-                aria-label={`${e.title.en ?? e.title.de}, ${dateOf(e)}`}
-                title={`${e.title.en ?? e.title.de} · ${dateOf(e)}`}
-                aria-pressed={selected?.id === e.id}
-                className={`absolute top-0 h-5 w-2 -translate-x-1/2 cursor-pointer rounded-sm outline-none hover:scale-y-125 focus-visible:ring-2 focus-visible:ring-bronze ${selected?.id === e.id ? "bg-oxblood" : ""}`}
-                style={{ left: `${Math.min(99.5, Math.max(0.5, x))}%`, background: selected?.id === e.id ? undefined : colorOf(theme, e.category) }}
-              />
-            );
-          })}
+        <div className="mt-1.5 border-t border-dashed border-line pt-1">
+          <span className="block text-[11px] text-ink-2" id="top-records-label"><span className="font-semibold uppercase tracking-wider">Top records</span> · the best documented here, one dot each. Click to open.</span>
+          {/* Full width, so each dot sits under its year in the bars above. Not a count. */}
+          <div className="relative h-6" role="group" aria-labelledby="top-records-label" data-testid="timeline-records">
+            {marks.map(({ e, x }) => {
+              const on = selected?.id === e.id;
+              return (
+                <button
+                  key={e.id}
+                  type="button"
+                  onClick={() => select(e)}
+                  aria-label={`${e.title.en ?? e.title.de}, ${dateOf(e)}`}
+                  title={`${e.title.en ?? e.title.de} · ${dateOf(e)}`}
+                  aria-pressed={on}
+                  className="group absolute top-1/2 grid h-6 w-6 -translate-x-1/2 -translate-y-1/2 cursor-pointer place-items-center rounded-full outline-none focus-visible:ring-2 focus-visible:ring-bronze"
+                  style={{ left: `${x}%` }}
+                >
+                  <span className={`block rounded-full border-2 border-paper-2 transition-transform group-hover:scale-125 ${on ? "h-3.5 w-3.5 ring-2 ring-oxblood" : "h-2.5 w-2.5"}`} style={{ background: colorOf(theme, e.category) }} />
+                </button>
+              );
+            })}
+          </div>
         </div>
       )}
-      {bars.length > 0 && <div className="mt-0.5 flex justify-between text-xs tabular-nums text-ink-2"><span>{bucketLabel(bars[0].bucket, bucket)}</span>{selYear !== null && <span className="font-semibold text-oxblood">Selected: {formatYear(selYear)}</span>}<span>{bucketLabel(bars[bars.length - 1].bucket, bucket)}</span></div>}
+      {bars.length > 0 && <div className="mt-0.5 flex justify-between text-xs tabular-nums text-ink-2"><span>{bucketLabel(bars[0].bucket, bucket)}</span>{selected && <span className="min-w-0 truncate px-2 font-semibold text-oxblood">Selected: {selected.title.en ?? selected.title.de}, {formatYear(selYear!)}</span>}<span>{bucketLabel(bars[bars.length - 1].bucket, bucket)}</span></div>}
       <div className={`${timelineOpen ? "flex" : "hidden"} mt-2 flex-wrap items-center gap-1.5 lg:flex`}>
         {PRESETS.map((p) => (
           <button key={p.label} type="button" aria-pressed={range?.[0] === p.from && range?.[1] === p.to} onClick={() => setRange([p.from, p.to])} className="chip !min-h-8 !px-2.5 !text-[0.8rem]">{p.label}</button>
@@ -750,7 +794,7 @@ export function HistoryAtlas({ region, regions }: { region: Region; regions: Reg
           <button type="submit" className="btn btn-sm btn-secondary !min-h-8">Go</button>
         </form>
       </div>
-      <p className={`${timelineOpen ? "block" : "hidden"} mt-1 text-xs text-ink-2 lg:block`}>Negative years are BC. A bar counts records in this dataset, not how eventful history was: click one to zoom in, or at single years to list its records. Marks below the bars are records; click one to open it.</p>
+      <p className={`${timelineOpen ? "block" : "hidden"} mt-1 text-xs text-ink-2 lg:block`}>Negative years are BC. Drag across the bars to choose a span. A bar counts records in this dataset, not how eventful history was: click one to zoom in, or at single years to list its records. Dots in “Top records” are the best-documented records of the range; click one to open it.</p>
     </div>
   );
 

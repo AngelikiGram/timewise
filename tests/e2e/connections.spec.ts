@@ -19,7 +19,7 @@ test("a place from the checked collection links to its sourced events, labelled 
 });
 
 test("every link says why, and branching builds a shareable path", async ({ page }) => {
-  await page.goto("/connections?id=Q2269"); // Industrial Revolution
+  await page.goto("/connections?id=Q2269&view=cards"); // Industrial Revolution
   await expect(page.getByTestId("record-card")).toContainText("Industrial Revolution", { timeout: 30000 });
   const documented = page.locator('[data-testid="connection-cards"] [data-card][data-documented="true"]').first();
   await expect(documented).toBeVisible();
@@ -37,7 +37,7 @@ test("every link says why, and branching builds a shareable path", async ({ page
 });
 
 test("contextual links are drawn and explained differently from documented ones", async ({ page }) => {
-  await page.goto("/connections?id=Q2269");
+  await page.goto("/connections?id=Q2269&view=cards");
   const contextual = page.locator('[data-testid="connection-cards"] [data-card][data-documented="false"]').first();
   await expect(contextual).toBeVisible({ timeout: 30000 });
   await contextual.getByRole("button", { name: /^Why is/ }).click();
@@ -47,11 +47,22 @@ test("contextual links are drawn and explained differently from documented ones"
   await expect(page.locator('[data-testid="connection-cards"] [data-card][data-documented="false"]')).toHaveCount(0);
 });
 
-test("the timeline and map views use the same links", async ({ page }) => {
-  await page.goto("/connections?id=Q2269&view=timeline");
-  // Dates come from the Wikidata Query Service; when it is slow or busy, the view says so instead of drawing.
-  await expect(page.getByTestId("timeline-view")).toBeVisible({ timeout: 40000 });
-  await expect(page.getByTestId("timeline-view")).toContainText(/Years are the earliest date|Reading dates|no dates/, { timeout: 40000 });
+test("the time graph places links at their dates, and brushing zooms it", async ({ page }, info) => {
+  await page.goto("/connections?id=Q2269");
+  const graph = page.getByTestId("time-graph");
+  await expect(graph.locator("[data-node]").first()).toBeVisible({ timeout: 40000 });
+  const before = await graph.locator("[data-node]").count();
+  if (info.project.name !== "mobile") {
+    const box = (await page.getByTestId("time-brush").boundingBox())!;
+    await page.mouse.move(box.x + box.width * 0.6, box.y + box.height / 2);
+    await page.mouse.down();
+    await page.mouse.move(box.x + box.width * 0.95, box.y + box.height / 2, { steps: 6 });
+    await page.mouse.up();
+    await expect(page.getByTestId("brush")).toBeVisible();
+    expect(await graph.locator("[data-node]").count()).toBeLessThanOrEqual(before);
+    await page.getByRole("button", { name: "All", exact: true }).click();
+    await expect(page.getByTestId("brush")).toHaveCount(0);
+  }
   await page.getByRole("tab", { name: "Map" }).click();
   await expect(page).toHaveURL(/view=map/);
   await expect(page.getByTestId("map-view")).toContainText("Today’s borders, not historical ones");
@@ -70,7 +81,7 @@ test("an imported event leads into the explorer", async ({ page }) => {
 });
 
 test("choosing a card steps to it, and Back returns one step", async ({ page }) => {
-  await page.goto("/connections?id=Q2269");
+  await page.goto("/connections?id=Q2269&view=cards");
   const card = page.locator('[data-testid="connection-cards"] [data-card][data-documented="true"]').first();
   await expect(card).toBeVisible({ timeout: 30000 });
   const target = await card.getAttribute("data-card");
@@ -84,7 +95,7 @@ test("choosing a card steps to it, and Back returns one step", async ({ page }) 
 
 test("cards don't overflow or clip on a phone", async ({ page }, info) => {
   test.skip(info.project.name !== "mobile", "phone layout");
-  await page.goto("/connections?id=Q2269");
+  await page.goto("/connections?id=Q2269&view=cards");
   await expect(page.getByTestId("focus-card")).toBeVisible({ timeout: 30000 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(0);
   const clipped = await page.locator("[data-card]").evaluateAll((els) => els.filter((e) => e.scrollWidth > e.clientWidth + 1).length);

@@ -27,7 +27,7 @@ test("the learn page makes the first step obvious and shows the path", async ({ 
   await expect(page.getByTestId("path-map").locator("[data-state]")).toHaveCount(6);
   await expect(page.getByTestId("path-map").locator('[data-state="next"]')).toHaveCount(1);
   await expect(page.getByTestId("path-card").first()).toContainText("Checked");
-  await expect(page.getByTestId("path-card").filter({ hasText: "Europe" }).first()).toContainText("Generated, unreviewed");
+  await expect(page.getByTestId("path-card").filter({ hasText: "Europe" }).first()).not.toContainText("Checked by hand");
 });
 
 test("a checked lesson: read, answer, see why with sources, finish and move on", async ({ page }) => {

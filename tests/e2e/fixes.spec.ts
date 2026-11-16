@@ -85,7 +85,7 @@ test("journeys can be browsed by question, topic, period, region and place", asy
   const catalog = page.getByTestId("journey-catalog");
   await expect(catalog.getByTestId("path-card")).toHaveCount(55);
   await catalog.getByRole("radio", { name: /By place/ }).click();
-  await expect(catalog.getByTestId("path-card").first()).toContainText("Generated, unreviewed");
+  await expect(catalog.getByTestId("path-card").first()).not.toContainText("Checked by hand");
   await catalog.getByPlaceholder(/Filter by name/).fill("Japan");
   await catalog.getByTestId("path-card").first().click();
   await expect(page).toHaveURL(/path=place-japan/);
@@ -115,22 +115,37 @@ test("the home workspace: a record in focus, its links on a map, and a timeline 
   expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(0);
 });
 
-test("hundreds of generated stories can be filtered and read on a map", async ({ page }) => {
+test("stories follow documented links, and every step shows the statement it rests on", async ({ page }) => {
   await page.goto("/stories");
   const list = page.getByTestId("generated-stories");
-  await expect(list).toContainText(/of 253 stories/, { timeout: 15000 });
-  await list.getByRole("radio", { name: "1800–1914" }).click();
-  await list.getByPlaceholder("e.g. Japan").fill("Japan");
+  await expect(list).toContainText(/of \d{3} stories/, { timeout: 15000 });
+  await list.getByRole("combobox", { name: "Kind of story" }).selectOption("chain");
   await list.getByTestId("generated-story").first().click();
-  await expect(page).toHaveURL(/stories\/read\?id=japan-long-19th/);
-  await expect(page.getByTestId("story-intro")).toContainText("Assembled automatically from Wikidata");
+  await expect(page).toHaveURL(/stories\/read\?id=chain-Q\d+/);
+  await expect(page.getByTestId("story-intro")).toContainText("Chain of documented links");
+  await expect(page.getByTestId("story-intro")).toContainText("documented links lead from");
   await page.getByTestId("story-start").click();
   const first = await page.getByTestId("story-title").textContent();
   await page.getByTestId("story-next").click();
   await expect(page.getByTestId("story-title")).not.toHaveText(first!);
+  await expect(page.getByTestId("story-link")).toContainText(first!);
+  await expect(page.getByTestId("story-link").getByRole("link")).toHaveAttribute("href", /wikidata\.org\/wiki\/Q\d+#P\d+/);
   await page.getByTestId("story-strip").getByRole("button").last().click();
   await page.getByTestId("story-next").click();
   await expect(page.getByTestId("story-end")).toContainText("Story complete");
+});
+
+test("the home timeline can be narrowed by typing years, and says which year is selected", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.getByTestId("focus-year")).toBeVisible({ timeout: 30000 });
+  const range = page.getByTestId("workspace-range");
+  await range.getByLabel("From year").fill("1848");
+  await range.getByLabel("To year").fill("1870");
+  await range.getByRole("button", { name: "Show" }).click();
+  await expect(range).toContainText("1848–1870");
+  const year = Number(await page.getByTestId("focus-year").textContent());
+  expect(year).toBeGreaterThanOrEqual(1848);
+  expect(year).toBeLessThanOrEqual(1870);
 });
 
 test("the navigation rail stays fixed at the left on wide screens", async ({ page }, info) => {
@@ -141,4 +156,28 @@ test("the navigation rail stays fixed at the left on wide screens", async ({ pag
   expect(box!.x).toBe(0);
   expect(box!.y).toBe(0);
   await expect(rail.getByRole("link", { name: "TIMEWISE home" })).toBeVisible();
+});
+
+test("changing the search scope says at once what it covers", async ({ page }, info) => {
+  test.skip(info.project.name === "mobile", "header search is collapsed on phones");
+  await page.goto("/atlas");
+  const header = page.getByRole("banner");
+  const scope = header.getByTestId("search-scope");
+  await expect(scope.locator("option")).toContainText(["Indexed records", "Checked only", "This map: the world", "Wikidata (live)"]);
+  await scope.selectOption("wikidata");
+  await expect(header.getByTestId("search-hint")).toContainText("Wikidata (live)");
+  await scope.selectOption("checked");
+  await expect(header.getByTestId("search-hint")).toContainText("hand-checked Austria collection");
+});
+
+test("dragging across the timeline bars chooses a span", async ({ page }, info) => {
+  test.skip(info.project.name === "mobile", "mouse drag on desktop");
+  await page.goto("/atlas/austria");
+  await expect(page.getByTestId("atlas-count")).toContainText("on the map", { timeout: 20000 });
+  const bars = (await page.getByTestId("timeline-bars").boundingBox())!;
+  await page.mouse.move(bars.x + bars.width * 0.55, bars.y + bars.height - 4);
+  await page.mouse.down();
+  await page.mouse.move(bars.x + bars.width * 0.8, bars.y + bars.height - 4, { steps: 8 });
+  await page.mouse.up();
+  await expect(page).toHaveURL(/from=\d+&to=\d+/);
 });

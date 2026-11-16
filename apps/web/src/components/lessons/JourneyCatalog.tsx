@@ -40,7 +40,7 @@ export function JourneyCatalog({ current, onPick }: { current?: string; onPick?:
         </label>
       </div>
       <p className="mt-2 text-xs text-ink-2">
-        {PATHS.length} journeys, {lessons} lessons. One is written from the hand-checked collection; the rest are assembled automatically from imported Wikidata records by fixed rules, and say how.
+        {PATHS.length} journeys, {lessons} lessons. One is checked by hand; the rest are assembled from Wikidata records by fixed rules.
       </p>
       <ul className="mt-3 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
         {list.map((x) => {
@@ -59,7 +59,7 @@ export function JourneyCatalog({ current, onPick }: { current?: string; onPick?:
                 </span>
               </span>
               <span className="mt-3 flex items-center gap-2">
-                <span className={`badge ${x.review === "source_checked" ? "" : "border-dashed"}`}>{x.review === "source_checked" ? "Checked by hand" : "Generated, unreviewed"}</span>
+                {x.review === "source_checked" && <span className="badge">Checked by hand</span>}
                 <span className="ml-auto text-xs tabular-nums text-ink-2">{done ? `${done}/${x.lessons.length} done` : "Not started"}</span>
               </span>
               <span className="mt-1.5 block h-1.5 overflow-hidden rounded-full bg-line" aria-hidden><span className="block h-full rounded-full bg-bronze" style={{ width: `${pct}%` }} /></span>

@@ -274,6 +274,41 @@ Tests: atlas and coverage specs pass on the new build (22). The admin and archiv
 
 Tests: 25 unit, 61 Python, 67 of 69 browser tests on the new build; the two world-map hover tests pass alone and are the known flake under full-suite load. Admin and archival specs need the API's port 3000 origin and weren't run.
 
+## Stories with a documented flow, a time graph, and brushing (2026-11-16)
+
+From feedback: stories need a logical flow that argues something; Explore needed a better visualization; the search scope seemed to do nothing; the home map zoomed out on its own; years were hard to read; ranges couldn't be changed.
+
+**Implemented and tested:**
+- **Documented links.** `scripts/link_harvest.py` asks the Wikidata Query Service which statements connect TIMEWISE's 60,486 records. It covers has cause, has immediate cause, has effect, follows, followed by, replaces, replaced by, part of and significant event, and records how many references each statement has. It found 31,882 links where both ends are TIMEWISE records (`data/generated/links.json`).
+- **Stories with a flow.** `scripts/story_catalog.py` builds 459 stories from those links, replacing the place-and-era stories, which had no flow.
+  - **142 chains:** "How did A lead to Z?", or "What came between A and Z?" when most links are succession. Each step is joined to the one before by a statement of cause, effect or succession, and the dates must run forward. Chains of yearly repeats (elections, seasons) are dropped.
+  - **317 episodes:** "How did X unfold?" ("What shaped X?" for states). The parts or significant events of a larger event, in date order. Lists of regional copies (a pandemic county by county) and parts that all fall in one or two years are dropped.
+  - Every story states its claim (for example, "5 documented links lead from … to …: 3 of cause and effect, 2 of succession"). Every step shows the statement that links it to the previous step or to the whole, with a link to it and its reference count.
+  - The step strip is now evenly spaced with years, instead of stacking markers whose dates are close.
+  - Places read "in today's …".
+- **Labels.** The per-card "Generated, unreviewed" badge is gone: everything imported is unreviewed. Only "Checked by hand" is marked, and the Sources page explains the rest once.
+- **Sources page** (`/about`): now "Sources at a glance". It shows four source cards, a key for reading links, and the details folded.
+- **Explore time graph** (now the default view): the record in focus is a red line at its date. Linked records sit at their own dates in lanes by kind of link, drawn solid when documented and dashed for shared time.
+  - An overview underneath can be brushed: drag a rectangle to zoom, drag it to move, use the edges to resize, and double-click or "All" to reset. "Around it" zooms to 30 years either side of the focus.
+  - Undated links are listed apart.
+  - Cards and Map stay as alternative views.
+- **World Map timeline:** drag across the count bars to choose a span. The best-documented records under the bars are now a labelled "Top records" row of dots, spaced so none overlap, and the selected record is named.
+- **Search:** the World Map has a "This map: the world" scope. Changing scope shows at once what it covers and puts the cursor back in the box.
+- **Home workspace:**
+  - Choosing a record pans to it if it's off screen, and keeps the zoom; the map is framed only when the period changes.
+  - The selected record's year is shown under its marker.
+  - The range can be narrowed by dragging on the timeline or typing years, and stepped with the arrows.
+
+**Limits:**
+- Story links are Wikidata's statements. Some have no reference, and the step says so. Wikidata models some successions oddly; for example, it lists Goguryeo as "replaced by" the Tang dynasty.
+- Episodes depend on Wikidata's part-of statements, so well-documented wars have far more than other subjects.
+
+**Tests:**
+- Typecheck clean; 51 unit tests pass.
+- Full run: 139 passed and 4 failed. The two non-API failures passed when rerun alone. The two archival-material tests still need the local API.
+- New browser tests cover the documented story steps, the time graph and its brush, the bar brushing, the search-scope hint, and the typed year range on the home page.
+- Screenshots checked: the home workspace, a chain story, the time graph before and after brushing, and the Sources page.
+
 ## Generated stories and layout clean-up (2026-11-16)
 
 From feedback on the live site: too few records on the home map, a crowded timeline, a cramped story layout, and too few stories.

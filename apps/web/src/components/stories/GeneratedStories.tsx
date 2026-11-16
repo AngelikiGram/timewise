@@ -24,12 +24,12 @@ export function GeneratedStories() {
   const [all, setAll] = useState<StoryEntry[] | null>(null);
   const [failed, setFailed] = useState(false);
   const [era, setEra] = useState("all");
-  const [kind, setKind] = useState<"all" | "country" | "continent">("all");
+  const [kind, setKind] = useState<"all" | "chain" | "episodes">("all");
   const [q, setQ] = useState("");
   const [shown, setShown] = useState(PAGE);
   useEffect(() => { loadStoryIndex().then((d) => setAll(d.stories), () => setFailed(true)); }, []);
   useEffect(() => setShown(PAGE), [era, kind, q]);
-  const list = useMemo(() => (all ?? []).filter((s) => (era === "all" || s.era === era) && (kind === "all" || s.kind === kind) && (!q.trim() || fold(s.title).includes(fold(q)))), [all, era, kind, q]);
+  const list = useMemo(() => (all ?? []).filter((s) => (era === "all" || s.era === era) && (kind === "all" || s.kind === kind) && (!q.trim() || fold(`${s.title} ${s.places.join(" ")}`).includes(fold(q)))), [all, era, kind, q]);
 
   return (
     <div data-testid="generated-stories">
@@ -38,18 +38,18 @@ export function GeneratedStories() {
           {ERAS.map((e) => <button key={e.id} type="button" role="radio" aria-checked={era === e.id} data-on={era === e.id} className="chip" onClick={() => setEra(e.id)}>{e.label}</button>)}
         </div>
         <div className="flex gap-2 lg:ml-auto">
-          <label><span className="sr-only">Countries or continents</span>
+          <label><span className="sr-only">Kind of story</span>
             <select value={kind} onChange={(e) => setKind(e.target.value as typeof kind)} className="field !py-1.5 text-sm">
-              <option value="all">Countries and continents</option>
-              <option value="country">Countries</option>
-              <option value="continent">Continents</option>
+              <option value="all">All kinds</option>
+              <option value="chain">Chains: how A led to B</option>
+              <option value="episodes">Episodes: how an event unfolded</option>
             </select>
           </label>
-          <label><span className="sr-only">Filter stories by name</span><input value={q} onChange={(e) => setQ(e.target.value)} placeholder="e.g. Japan" className="field !py-1.5 text-sm" /></label>
+          <label><span className="sr-only">Filter stories by name</span><input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Name or country" className="field !py-1.5 text-sm" /></label>
         </div>
       </div>
       {failed && <p className="mt-3 text-sm text-ink-2">The story list couldn&rsquo;t be loaded.</p>}
-      {all && <p className="mt-2 text-xs text-ink-2">{list.length} of {all.length} stories. Generated from imported Wikidata records by fixed rules; each says how its records were chosen.</p>}
+      {all && <p className="mt-2 text-xs text-ink-2">{list.length} of {all.length} stories. Every step is joined to the last by a documented Wikidata statement.</p>}
       <ul className="mt-3 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         {!all && !failed && Array.from({ length: 8 }, (_, i) => <li key={i} className="skeleton h-28 rounded-xl" />)}
         {list.slice(0, shown).map((s) => {
@@ -59,10 +59,10 @@ export function GeneratedStories() {
             <li key={s.id}>
               <Link href={`/stories/read?id=${s.id}`} className="card card-link flex h-full flex-col p-4" data-testid="generated-story">
                 <span className="flex items-start gap-3">
-                  <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-paper-3 text-bronze"><Icon name={s.kind === "country" ? "place" : "map"} size={22} /></span>
+                  <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-paper-3 text-bronze"><Icon name={s.kind === "chain" ? "cause" : "parts"} size={22} /></span>
                   <span className="min-w-0">
                     <span className="block font-serif text-lg leading-tight">{s.title}</span>
-                    <span className="mt-0.5 block text-xs text-ink-2">{s.count} records · about {Math.round(s.count * 0.6) + 2} min</span>
+                    <span className="mt-0.5 block text-xs text-ink-2">{s.from < 0 ? `${-s.from} BC` : s.from}–{s.to < 0 ? `${-s.to} BC` : s.to} · {s.count} steps{s.places.length ? ` · ${s.places.slice(0, 2).join(", ")}` : ""}</span>
                   </span>
                 </span>
                 {saved && (

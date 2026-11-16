@@ -14,9 +14,12 @@ import { categoryIcon, Icon } from "../icons";
 import { ActivityView } from "../lessons/activities";
 import { SaveButton } from "../ui";
 
-export type StoryRecord = { id: string; title: { en: string }; description: string; category: string; start: string; end?: string; precision: Precision; lng: number; lat: number; links: number; home: string; url: string; loc?: string };
-export type GeneratedStory = { id: string; title: string; kind: "country" | "continent"; region: string; regionLabel: string; era: string; eraLabel: string; from: number; to: number; count: number; why: string; chapters: { label: string; records: StoryRecord[] }[] };
-export type StoryEntry = Omit<GeneratedStory, "why" | "chapters">;
+/** How a step connects to the one before it (or, in an episode story, to the whole): a Wikidata statement. */
+export type Via = { from: string; fromTitle: string; relation: string; kind: "cause" | "succession" | "part"; prop: string; refs: number; on: string };
+export type StoryRecord = { id: string; title: { en: string }; description?: string; category: string; start: string; end?: string; precision: Precision; lng: number; lat: number; links: number; home?: string; url: string; loc?: string; via?: Via };
+export type GeneratedStory = { id: string; title: string; kind: "chain" | "episodes"; question: string; claim: string; why: string; count: number; from: number; to: number; era: string; places: string[]; chapters: { label: string; records: StoryRecord[] }[] };
+export type StoryEntry = Omit<GeneratedStory, "why" | "chapters" | "question" | "claim">;
+export const KIND_LABEL: Record<GeneratedStory["kind"], string> = { chain: "Chain of documented links", episodes: "A larger event, part by part" };
 
 let index: Promise<{ stories: StoryEntry[]; labels: Record<string, string> }> | null = null;
 export const loadStoryIndex = () => (index ??= fetch(asset("/data/stories/index.json")).then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status))))).catch((e) => { index = null; throw e; }));
@@ -77,31 +80,27 @@ function StoryMap({ records, current, onPick }: { records: StoryRecord[]; curren
   return <div className="absolute inset-0"><div ref={box} className="h-full w-full" data-testid="story-map" data-ready={ready} /></div>;
 }
 
-/** The records across the bottom, numbered, by date. */
+/** The story's steps in order along one line, evenly spaced, each with its year: a sequence, not a scale. */
 function Strip({ records, current, onPick }: { records: StoryRecord[]; current: number; onPick: (i: number) => void }) {
-  const lo = yearOf(records[0].start), hi = yearOf(records[records.length - 1].start);
-  const span = Math.max(1, hi - lo);
-  const rows: number[] = [];
-  const xs = records.map((r) => 3 + ((yearOf(r.start) - lo) / span) * 94);
-  // Up to three rows: each marker takes the lowest row with room, so close dates never overlap.
-  xs.forEach((x, i) => { rows[i] = [0, 1, 2].find((r) => !xs.slice(0, i).some((y, j) => rows[j] === r && Math.abs(y - x) < 2.6)) ?? 2; });
+  const n = records.length;
+  const x = (i: number) => (n === 1 ? 50 : 3 + (i / (n - 1)) * 94);
   return (
-    <div className="relative h-[5.5rem]" role="group" aria-label="The story's records in time" data-testid="story-strip">
-      <span aria-hidden className="absolute inset-x-0 top-[3.6rem] h-px bg-ink-2/40" />
-      <span aria-hidden className="absolute left-0 top-[4.2rem] text-xs tabular-nums text-ink-2">{formatYear(lo)}</span>
-      <span aria-hidden className="absolute right-0 top-[4.2rem] text-xs tabular-nums text-ink-2">{formatYear(hi)}</span>
+    <div className="relative h-16" role="group" aria-label="The story's steps, in order" data-testid="story-strip">
+      <span aria-hidden className="absolute top-[18px] h-0.5 rounded-full bg-line" style={{ left: `${x(0)}%`, right: `${100 - x(n - 1)}%` }} />
+      {current >= 0 && <span aria-hidden className="absolute top-[18px] h-0.5 rounded-full bg-bronze transition-[width]" style={{ left: `${x(0)}%`, width: `${x(current) - x(0)}%` }} />}
       {records.map((r, i) => (
         <button
           key={r.id}
           type="button"
           onClick={() => onPick(i)}
           aria-current={i === current ? "step" : undefined}
-          aria-label={`${i + 1}. ${r.title.en}, ${when(r)}`}
+          aria-label={`Step ${i + 1}: ${r.title.en}, ${when(r)}`}
           title={`${r.title.en} · ${when(r)}`}
-          className={`absolute grid -translate-x-1/2 place-items-center rounded-full text-xs font-semibold tabular-nums transition-colors focus-visible:ring-2 focus-visible:ring-bronze ${i === current ? "h-8 w-8 bg-oxblood text-white" : "h-7 w-7 border border-bronze bg-paper-2 text-ink hover:bg-bronze-soft"}`}
-          style={{ left: `${xs[i]}%`, top: 40 - rows[i] * 20 }}
+          className="group absolute top-0 flex -translate-x-1/2 flex-col items-center gap-1 outline-none"
+          style={{ left: `${x(i)}%` }}
         >
-          {i + 1}
+          <span className={`grid h-9 w-9 place-items-center rounded-full text-xs font-semibold tabular-nums transition-colors group-focus-visible:ring-2 group-focus-visible:ring-bronze ${i === current ? "bg-oxblood text-white shadow" : i < current ? "bg-bronze text-paper" : "border border-bronze bg-paper-2 text-ink group-hover:bg-bronze-soft"}`}>{i + 1}</span>
+          <span className={`whitespace-nowrap text-[11px] tabular-nums ${i === current ? "font-semibold text-ink" : "text-ink-2"}`}>{formatYear(yearOf(r.start))}</span>
         </button>
       ))}
     </div>
@@ -171,10 +170,10 @@ export function StoryReader() {
 
   const next = useMemo(() => {
     if (!story) return [];
-    const eras = ["antiquity", "middle-ages", "early-modern", "long-19th", "world-wars", "since-1945"];
-    const later = entries.find((e) => e.region === story.region && eras.indexOf(e.era) === eras.indexOf(story.era) + 1);
-    const same = entries.filter((e) => e.era === story.era && e.id !== story.id && e.kind === story.kind).sort((a, b) => a.id.localeCompare(b.id)).slice(0, 2);
-    return [later, ...same].filter(Boolean) as StoryEntry[];
+    // Stories that begin where this one ends, then others from the same years and places.
+    const after = entries.filter((e) => e.id !== story.id && e.from >= story.to).sort((a, b) => a.from - b.from).slice(0, 1);
+    const near = entries.filter((e) => e.id !== story.id && !after.includes(e) && e.era === story.era && e.places.some((p) => story.places.includes(p))).slice(0, 2);
+    return [...after, ...near];
   }, [entries, story]);
 
   if (story === null) {
@@ -192,7 +191,7 @@ export function StoryReader() {
         <StoryMap records={records} current={r ? step : -1} onPick={(i) => go(i)} />
       </div>
 
-      <article ref={panel} className="relative z-10 min-h-0 flex-1 overflow-y-auto border-t border-line bg-paper lg:absolute lg:bottom-36 lg:left-5 lg:top-5 lg:w-[min(620px,44vw)] lg:rounded-2xl lg:border lg:shadow-[0_18px_50px_-24px_rgb(0_0_0/0.5)]" aria-live="polite">
+      <article ref={panel} className="relative z-10 min-h-0 flex-1 overflow-y-auto border-t border-line bg-paper lg:absolute lg:bottom-28 lg:left-5 lg:top-5 lg:w-[min(620px,44vw)] lg:rounded-2xl lg:border lg:shadow-[0_18px_50px_-24px_rgb(0_0_0/0.5)]" aria-live="polite">
         <div className="sticky top-0 z-10 flex items-center gap-3 border-b border-line bg-paper/95 px-5 py-2.5 backdrop-blur">
           <Link href="/stories" className="btn btn-ghost btn-icon" aria-label="All stories"><Icon name="back" size={18} /></Link>
           <div className="h-2 flex-1 overflow-hidden rounded-full bg-line" role="progressbar" aria-label="Story progress" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100}><div className="h-full rounded-full bg-bronze transition-[width]" style={{ width: `${pct}%` }} /></div>
@@ -202,9 +201,9 @@ export function StoryReader() {
         <div className="p-5 sm:p-7" key={step}>
           {step < 0 && (
             <section className="fade-in" data-testid="story-intro">
-              <p className="eyebrow">Generated story · {story.count} records</p>
-              <h1 className="mt-2 font-serif text-4xl leading-tight">{story.title}</h1>
-              <p className="mt-3 inline-flex items-center gap-1.5 rounded-full border border-dashed border-line px-3 py-1 text-xs text-ink-2"><Icon name="info" size={14} />Assembled automatically from Wikidata · not checked by hand</p>
+              <p className="eyebrow">{KIND_LABEL[story.kind]} · {story.count} records</p>
+              <h1 className="mt-2 font-serif text-4xl leading-tight">{story.question}</h1>
+              <p className="mt-3 flex gap-2 rounded-xl bg-bronze-soft/40 p-3 leading-relaxed"><Icon name={story.kind === "chain" ? "cause" : "parts"} size={20} className="mt-0.5 shrink-0 text-bronze" /><span>{story.claim}</span></p>
               <ol className="mt-6 grid gap-3">
                 {story.chapters.map((c, i) => (
                   <li key={c.label} className="flex gap-3">
@@ -213,7 +212,7 @@ export function StoryReader() {
                   </li>
                 ))}
               </ol>
-              <details className="mt-5 text-sm text-ink-2"><summary className="cursor-pointer hover:text-ink">How these records were chosen</summary><p className="mt-1">{story.why} Titles, dates, places and descriptions are Wikidata&rsquo;s; nothing here is written by TIMEWISE, and it isn&rsquo;t a narrative of cause and effect.</p></details>
+              <details className="mt-5 text-sm text-ink-2"><summary className="cursor-pointer hover:text-ink">How this story was built</summary><p className="mt-1">{story.why} Titles, dates, places and descriptions are Wikidata&rsquo;s, and every link names the statement it rests on.</p></details>
               <button type="button" className="btn btn-primary mt-6" onClick={() => go(0)} data-testid="story-start">Start</button>
             </section>
           )}
@@ -221,10 +220,17 @@ export function StoryReader() {
           {r && (
             <section className="fade-in" data-testid="story-step">
               <p className="eyebrow">Chapter {ch + 1} of {story.chapters.length} · {story.chapters[ch].label}</p>
+              {r.via && (
+                <p className="mt-2 flex flex-wrap items-center gap-1.5 text-sm" data-testid="story-link">
+                  <Icon name={r.via.kind === "part" ? "parts" : r.via.kind === "cause" ? "cause" : "sequence"} size={16} className="text-bronze" />
+                  {r.via.kind === "part" ? <span>Part of <strong>{r.via.fromTitle}</strong></span> : <span><strong>{r.via.fromTitle}</strong> {r.via.relation} …</span>}
+                  <a className="link text-xs" href={`https://www.wikidata.org/wiki/${r.via.on}#${r.via.prop}`} target="_blank" rel="noopener noreferrer">statement{r.via.refs ? `, ${r.via.refs} reference${r.via.refs > 1 ? "s" : ""}` : ", no reference"} ↗</a>
+                </p>
+              )}
               <h1 className="mt-2 font-serif text-3xl leading-tight sm:text-4xl" data-testid="story-title">{r.title.en}</h1>
               <div className="mt-3 flex flex-wrap gap-2 text-sm">
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-bronze-soft/60 px-3 py-1"><Icon name="timeline" size={14} />{when(r)}</span>
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-paper-3 px-3 py-1"><Icon name={categoryIcon(r.category)} size={14} />{story.kind === "continent" ? labels[r.home] ?? "" : story.regionLabel}</span>
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-paper-3 px-3 py-1"><Icon name={categoryIcon(r.category)} size={14} />{r.home && labels[r.home] ? `in today’s ${labels[r.home]}` : "Location from Wikidata"}</span>
               </div>
               {detail?.image && (
                 <figure className="mt-4">
@@ -233,7 +239,7 @@ export function StoryReader() {
                   <figcaption className="mt-1 truncate text-[11px] text-ink-2">Image: {detail.image.artist ?? "Wikimedia Commons"}{detail.image.license ? ` · ${detail.image.license}` : ""} · <a className="link" href={detail.image.page} target="_blank" rel="noopener noreferrer">source</a></figcaption>
                 </figure>
               )}
-              <p className="mt-4 text-lg leading-relaxed">{r.description[0].toUpperCase() + r.description.slice(1)}.</p>
+              {r.description && <p className="mt-4 text-lg leading-relaxed">{r.description[0].toUpperCase() + r.description.slice(1)}.</p>}
               {detail?.summary && (
                 <details className="mt-3 rounded-xl bg-paper-3/60 p-3 text-[0.95rem]">
                   <summary className="cursor-pointer font-semibold">Read more</summary>
@@ -243,7 +249,7 @@ export function StoryReader() {
               )}
               <details className="mt-3 text-sm text-ink-2">
                 <summary className="cursor-pointer hover:text-ink">Source and why it&rsquo;s here</summary>
-                <p className="mt-1">Record: <a className="link" href={r.url} target="_blank" rel="noopener noreferrer">Wikidata {r.id} ↗</a> (CC0). Location: {r.loc ? LOC[r.loc] : "from Wikidata"}. It&rsquo;s in this story because it&rsquo;s among the records of this place and era written about in the most Wikipedia languages ({r.links}).</p>
+                <p className="mt-1">Record: <a className="link" href={r.url} target="_blank" rel="noopener noreferrer">Wikidata {r.id} ↗</a> (CC0). Location: {r.loc ? LOC[r.loc] : "from Wikidata"}. {r.via ? <>It&rsquo;s in this story because of the statement above, linking it to {r.via.fromTitle}.</> : <>It&rsquo;s where the story begins.</>}</p>
               </details>
               <div className="mt-6 flex flex-wrap items-center gap-2">
                 <button type="button" className="btn btn-secondary" onClick={() => go(step - 1)}><Icon name="back" size={16} />Back</button>
@@ -270,7 +276,7 @@ export function StoryReader() {
                 <div>
                   <h2 className="font-serif text-xl">Next</h2>
                   <ul className="mt-2 grid gap-2">
-                    {next.map((n) => <li key={n.id}><button type="button" className="card card-link flex w-full items-center gap-3 p-3 text-left" onClick={() => router.push(`/stories/read?id=${n.id}`)}><Icon name={n.kind === "country" ? "place" : "map"} size={20} className="text-bronze" /><span className="flex-1 font-serif text-lg">{n.title}</span><Icon name="forward" size={16} /></button></li>)}
+                    {next.map((n) => <li key={n.id}><button type="button" className="card card-link flex w-full items-center gap-3 p-3 text-left" onClick={() => router.push(`/stories/read?id=${n.id}`)}><Icon name={n.kind === "chain" ? "cause" : "parts"} size={20} className="text-bronze" /><span className="flex-1 font-serif text-lg">{n.title}</span><Icon name="forward" size={16} /></button></li>)}
                   </ul>
                 </div>
               )}

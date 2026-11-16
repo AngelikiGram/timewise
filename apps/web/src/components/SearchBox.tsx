@@ -49,6 +49,7 @@ function searchIndex(events: IndexEvent[], regions: RegionRow[], query: string):
 /** The region whose map this page shows, if any: /atlas/austria, /history/europe. */
 function regionOfPath(pathname: string) {
   const p = BASE_PATH && pathname.startsWith(BASE_PATH) ? pathname.slice(BASE_PATH.length) : pathname;
+  if (/^\/atlas\/?$/.test(p)) return "world";
   const m = p.match(/^\/(?:atlas|history)\/([a-z_]+)\/?$/);
   return m && m[1] !== "countries" ? m[1] : null;
 }
@@ -72,9 +73,11 @@ export function SearchBox({ size = "large", placeholder }: { size?: "large" | "c
   const [retry, setRetry] = useState(0);
   const large = size === "large";
   const box = useRef<HTMLDivElement>(null);
+  const input = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (!regionId) { setRegionName(null); if (scope === "region") setScope("indexed"); return; }
+    if (regionId === "world") { setRegionName("the world"); return; }
     loadRegions().then((rs) => setRegionName(rs.find((r) => r.id === regionId)?.label.en ?? CONTINENT_LABELS[regionId] ?? null), () => {});
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [regionId]);
@@ -111,7 +114,7 @@ export function SearchBox({ size = "large", placeholder }: { size?: "large" | "c
         return events
           .filter((e) => terms.every((t) => fold(`${e.title.en ?? ""} ${e.title.de ?? ""}`).includes(t)))
           .slice(0, 10)
-          .map((e) => { const k = new URLSearchParams(keep); k.set("event", e.id); return { key: `m-${e.id}`, kind: "On this map", label: e.title.en ?? e.title.de ?? e.id, detail: formatYear(yearOf(e.start)) + (e.inside === false ? " · located elsewhere" : ""), href: `/atlas/${regionId}?${k}` }; });
+          .map((e) => { const k = new URLSearchParams(keep); k.set("event", e.id); return { key: `m-${e.id}`, kind: "On this map", label: e.title.en ?? e.title.de ?? e.id, detail: formatYear(yearOf(e.start)) + (e.inside === false ? " · located elsewhere" : ""), href: `${regionId === "world" ? "/atlas" : `/atlas/${regionId}`}?${k}` }; });
       }
       const [events, regions] = await Promise.all([loadIndex(), loadRegions()]);
       return [...checked(3), ...searchIndex(events, regions, q)].slice(0, 10);
@@ -126,6 +129,7 @@ export function SearchBox({ size = "large", placeholder }: { size?: "large" | "c
     router.push(href);
   };
   const showPanel = open && query.trim().length >= 2;
+  const showHint = open && query.trim().length < 2;
 
   return (
     <div ref={box} className="relative w-full" onBlur={(e) => { if (!box.current?.contains(e.relatedTarget as Node)) setOpen(false); }}>
@@ -142,6 +146,7 @@ export function SearchBox({ size = "large", placeholder }: { size?: "large" | "c
       >
         <svg aria-hidden viewBox="0 0 20 20" className={`${large ? "h-5 w-5" : "h-4 w-4"} shrink-0 text-ink-2`}><circle cx="8.5" cy="8.5" r="5.5" fill="none" stroke="currentColor" strokeWidth="1.8" /><path d="m13 13 4.5 4.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></svg>
         <input
+          ref={input}
           role="combobox"
           aria-expanded={showPanel && hits.length > 0}
           aria-controls={listId}
@@ -165,7 +170,7 @@ export function SearchBox({ size = "large", placeholder }: { size?: "large" | "c
           <span className="sr-only">Search in</span>
           <select
             value={scope}
-            onChange={(e) => { setScope(e.target.value as Scope); setOpen(true); }}
+            onChange={(e) => { setScope(e.target.value as Scope); setOpen(true); input.current?.focus(); }}
             title={scopeInfo.help}
             data-testid="search-scope"
             className={`cursor-pointer rounded-full border border-line bg-paper text-ink-2 outline-none hover:border-bronze focus:border-bronze ${large ? "max-w-48 px-3 py-1.5 text-sm" : "max-w-40 px-2 py-0.5 text-xs"}`}
@@ -174,6 +179,11 @@ export function SearchBox({ size = "large", placeholder }: { size?: "large" | "c
           </select>
         </label>
       </form>
+      {showHint && (
+        <p role="status" className="absolute inset-x-0 top-full z-50 mt-1 rounded-lg border border-line bg-paper-2 px-4 py-2.5 text-xs text-ink-2 shadow-xl" data-testid="search-hint">
+          <span className="font-semibold text-ink">{scopeInfo.label}:</span> {scopeInfo.help} Type at least two letters.
+        </p>
+      )}
       {showPanel && (
         <div className="absolute inset-x-0 top-full z-50 mt-1 overflow-hidden rounded-lg border border-line bg-paper-2 shadow-xl" data-testid="search-panel">
           <p role="status" aria-live="polite" className="border-b border-line px-4 py-2 text-xs text-ink-2" data-testid="search-status">

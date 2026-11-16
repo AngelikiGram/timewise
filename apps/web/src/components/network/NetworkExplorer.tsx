@@ -13,12 +13,13 @@ import { CONTINENT_LABELS, loadIndex, loadRegions, type IndexEvent } from "@/lib
 import { ConnectionCards, GROUP_ORDER } from "./ConnectionCards";
 import { Icon } from "../icons";
 import { LinkDetail, RecordCard } from "./RecordPanel";
-import { MapView, TimelineView } from "./views";
+import { MapView } from "./views";
+import { TimeGraph } from "./TimeGraph";
 
-type View = "network" | "timeline" | "map";
+type View = "network" | "cards" | "map";
 const VIEWS: { id: View; label: string }[] = [
-  { id: "network", label: "Connections" },
-  { id: "timeline", label: "Timeline" },
+  { id: "network", label: "Time graph" },
+  { id: "cards", label: "Cards" },
   { id: "map", label: "Map" },
 ];
 
@@ -289,9 +290,9 @@ export function NetworkExplorer() {
         {GROUP_ORDER.filter((g) => all.some((l) => l.group === g)).map((g) => {
           const n = all.filter((l) => l.group === g).length;
           return (
-            <button key={g} type="button" className="chip" aria-pressed={!off.has(g)} onClick={() => setOff((s) => { const t = new Set(s); if (t.has(g)) t.delete(g); else t.add(g); return t; })}>
-              <span aria-hidden className={`inline-block h-0 w-4 border-t-2 ${GROUPS[g].documented ? "border-navy" : "border-dashed border-bronze"}`} />
-              {GROUPS[g].label} <span className="tabular-nums opacity-70">{n}</span>
+            <button key={g} type="button" aria-pressed={!off.has(g)} onClick={() => setOff((s) => { const t = new Set(s); if (t.has(g)) t.delete(g); else t.add(g); return t; })} className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-sm transition-colors ${off.has(g) ? "border-line text-ink-2 line-through opacity-60" : "border-bronze/60 bg-paper-2 text-ink hover:border-bronze"}`}>
+              <span aria-hidden className={`inline-block h-0 w-4 border-t-2 border-bronze ${GROUPS[g].documented ? "" : "border-dashed"}`} />
+              {GROUPS[g].label} <span className="tabular-nums text-ink-2">{n}</span>
             </button>
           );
         })}
@@ -309,7 +310,7 @@ export function NetworkExplorer() {
         {countries.length > 0 && (
           <label className="text-sm text-ink-2">
             <span className="sr-only">Country</span>
-            <select value={country} onChange={(e) => setCountry(e.target.value)} className="field !w-auto !py-1 text-sm">
+            <select value={country} onChange={(e) => setCountry(e.target.value)} className="field !w-auto max-w-48 !py-1 text-sm">
               <option value="">Any country</option>
               {countries.map((c) => <option key={c}>{c}</option>)}
             </select>
@@ -346,11 +347,11 @@ export function NetworkExplorer() {
                   <span className="inline-flex items-center gap-1"><span aria-hidden className="inline-block w-5 border-t-2 border-dashed border-bronze" />contextual</span>
                 </p>
               </div>
-              {view === "network" && <ConnectionCards record={record} links={filtered} facts={facts} selected={selected} onStep={(l) => (isQid(l.target) ? open(l.target) : l.href && router.push(l.href))} onDetails={select} />}
-              {view === "timeline" && <TimelineView record={record} links={filtered} facts={facts} selected={selected} onSelect={select} loading={factsState === "loading"} />}
+              {view === "network" && <TimeGraph record={record} links={filtered} facts={facts} selected={selected} onStep={(l) => (isQid(l.target) ? open(l.target) : l.href && router.push(l.href))} onDetails={select} loading={factsState === "loading"} />}
+              {view === "cards" && <ConnectionCards record={record} links={filtered} facts={facts} selected={selected} onStep={(l) => (isQid(l.target) ? open(l.target) : l.href && router.push(l.href))} onDetails={select} />}
               {view === "map" && <MapView record={record} links={filtered} facts={facts} selected={selected} onSelect={select} loading={factsState === "loading"} />}
               {factsState === "failed" && <p className="mt-2 text-xs text-ink-2">Dates and places of the linked records couldn&rsquo;t be loaded from the Wikidata Query Service, so the period and country filters have nothing to work with.</p>}
-              <p className="mt-3 px-1 text-xs text-ink-2">{view === "network" ? "Choose a card to step to that record. “Why” explains the link and its source." : "Choose a record to see why it’s connected."}</p>
+              <p className="mt-3 px-1 text-xs text-ink-2">{view === "map" ? "Choose a record to see why it’s connected." : "Choose a record to step to it; the i button explains the link and its source."}</p>
             </>
           )}
         </section>
