@@ -41,11 +41,10 @@ export function SiteHeader({ children, search = true }: { children?: React.React
   const saved = Object.keys(progress.bookmarks).length;
 
   return (
-    <header className="sticky top-0 z-30 shrink-0 border-b border-line bg-paper-2/95 backdrop-blur lg:-ml-[88px] lg:w-[calc(100%+88px)]">
-      <div className="flex h-14 items-center gap-3 px-4 sm:px-6">
-        <Wordmark />
-        {/* On wide screens the sections sit in a quiet rail on the left, icon above label. */}
-        <nav aria-label="Main" className="fixed bottom-0 left-0 top-14 z-20 hidden w-[88px] flex-col gap-1 border-r border-line bg-paper-2 px-2 pt-4 lg:flex">
+    <>
+      {/* On wide screens the sections sit in a quiet rail on the left, icon above label. */}
+        <nav aria-label="Main" className="fixed bottom-0 left-0 top-0 z-40 hidden w-[88px] flex-col gap-1 border-r border-line bg-paper-2 px-2 lg:flex">
+          <Link href="/" aria-label="TIMEWISE home" className="mb-3 flex h-14 shrink-0 flex-col items-center justify-center border-b border-line font-serif text-[13px] leading-none tracking-[0.18em] text-ink">TIME<span className="text-bronze">WISE</span></Link>
           {SECTIONS.map((s) => (
             <Link
               key={s.id}
@@ -59,6 +58,9 @@ export function SiteHeader({ children, search = true }: { children?: React.React
             </Link>
           ))}
         </nav>
+    <header className="sticky top-0 z-30 shrink-0 border-b border-line bg-paper-2/95 backdrop-blur">
+      <div className="flex h-14 items-center gap-3 px-4 sm:px-6">
+        <span className="lg:hidden"><Wordmark /></span>
         <div className="min-w-0 flex-1 lg:flex-none">{children}</div>
         {!children && search && (
           <div className="hidden w-full max-w-xl md:block lg:mx-auto">
@@ -94,5 +96,6 @@ export function SiteHeader({ children, search = true }: { children?: React.React
         ))}
       </nav>
     </header>
+    </>
   );
 }

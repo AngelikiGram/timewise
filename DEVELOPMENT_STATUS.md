@@ -274,6 +274,37 @@ Tests: atlas and coverage specs pass on the new build (22). The admin and archiv
 
 Tests: 25 unit, 61 Python, 67 of 69 browser tests on the new build; the two world-map hover tests pass alone and are the known flake under full-suite load. Admin and archival specs need the API's port 3000 origin and weren't run.
 
+## Generated stories and layout clean-up (2026-11-16)
+
+From feedback on the live site: too few records on the home map, a crowded timeline, a cramped story layout, and too few stories.
+
+**Implemented and tested:**
+- **Home map:** all of the period's 150 best-documented records are now drawn as dots, and the top 40 are named where there's room. Clicking any record moves the focus there; the focus and its links stay as labelled bubbles.
+- **Home timeline:** one row of at most 12 icon markers, spaced so none overlap. Every record of the period is a faint tick on the axis.
+- **Navigation:**
+  - The rail now sits outside the header. The header's blur had made the "fixed" rail move with the header, and the logo was clipped on full-screen pages.
+  - The rail carries its own logo.
+  - A test checks the rail stays at the left edge.
+- **Story player** (`/journeys/…`): the text panel is wider (up to 620px, 44% of the screen), the chapter title is no longer squeezed by the Evidence/Story toggle, and the chapter list is folded.
+- **Generated stories:** 253 stories, 224 of countries and 29 of continents, each a place in an era.
+  - **Rules:** `scripts/story_catalog.py` writes them to `public/data/stories/`. The twelve qualifying records written about in the most Wikipedia languages are taken, then put in date order, three per chapter. For continents, at most two records come from each country. A story needs at least six records.
+  - **Reader** (`/stories/read?id=…`): a full-screen map with numbered records, a wide text panel, and a numbered timeline across the bottom.
+  - **Each step:** the Commons image with its credit, Wikidata's description, the Wikipedia summary folded and attributed, and the source with the reason the record is included.
+  - **The end:** a recap, a question putting four of the records in order, and next stories.
+  - Progress is saved, and the arrow keys work.
+  - The Stories page lists them all, filterable by era, by country or continent, and by name. They are labelled "Generated" and "not checked by hand".
+
+**Limits:**
+- Generated stories are sequences of well-documented records, not narratives. They say nothing about causes, and they favour famous topics.
+- Records at the same place (often a capital) overlap on the story map. The timeline strip and Next still reach each one.
+
+**Tests:**
+- Typecheck clean; 51 unit tests pass.
+- Full run: 132 passed and 7 failed. Rerun with one worker, all of those passed except:
+  - the two archival-material tests, which need the local API
+  - the coverage-hover flake
+- Screenshots checked: home, Stories, the story reader and the story player on desktop, and the reader on a phone.
+
 ## Fixes and the map-first workspace (2026-11-16)
 
 From the fifth pasted brief (six issues and a layout reference), and a follow-up asking for the calmer, map-first look of the reference mockup.

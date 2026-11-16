@@ -49,7 +49,7 @@ function arc(a: [number, number], b: [number, number], bend = 0.18): [number, nu
   });
 }
 
-function WorkspaceMap({ focus, bubbles, onPick }: { focus: W | null; bubbles: Bubble[]; onPick: (b: Bubble) => void }) {
+function WorkspaceMap({ focus, bubbles, onPick, period, onFocus }: { focus: W | null; bubbles: Bubble[]; onPick: (b: Bubble) => void; period: W[]; onFocus: (id: string) => void }) {
   const box = useRef<HTMLDivElement>(null);
   const map = useRef<MapLibreMap | null>(null);
   const markers = useRef<Marker[]>([]);
@@ -60,6 +60,8 @@ function WorkspaceMap({ focus, bubbles, onPick }: { focus: W | null; bubbles: Bu
   const theme = useAppearance();
   const pick = useRef(onPick);
   pick.current = onPick;
+  const focusRef = useRef(onFocus);
+  focusRef.current = onFocus;
 
   useEffect(() => {
     let m: MapLibreMap | undefined;
@@ -79,13 +81,45 @@ function WorkspaceMap({ focus, bubbles, onPick }: { focus: W | null; bubbles: Bu
         m!.addSource("ws-lines", { type: "geojson", data: { type: "FeatureCollection", features: [] } });
         m!.addLayer({ id: "ws-doc", type: "line", source: "ws-lines", filter: ["==", ["get", "documented"], true], paint: { "line-color": "#8a5a1c", "line-width": 2.2, "line-opacity": 0.85 } });
         m!.addLayer({ id: "ws-ctx", type: "line", source: "ws-lines", filter: ["==", ["get", "documented"], false], paint: { "line-color": "#8a5a1c", "line-width": 1.6, "line-opacity": 0.7, "line-dasharray": [2, 2] } });
+        // Every well-documented record of the period: a dot each, and names where there's room for them.
+        m!.addSource("ws-events", { type: "geojson", data: { type: "FeatureCollection", features: [] } });
+        m!.addLayer({ id: "ws-dots", type: "circle", source: "ws-events", paint: {
+          "circle-radius": ["interpolate", ["linear"], ["get", "links"], 10, 3.5, 60, 6, 150, 8],
+          "circle-color": "#8a5a1c", "circle-opacity": 0.75, "circle-stroke-width": 1.2, "circle-stroke-color": "#f4ecdc",
+        } });
+        m!.addLayer({ id: "ws-names", type: "symbol", source: "ws-events", filter: ["<", ["get", "rank"], 40], layout: {
+          "text-field": ["get", "title"], "text-font": ["Noto Sans Regular"], "text-size": 11.5, "text-max-width": 9,
+          "text-variable-anchor": ["top", "bottom", "left", "right"], "text-radial-offset": 0.9, "text-optional": true,
+          "symbol-sort-key": ["-", 0, ["get", "links"]],
+        }, paint: { "text-color": "#3a2d1c", "text-halo-color": "#f4ecdc", "text-halo-width": 1.6 } });
+        m!.on("click", "ws-dots", (e) => { const id = e.features?.[0]?.properties?.id; if (id) focusRef.current(id); });
+        m!.on("mouseenter", "ws-dots", () => { m!.getCanvas().style.cursor = "pointer"; });
+        m!.on("mouseleave", "ws-dots", () => { m!.getCanvas().style.cursor = ""; });
         setReady(true);
       });
     })();
     return () => { cancelled = true; markers.current.forEach((x) => x.remove()); m?.remove(); map.current = null; };
   }, []);
 
-  useEffect(() => { if (ready && map.current) applyBasemapPalette(map.current, theme); }, [ready, theme]);
+  useEffect(() => {
+    const m = map.current;
+    if (!ready || !m) return;
+    applyBasemapPalette(m, theme);
+    m.setPaintProperty("ws-names", "text-color", theme === "dark" ? "#ebe4d4" : "#3a2d1c");
+    m.setPaintProperty("ws-names", "text-halo-color", theme === "dark" ? "#1c2230" : "#f4ecdc");
+    m.setPaintProperty("ws-dots", "circle-color", theme === "dark" ? "#d9a35b" : "#8a5a1c");
+    m.setPaintProperty("ws-dots", "circle-stroke-color", theme === "dark" ? "#1c2230" : "#f4ecdc");
+  }, [ready, theme]);
+
+  useEffect(() => {
+    const m = map.current;
+    if (!ready || !m) return;
+    const shown = new Set([focus?.id, ...bubbles.map((b) => b.id)]);
+    (m.getSource("ws-events") as import("maplibre-gl").GeoJSONSource).setData({
+      type: "FeatureCollection",
+      features: period.filter((e) => !shown.has(e.id)).map((e, rank) => ({ type: "Feature", properties: { id: e.id, title: titleOf(e), links: e.links, rank }, geometry: { type: "Point", coordinates: [e.lng!, e.lat!] } })),
+    });
+  }, [ready, period, focus, bubbles]);
 
   useEffect(() => {
     const m = map.current;
@@ -202,19 +236,20 @@ export function ExploreWorkspace() {
   // A phone map has room for fewer labels; the full list stays in the panel.
   const all = useMemo(() => [...documented, ...contextual.filter((c) => !documented.some((d) => d.id === c.id))].slice(0, 6), [documented, contextual]);
   const bubbles = all;
-  const onMap = useMemo(() => all.slice(0, narrow ? 3 : 6), [all, narrow]);
-  // Timeline markers: the best documented first, in two rows, leaving out any that would overlap.
+  const onMap = useMemo(() => all.slice(0, narrow ? 3 : 5), [all, narrow]);
+  /** The period's best-documented records, all on the map: the top 150 by Wikipedia languages. */
+  const mapEvents = useMemo(() => inPeriod.slice(0, 150), [inPeriod]);
+  // Timeline markers: one row, the best documented first, leaving out any that would crowd another.
   const timeline = useMemo(() => {
     const span = Math.max(1, Math.min(p.to, 2026) - p.from);
     const placed: { e: W; row: number; x: number }[] = [];
     const must = focus ? [focus, ...inPeriod.filter((e) => e.id !== focus.id)] : inPeriod;
     for (const e of must.slice(0, 40)) {
       const x = ((yearOf(e.start) - p.from) / span) * 100;
-      const gap = typeof window !== "undefined" && window.innerWidth < 640 ? 9 : 3.2;
-      const row = [0, 1].find((r) => !placed.some((q) => q.row === r && Math.abs(q.x - x) < gap));
-      if (row === undefined) continue;
-      placed.push({ e, row, x });
-      if (placed.length >= 14) break;
+      const gap = typeof window !== "undefined" && window.innerWidth < 640 ? 14 : 6;
+      if (placed.some((q) => Math.abs(q.x - x) < gap)) continue;
+      placed.push({ e, row: 0, x });
+      if (placed.length >= 12) break;
     }
     return placed;
   }, [inPeriod, focus, p]);
@@ -245,7 +280,7 @@ export function ExploreWorkspace() {
       <div className="min-w-0">
         {/* Map */}
         <div className="relative h-[340px] overflow-hidden rounded-2xl border border-line bg-paper-3 shadow-sm sm:h-[440px] xl:h-[480px]">
-          {focus && <WorkspaceMap focus={focus} bubbles={onMap} onPick={pickBubble} />}
+          {focus && <WorkspaceMap focus={focus} bubbles={onMap} onPick={pickBubble} period={mapEvents} onFocus={choose} />}
           {!events && !failed && <div className="absolute inset-0 grid place-items-center text-ink-2" role="status">Loading the map…</div>}
           {failed && <div className="absolute inset-0 grid place-items-center p-6 text-center"><div><p>The records couldn&rsquo;t be loaded.</p><button type="button" className="btn btn-secondary mt-2" onClick={() => setRetry((r) => r + 1)}>Try again</button></div></div>}
           <label className="absolute left-3 top-3 z-10 flex items-center gap-2 rounded-full border border-line bg-paper-2/95 py-1 pl-3 pr-1 text-sm shadow-sm">
@@ -265,11 +300,13 @@ export function ExploreWorkspace() {
         {/* Timeline */}
         <div className="mt-4 flex items-center gap-2" data-testid="workspace-timeline">
           <button type="button" className="btn btn-secondary btn-icon !rounded-full" onClick={() => movePeriod(-1)} disabled={period === 0} aria-label="Earlier period"><Icon name="back" size={18} /></button>
-          <div className="relative h-28 flex-1">
-            {band && <span aria-hidden className="absolute top-[66px] h-7 rounded-full bg-bronze-soft/70" style={{ left: `${xOf(band[0])}%`, width: `${Math.max(1, xOf(band[1]) - xOf(band[0]))}%` }} />}
-            <span aria-hidden className="absolute inset-x-0 top-[79px] h-px bg-ink-2/40" />
+          <div className="relative h-24 flex-1">
+            {/* Every record of the period as a faint tick: where the records are, not how eventful it was. */}
+            {mapEvents.map((e) => <span key={`t-${e.id}`} aria-hidden className="absolute top-[38px] h-3 w-px bg-bronze/40" style={{ left: `${xOf(yearOf(e.start))}%` }} />)}
+            {band && <span aria-hidden className="absolute top-[30px] h-7 rounded-full bg-bronze-soft/70" style={{ left: `${xOf(band[0])}%`, width: `${Math.max(1, xOf(band[1]) - xOf(band[0]))}%` }} />}
+            <span aria-hidden className="absolute inset-x-0 top-[50px] h-px bg-ink-2/40" />
             {ticks.map((t) => (
-              <span key={t} aria-hidden className="absolute top-[74px] -translate-x-1/2 text-center" style={{ left: `${xOf(t)}%` }}>
+              <span key={t} aria-hidden className="absolute top-[56px] -translate-x-1/2 text-center" style={{ left: `${xOf(t)}%` }}>
                 <span className="mx-auto block h-2.5 w-px bg-ink-2/50" />
                 <span className="mt-1.5 block whitespace-nowrap text-xs tabular-nums text-ink-2">{formatYear(t)}</span>
               </span>
@@ -278,16 +315,16 @@ export function ExploreWorkspace() {
               {timeline.map(({ e, row }) => {
                 const on = e.id === focus?.id;
                 return (
-                  <li key={e.id} className="absolute -translate-x-1/2" style={{ left: `${Math.min(98, Math.max(2, xOf(yearOf(e.start))))}%`, top: row ? 0 : 36 }}>
+                  <li key={e.id} className="absolute -translate-x-1/2" style={{ left: `${Math.min(98, Math.max(2, xOf(yearOf(e.start))))}%`, top: 0 }}>
                     <button
                       type="button"
                       onClick={() => setFocusId(e.id)}
                       aria-pressed={on}
                       aria-label={`${titleOf(e)}, ${formatImportedDate(e.start, e.end, e.precision)}`}
                       title={`${titleOf(e)} · ${formatImportedDate(e.start, e.end, e.precision)}`}
-                      className={`grid place-items-center rounded-full transition-transform hover:-translate-y-0.5 focus-visible:ring-2 focus-visible:ring-bronze motion-reduce:transition-none ${on ? "h-10 w-10 bg-oxblood text-paper shadow" : "h-8 w-8 border border-line bg-paper-2 text-ink hover:border-bronze"}`}
+                      className={`grid place-items-center rounded-full transition-transform hover:-translate-y-0.5 focus-visible:ring-2 focus-visible:ring-bronze motion-reduce:transition-none ${on ? "h-9 w-9 bg-oxblood text-paper shadow" : "h-8 w-8 border border-line bg-paper-2 text-ink-2 hover:border-bronze hover:text-ink"}`}
                     >
-                      <Icon name={categoryIcon(e.category)} size={on ? 20 : 16} />
+                      <Icon name={categoryIcon(e.category)} size={on ? 18 : 15} />
                     </button>
                   </li>
                 );

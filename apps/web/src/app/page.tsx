@@ -5,7 +5,9 @@ import { Icon, type IconName } from "@/components/icons";
 import { SearchBox } from "@/components/SearchBox";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
-import { PATHS } from "@/lib/lessons";
+import storyIndex from "../../public/data/stories/index.json";
+
+const storyCount = (storyIndex as { stories: unknown[] }).stories.length;
 import { STORIES } from "@/lib/stories";
 
 const flagship = STORIES[0];
@@ -39,7 +41,7 @@ function Card({ href, title, tags, icon, image, credit }: { href: string; title:
 }
 
 export default function Home() {
-  const journeys = PATHS.length;
+  const stories = storyCount;
   return (
     <>
       <SiteHeader search={false} />
@@ -63,7 +65,7 @@ export default function Home() {
         <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <Card href={flagship.href} title={flagship.title} tags={[flagship.place, flagship.period, `${flagship.minutes} min`]} icon="book" image={flagship.image} credit={flagship.image ? `Image: ${flagship.image.creator}, ${flagship.image.license}` : undefined} />
           <Card href={detective.href} title={detective.title} tags={["Detective case", detective.place, `${detective.minutes} min`]} icon="source" />
-          <Card href="/stories#journeys" title="Short journeys" tags={[`${journeys} journeys`, "by topic, period, region, place"]} icon="timeline" />
+          <Card href="/stories" title="Stories by place and era" tags={[`${stories} stories`, "generated from records", "map and timeline"]} icon="place" />
         </ul>
         <p className="mt-6 text-xs text-ink-2">
           Records come from Wikidata and a small hand-checked collection; none of it is complete. <Link href="/about" className="link">How TIMEWISE handles sources</Link>

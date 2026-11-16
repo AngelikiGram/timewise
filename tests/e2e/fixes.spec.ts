@@ -114,3 +114,31 @@ test("the home workspace: a record in focus, its links on a map, and a timeline 
   await expect(record).toContainText(/19(1[4-9]|[23]\d|4[0-5])/);
   expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(0);
 });
+
+test("hundreds of generated stories can be filtered and read on a map", async ({ page }) => {
+  await page.goto("/stories");
+  const list = page.getByTestId("generated-stories");
+  await expect(list).toContainText(/of 253 stories/, { timeout: 15000 });
+  await list.getByRole("radio", { name: "1800–1914" }).click();
+  await list.getByPlaceholder("e.g. Japan").fill("Japan");
+  await list.getByTestId("generated-story").first().click();
+  await expect(page).toHaveURL(/stories\/read\?id=japan-long-19th/);
+  await expect(page.getByTestId("story-intro")).toContainText("Assembled automatically from Wikidata");
+  await page.getByTestId("story-start").click();
+  const first = await page.getByTestId("story-title").textContent();
+  await page.getByTestId("story-next").click();
+  await expect(page.getByTestId("story-title")).not.toHaveText(first!);
+  await page.getByTestId("story-strip").getByRole("button").last().click();
+  await page.getByTestId("story-next").click();
+  await expect(page.getByTestId("story-end")).toContainText("Story complete");
+});
+
+test("the navigation rail stays fixed at the left on wide screens", async ({ page }, info) => {
+  test.skip(info.project.name === "mobile", "wide screens");
+  await page.goto("/journeys/austria-1848-1921");
+  const rail = page.getByRole("navigation", { name: "Main" }).filter({ visible: true });
+  const box = await rail.boundingBox();
+  expect(box!.x).toBe(0);
+  expect(box!.y).toBe(0);
+  await expect(rail.getByRole("link", { name: "TIMEWISE home" })).toBeVisible();
+});

@@ -172,7 +172,7 @@ export function JourneyPlayer({ id }: { id: string }) {
       <SiteHeader />
       <main className="relative flex min-h-0 flex-1 flex-col lg:block">
         <div className="relative h-[38dvh] shrink-0 lg:absolute lg:inset-0 lg:h-auto">
-          <AtlasMap events={eventsByDate} selectedId={selectedId} date={date} onSelect={onMapSelect} leftInset={wide ? 490 : 0} bottomInset={wide ? 60 : 0} />
+          <AtlasMap events={eventsByDate} selectedId={selectedId} date={date} onSelect={onMapSelect} leftInset={wide ? 650 : 0} bottomInset={wide ? 60 : 0} />
           <div className="hidden lg:block"><CoverageNoteRight /></div>
           <output data-testid="journey-year" className="pointer-events-none absolute right-14 top-3 font-serif text-4xl tabular-nums text-bronze drop-shadow-sm lg:right-16 lg:top-4 lg:text-6xl">{date.slice(0, 4)}</output>
         </div>
@@ -180,7 +180,7 @@ export function JourneyPlayer({ id }: { id: string }) {
         <article
           ref={scroller}
           aria-live="polite"
-          className="relative z-10 min-h-0 flex-1 overflow-y-auto border-t border-line bg-paper lg:absolute lg:bottom-16 lg:left-4 lg:top-4 lg:w-[460px] lg:border lg:shadow-[0_18px_50px_-24px_rgb(0_0_0/0.5)]"
+          className="relative z-10 min-h-0 flex-1 overflow-y-auto border-t border-line bg-paper lg:absolute lg:bottom-16 lg:left-4 lg:top-4 lg:w-[min(620px,44vw)] lg:rounded-2xl lg:border lg:shadow-[0_18px_50px_-24px_rgb(0_0_0/0.5)]"
         >
           {finished ? (
             <div className="fade-in space-y-6 p-5 sm:p-6" data-testid="journey-closing">
@@ -241,7 +241,7 @@ export function JourneyPlayer({ id }: { id: string }) {
                 </div>
               )}
               {atStart && story && (
-                <details className="mb-4 rounded-md border border-line bg-paper-2" open={firstVisit}>
+                <details className="mb-4 rounded-md border border-line bg-paper-2">
                   <summary className="cursor-pointer px-3 py-2 text-sm font-semibold">About this story · {story.minutes} min · {journey.chapters.length} chapters</summary>
                   <div className="px-3 pb-3 text-sm">
                     <p className="text-ink-2">{story.intro}</p>
@@ -252,13 +252,13 @@ export function JourneyPlayer({ id }: { id: string }) {
                 </details>
               )}
               {/* Chapter header with view mode toggle */}
-              <div className="flex items-start justify-between gap-4 mb-4">
-                <div className="flex-1 min-w-0">
+              <div className="mb-4 flex flex-col gap-3">
+                <div className="min-w-0">
                   <p className="eyebrow">{journey.title.en} · Chapter {position.chapter + 1} of {journey.chapters.length}</p>
                   <h1 className="mt-2 font-serif text-3xl leading-[1.1] sm:text-4xl" data-testid="journey-question">{chapter.question.en}</h1>
                   {chapter.connection && <p className="mt-2 border-l-2 border-bronze pl-3 text-sm italic text-ink-2">{chapter.connection.en}</p>}
                 </div>
-                <div className="flex items-center gap-2 shrink-0">
+                <div className="flex items-center gap-2 self-start" role="group" aria-label="How to read this chapter">
                   <button
                     type="button"
                     onClick={() => setViewMode("compact")}
