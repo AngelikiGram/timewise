@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { LearnCta } from "@/components/HomeWidgets";
 import { ExploreWorkspace } from "@/components/home/ExploreWorkspace";
+import { BeginCards } from "@/components/modes/BeginCards";
 import { Icon, type IconName } from "@/components/icons";
 import { SearchBox } from "@/components/SearchBox";
 import { SiteFooter } from "@/components/SiteFooter";
@@ -48,7 +49,7 @@ export default function Home() {
       <main className="mx-auto max-w-[1500px] px-4 pb-12 pt-6 sm:px-6">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div>
-            <h1 className="font-serif text-3xl leading-tight sm:text-4xl">Learn history in short steps, and see how it connects</h1>
+            <h1 className="font-serif text-3xl leading-tight sm:text-4xl">Explore history through time, places, people and the things you care about</h1>
             <p className="mt-1 max-w-2xl text-ink-2">Each lesson adds its people, places and events to your own atlas, linked only where a source says so.</p>
             <ol className="mt-3 flex flex-wrap gap-2 text-sm" aria-label="How TIMEWISE works" data-testid="loop">
               {([["book", "Learn a short step"], ["idea", "Connect it in your atlas"], ["checked", "Practise it until it sticks"]] as const).map(([icon, text], i) => (
@@ -65,7 +66,9 @@ export default function Home() {
           <SearchBox placeholder="Search people, places, events…" />
         </div>
 
-        <div className="mt-5"><ExploreWorkspace /></div>
+        <div className="mt-8"><BeginCards /></div>
+
+        <div className="mt-8"><ExploreWorkspace /></div>
 
         <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <Card href={flagship.href} title={flagship.title} tags={[flagship.place, flagship.period, `${flagship.minutes} min`]} icon="book" image={flagship.image} credit={flagship.image ? `Image: ${flagship.image.creator}, ${flagship.image.license}` : undefined} />

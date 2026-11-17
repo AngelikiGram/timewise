@@ -274,6 +274,43 @@ Tests: atlas and coverage specs pass on the new build (22). The admin and archiv
 
 Tests: 25 unit, 61 Python, 67 of 69 browser tests on the new build; the two world-map hover tests pass alone and are the known flake under full-suite load. Admin and archival specs need the API's port 3000 origin and weren't run.
 
+## Four ways in: follow a thing, explore a year, follow a life, follow your interests (2026-11-17)
+
+A small connected collection, built for all four modes at once: Vienna around 1900, a few places, 16 people and three "things", with shared records, images and sources.
+
+**Implemented and tested:**
+- **The collection** comes from Wikidata, built by `scripts/explore_collection.py` into `data/generated/explore.json`. Nothing is written by hand: every fact carries the Wikidata statement it came from.
+  - **People:** each is found by exact name and checked against a birth-year range; the chosen QID and Wikidata's description are kept as evidence. 16 people, 10 relationships between them (teacher, student, spouse), and 82 works (buildings they designed, works they created, notable works), 74 of them with a credited Commons image.
+  - **Things:**
+    - Art Nouveau: 700 buildings, from 1890, the style's own start date; buildings begun earlier and remodelled later are left out.
+    - Cafés: 370, from 1564.
+    - Psychoanalysis: 368 people, placed where they worked.
+  - It uses the Wikidata API rather than the query service, which was rate-limited during this work, and caches responses.
+- **Where would you like to begin?** (Explore › Where to begin): four cards with credited images.
+- **Follow a thing:**
+  - Decade bars you click to narrow the list.
+  - A map, and the places it appears most.
+  - Each item links to its statement, and its year opens that year.
+- **Explore a year:**
+  - The best-documented records of each continent for that year.
+  - Who in the collection was alive and how old they were, works dated that year, and how many of each "thing".
+  - Earlier and later years. It says plainly that the records tell of events more than of everyday life.
+- **Follow a life:**
+  - Birth and death with sources, occupations and movements, and a timeline whose marks open that year.
+  - A map, works with images and credits, and the people around them (documented relationships, and others named on the same work).
+- **Your interests:** add things, people or years, on their pages or here. Suggestions then combine a thing, a life and a year, with lessons to go with them.
+- **Moving between them:** every page ends in "Where to next" links into the other modes, so you can go from a year, to a life, to a style, to saved interests without choosing a mode again.
+
+**Partially implemented:**
+- **Only one well-covered period.** Explore a year works for any year from the world index, but the people and things are centred on Vienna around 1900.
+- **No illustrations or annotations.** Images are Commons photographs and paintings with their credits.
+
+**Tests:**
+- Typecheck clean; 69 unit tests pass, including that every fact in the collection has a statement URL, that Freud and Klimt resolve to Q9215 and Q34661, and that the modes link to each other.
+- Browser tests: the year → life → thing → interests journey, and the decade filter.
+- Full browser run: 151 passed. The failures were the Austria journey tests and "a story remembers where you stopped", which fail the same way on the previous commit in this local setup but pass on the live site; they don't come from this work.
+- Screenshots checked: the home page with the begin cards, a life, a thing, a year, and interests.
+
 ## Simpler navigation, alternating lessons, and an atlas with a learning purpose (2026-11-17)
 
 From an outside review of the site: too many sections, too many journeys at once, reading separated from practice, and an atlas that only collected records.

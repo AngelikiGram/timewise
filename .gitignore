@@ -17,3 +17,4 @@ __pycache__/
 *.jpeg
 *.gif
 *.svg
+data/generated/.explore-cache.json
