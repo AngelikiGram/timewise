@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import type { Entity, Edge } from "@/lib/entities";
 import { formatYear } from "@/lib/dates";
-import type { Activity, LearnCard, Lesson, PathDef, SourceRef } from "@/lib/lessons";
+import { ERA_COLOR, eraOf, type Activity, type LearnCard, type Lesson, type PathDef, type SourceRef } from "@/lib/lessons";
 import { dueReviews, type AtlasGrowth, type Progress } from "@/lib/progress";
 import { Icon } from "../icons";
 import { TYPE_ICON } from "../atlas/EntityPanel";
@@ -14,6 +14,26 @@ import { MiniMap } from "./activities";
 export function aboutOf(a: Activity, cards: LearnCard[]): LearnCard | undefined {
   const text = `${a.prompt} ${a.kind === "choice" ? a.context ?? "" : ""} ${a.kind === "timeline" ? a.target : ""}`;
   return cards.find((c) => text.includes(c.title)) ?? cards.find((c) => c.claims.some((cl) => text.includes(cl.text)));
+}
+
+export type Slot = { kind: "intro" } | { kind: "card"; i: number } | { kind: "act"; i: number } | { kind: "summary" };
+
+/**
+ * The order of a lesson's steps: each record is followed by one question about it, so reading and
+ * practice alternate. Questions about several records (ordering, for instance) come at the end.
+ */
+export function lessonOrder(lesson?: Pick<Lesson, "cards" | "activities"> | null): Slot[] {
+  if (!lesson) return [];
+  const used = new Set<number>();
+  const out: Slot[] = [{ kind: "intro" }];
+  lesson.cards.forEach((c, ci) => {
+    out.push({ kind: "card", i: ci });
+    const k = lesson.activities.findIndex((a, j) => !used.has(j) && a.kind !== "order" && aboutOf(a, lesson.cards) === c);
+    if (k >= 0) { used.add(k); out.push({ kind: "act", i: k }); }
+  });
+  lesson.activities.forEach((_, j) => { if (!used.has(j)) out.push({ kind: "act", i: j }); });
+  out.push({ kind: "summary" });
+  return out;
 }
 
 /** The lesson's places on one map and its records on one timeline, with the current one highlighted. */
@@ -32,17 +52,29 @@ export function LessonContext({ cards, current, onPick, showMap = true }: { card
           <span aria-hidden className="absolute inset-x-0 top-4 h-0.5 rounded bg-bronze/40" />
           {dated.map((c) => {
             const on = c === current;
+            const era = eraOf(c.year);
             const x = ((c.year! - lo) / span) * 100;
             return (
               <button key={c.id} type="button" disabled={!onPick} onClick={() => onPick?.(c)} aria-current={on ? "step" : undefined} aria-label={`${c.title}, ${c.when}`} title={`${c.title} · ${c.when}`} className="absolute top-0 flex -translate-x-1/2 flex-col items-center disabled:cursor-default" style={{ left: `${x}%` }}>
-                <span className={`grid place-items-center rounded-full border-2 ${on ? "h-8 w-8 border-oxblood bg-oxblood/15" : "mt-1.5 h-5 w-5 border-bronze bg-paper-2"}`}>{on && <span className="h-3 w-3 rounded-full bg-oxblood" />}</span>
+                <span className={`grid place-items-center rounded-full border-2 ${on ? "h-8 w-8 border-oxblood bg-oxblood/15" : "mt-1.5 h-5 w-5 bg-paper-2"}`} style={on ? undefined : { borderColor: ERA_COLOR[era?.id ?? ""] }}>{on && <span className="h-3 w-3 rounded-full bg-oxblood" />}</span>
                 <span className={`mt-1 whitespace-nowrap rounded-full px-2 text-xs tabular-nums ${on ? "bg-oxblood font-semibold text-white" : "text-ink-2"}`}>{formatYear(c.year!)}</span>
               </button>
             );
           })}
         </div>
       )}
+      {dated.length > 1 && <EraKey years={dated.map((c) => c.year!)} />}
     </div>
+  );
+}
+
+/** The eras a set of years falls in, each with its colour and name, so colour never stands alone. */
+export function EraKey({ years }: { years: number[] }) {
+  const eras = [...new Set(years.map((y) => eraOf(y)!.id))];
+  return (
+    <ul className="flex flex-wrap gap-x-3 gap-y-1 text-xs text-ink-2" aria-label="Eras" data-testid="era-key">
+      {eras.map((id) => <li key={id} className="inline-flex items-center gap-1.5"><span aria-hidden className="h-2.5 w-2.5 rounded-full" style={{ background: ERA_COLOR[id] }} />{eraOf(years.find((y) => eraOf(y)!.id === id))!.label}</li>)}
+    </ul>
   );
 }
 

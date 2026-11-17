@@ -45,9 +45,11 @@ test("the table lists the same countries and links to their atlas", async ({ pag
   expect(overflow).toBeLessThanOrEqual(0);
 });
 
-test("the header's World Map link opens the world map", async ({ page }) => {
+test("Explore opens the world map, with Stories and Connections beside it", async ({ page }) => {
   await page.goto("/");
-  await page.getByRole("navigation", { name: "Main" }).filter({ visible: true }).getByRole("link", { name: "World Map" }).click();
+  await page.getByRole("navigation", { name: "Main" }).filter({ visible: true }).getByRole("link", { name: "Explore" }).click();
+  await expect(page.getByTestId("subnav")).toContainText("Stories");
+  await expect(page.getByTestId("subnav")).toContainText("Connections");
   await expect(page).toHaveURL(/\/atlas$/);
   await expect(page.getByTestId("history-map")).toHaveAttribute("data-ready", "true", { timeout: 30000 });
   await expect(page.getByRole("link", { name: "World Map" }).filter({ visible: true })).toHaveAttribute("aria-current", "page");

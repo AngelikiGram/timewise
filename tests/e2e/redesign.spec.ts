@@ -1,13 +1,19 @@
 import { expect, test } from "@playwright/test";
 import { mainSearch, openList } from "./helpers";
 
-test("the five sections are reachable, and the current one is marked", async ({ page }) => {
+test("four main sections, with tabs inside, and the current one is marked", async ({ page }) => {
+  await page.goto("/learn");
+  const main = page.getByRole("navigation", { name: "Main" }).filter({ visible: true });
+  await expect(main.getByRole("link").filter({ hasNotText: "WISE" })).toHaveText(["Learn", "Explore", /Review/, /My Atlas/]);
   for (const [label, path] of [["Stories", "/stories"], ["Learn", "/challenges"], ["Learn", "/learn"], ["Saved", "/collection"]] as const) {
     await page.goto(path);
     await expect(page.getByRole("link", { name: label, exact: true }).filter({ visible: true })).toHaveAttribute("aria-current", "page");
   }
   await page.goto("/history/europe");
   await expect(page.getByRole("link", { name: "World Map", exact: true }).filter({ visible: true })).toHaveAttribute("aria-current", "page");
+  await expect(page.getByRole("navigation", { name: "Main" }).filter({ visible: true }).getByRole("link", { name: "Explore" })).toHaveAttribute("aria-current", "page");
+  await page.goto("/profile");
+  await expect(page.getByRole("navigation", { name: "Main" }).filter({ visible: true }).getByRole("link", { name: "My Atlas" })).toHaveAttribute("aria-current", "page");
 });
 
 test("search says where it looks, and finds world records", async ({ page }) => {

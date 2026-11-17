@@ -73,6 +73,14 @@ test("the atlas graph shows a focus, labelled sourced links, and a way back to t
   await expect(graph.locator("[data-atlas-focus]")).toBeVisible();
   await expect(graph.locator("[data-atlas-node]").first()).toBeVisible();
   expect(await graph.locator("[data-atlas-node]").count()).toBeLessThanOrEqual(6);
+  // Sharing a lesson is never drawn as a link; those entities are listed beside the graph.
+  await expect(graph).not.toContainText(/same lesson/i);
+  await expect(page.getByTestId("lesson-mates")).toContainText("not a historical link");
+  // Choosing a neighbour moves it to the centre.
+  const next = graph.locator("[data-atlas-node]").first();
+  const id = await next.getAttribute("data-atlas-node");
+  await next.click();
+  await expect(graph.locator(`[data-atlas-focus="${id}"]`)).toBeVisible();
   await expect(page.getByTestId("back-to-lesson")).toHaveAttribute("href", /austria-rails/);
 });
 

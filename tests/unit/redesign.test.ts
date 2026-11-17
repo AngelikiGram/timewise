@@ -62,12 +62,15 @@ describe("dates and navigation", () => {
     expect(dateForm("1848-01-01", "1854-12-31", "year")).toBe("process");
   });
   it("keeps old addresses in their new section", () => {
-    expect(currentSection("/")).toBe("discover");
-    expect(currentSection("/history/europe")).toBe("map");
-    expect(currentSection("/explore")).toBe("map");
-    expect(currentSection("/journeys/austria-1848-1921")).toBe("stories");
+    expect(currentSection("/")).toBeUndefined();
+    expect(currentSection("/history/europe")).toBe("explore");
+    expect(currentSection("/explore")).toBe("explore");
+    expect(currentSection("/journeys/austria-1848-1921")).toBe("explore");
+    expect(currentSection("/connections")).toBe("explore");
     expect(currentSection("/learn")).toBe("learn");
+    expect(currentSection("/learn/review")).toBe("review");
     expect(currentSection("/challenges/order-rails")).toBe("learn");
-    expect(currentSection("/collection")).toBe("collection");
+    expect(currentSection("/collection")).toBe("my-atlas");
+    expect(currentSection("/profile")).toBe("my-atlas");
   });
 });

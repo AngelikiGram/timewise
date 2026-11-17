@@ -26,8 +26,16 @@ test("the learn page makes the first step obvious and shows the path", async ({ 
   await expect(page.getByTestId("continue-learning")).toContainText("Start here", { timeout: 20000 });
   await expect(page.getByTestId("path-map").locator("[data-state]")).toHaveCount(6);
   await expect(page.getByTestId("path-map").locator('[data-state="next"]')).toHaveCount(1);
+  // Three recommendations instead of the whole catalogue; the rest waits behind "Browse all".
+  await expect(page.getByTestId("recommended-path")).toHaveCount(3);
+  await expect(page.getByTestId("recommended-path").first()).toContainText("Checked by hand");
+  await expect(page.getByTestId("journey-catalog")).toBeHidden();
+  await page.getByTestId("browse-all").locator("summary").click();
   await expect(page.getByTestId("path-card").first()).toContainText("Checked");
   await expect(page.getByTestId("path-card").filter({ hasText: "Europe" }).first()).not.toContainText("Checked by hand");
+  // Choosing an interest changes the recommendations.
+  await page.getByRole("group", { name: "Your interests" }).getByRole("button", { name: "Asia" }).click();
+  await expect(page.getByTestId("recommended-path").filter({ hasText: "Matches your interests" })).toHaveCount(1);
 });
 
 test("a checked lesson: read, answer, see why with sources, finish and move on", async ({ page }) => {

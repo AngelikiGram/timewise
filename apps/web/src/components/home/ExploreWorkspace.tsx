@@ -71,7 +71,13 @@ function WorkspaceMap({ focus, bubbles, onPick, period, onFocus, rangeKey }: { f
         lib.current = (await import("maplibre-gl")).default;
       } catch { setFailed(true); return; }
       if (cancelled || !box.current) return;
-      const created: MapLibreMap = new lib.current.Map({ container: box.current, style: STYLE_URL, center: [15, 35], zoom: 1.6, attributionControl: { compact: true }, cooperativeGestures: false });
+      let created: MapLibreMap;
+      // Without WebGL, or when the style never arrives, fall back to a plain dot map rather than a blank box.
+      try {
+        created = new lib.current.Map({ container: box.current, style: STYLE_URL, center: [15, 35], zoom: 1.6, attributionControl: { compact: true }, cooperativeGestures: false });
+      } catch { setFailed(true); return; }
+      const stall = window.setTimeout(() => { if (!cancelled) setFailed((f) => f || !created.isStyleLoaded()); }, 15000);
+      created.once("style.load", () => window.clearTimeout(stall));
       m = created;
       map.current = created;
       created.addControl(new lib.current.NavigationControl({ showCompass: false }), "top-right");
@@ -172,7 +178,19 @@ function WorkspaceMap({ focus, bubbles, onPick, period, onFocus, rangeKey }: { f
     <div className="absolute inset-0">
       {/* MapLibre makes its container position: relative, so it fills a positioned wrapper instead of being one. */}
       <div ref={box} className="h-full w-full" data-testid="workspace-map" data-ready={ready} />
-      {failed && <div className="absolute inset-0 grid place-items-center bg-paper-3 p-6 text-center text-sm text-ink-2">The base map couldn&rsquo;t be loaded. The timeline and the record still work.</div>}
+      {failed && (
+        <div className="absolute inset-0 flex flex-col bg-paper-3" data-testid="map-fallback">
+          <svg viewBox="-180 -90 360 180" className="min-h-0 w-full flex-1" role="group" aria-label="Records of this period, placed by longitude and latitude">
+            <rect x={-180} y={-90} width={360} height={180} fill="var(--paper-2)" />
+            {[-120, -60, 0, 60, 120].map((x) => <line key={x} x1={x} x2={x} y1={-90} y2={90} stroke="var(--line)" strokeWidth={0.3} />)}
+            {[-60, -30, 0, 30, 60].map((y) => <line key={y} y1={y} y2={y} x1={-180} x2={180} stroke="var(--line)" strokeWidth={0.3} />)}
+            {period.filter((e) => e.lng !== undefined && e.lat !== undefined).slice(0, 300).map((e) => (
+              <circle key={e.id} cx={e.lng!} cy={-e.lat!} r={e.id === focus?.id ? 2.6 : 1.4} fill={e.id === focus?.id ? "var(--oxblood)" : "var(--bronze)"} opacity={0.8} className="cursor-pointer" onClick={() => focusRef.current(e.id)}><title>{titleOf(e)}</title></circle>
+            ))}
+          </svg>
+          <p className="px-3 py-1.5 text-xs text-ink-2">The base map couldn&rsquo;t be loaded, so records are shown as dots by longitude and latitude, without borders. The timeline and the record still work.</p>
+        </div>
+      )}
     </div>
   );
 }

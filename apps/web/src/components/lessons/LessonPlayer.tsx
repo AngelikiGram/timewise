@@ -8,8 +8,9 @@ import type { Activity } from "@/lib/lessons";
 import type { Entity } from "@/lib/entities";
 import { completeLessonAtlas, encounterEntities, type AtlasGrowth } from "@/lib/progress";
 import { EntityPanel } from "../atlas/EntityPanel";
-import { aboutOf, LessonContext, LessonSide } from "./LessonSide";
+import { aboutOf, LessonContext, LessonSide, lessonOrder } from "./LessonSide";
 import { ConnectExercise } from "../atlas/ConnectExercise";
+import { MeanwhileQuiz } from "./MeanwhileQuiz";
 
 /** The entities a finished lesson practised: its records, their places, and the people it names. */
 const centralOf = (l: Lesson): Entity[] => {
@@ -28,7 +29,7 @@ function describeGrowth(g: AtlasGrowth) {
 /** The text a question is filed under in Review, the same whether it was missed or added by hand. */
 const reviewPrompt = (a: Activity) => `${a.prompt}${a.kind === "choice" && a.context ? ` ${a.context}` : a.kind === "timeline" ? ` ${a.target}` : ""}`;
 const correctOf = (a: Activity) => (a.kind === "choice" ? a.options.find((o) => o.id === a.answer)?.label ?? "" : a.kind === "order" ? a.items.map((x) => x.label).join(" → ") : a.answer === 0 ? `Before ${a.anchors[0].label}` : a.answer === a.anchors.length ? `After ${a.anchors[a.anchors.length - 1].label}` : `Between ${a.anchors[a.answer - 1].label} and ${a.anchors[a.answer].label}`);
-import { lessonHref, loadLesson, nextInPath, pathById, SKILLS, type LearnCard, type Lesson, type Skill } from "@/lib/lessons";
+import { continentOfPath, ERA_COLOR, eraOf, lessonHref, loadLesson, nextInPath, pathById, SKILLS, type LearnCard, type Lesson, type Skill } from "@/lib/lessons";
 import { CreditedImage, ReviewBadge, SaveButton } from "../ui";
 import { ActivityView, MiniMap, Sources, type Answer } from "./activities";
 import { formatYear } from "@/lib/dates";
@@ -148,7 +149,10 @@ export function LessonPlayer() {
     return () => ac.abort();
   }, [id, pathId, retry]);
 
-  const steps = lesson ? 1 + lesson.cards.length + lesson.activities.length + 1 : 0;
+  // One record, then one question about it, then the next record; questions about the whole lesson come last.
+  const order = useMemo(() => lessonOrder(lesson), [lesson]);
+  const steps = order.length;
+  const slot = order[step];
   const path = pathById(lesson?.pathId || pathId);
 
   // Resume where the reader stopped, once.
@@ -167,9 +171,10 @@ export function LessonPlayer() {
   }, [step, lesson, steps]);
 
   const go = (n: number) => setStep(Math.max(0, Math.min(steps - 1, n)));
-  const cardStart = 1;
-  const actStart = 1 + (lesson?.cards.length ?? 0);
   const summaryAt = steps - 1;
+  const cardAt = slot?.kind === "card" ? lesson?.cards[slot.i] : undefined;
+  const actAt = slot?.kind === "act" ? slot.i : -1;
+  const stepOfCard = (ci: number) => order.findIndex((o) => o.kind === "card" && o.i === ci);
   const score = Object.values(answers).filter((a) => a.ok).length;
   const asked = Object.keys(answers).length;
 
@@ -183,10 +188,11 @@ export function LessonPlayer() {
 
   // A card's entities are encountered when it's shown: seen, not yet explored or learned.
   useEffect(() => {
-    if (!lesson || step < 1 || step > lesson.cards.length) return;
-    const c = lesson.cards[step - 1];
+    const o = order[step];
+    if (!lesson || o?.kind !== "card") return;
+    const c = lesson.cards[o.i];
     encounterEntities(lesson.id, [c.entity, ...(c.place ? [c.place] : []), ...(c.people ?? []).flatMap((x) => (x.entity ? [x.entity] : []))]);
-  }, [lesson, step]);
+  }, [lesson, step, order]);
   const metBefore = (id: string) => (progress.atlas?.nodes[id]?.lessons ?? []).some((l) => l !== lesson?.id && progress.lessons[l]);
   const lessonTitles = Object.fromEntries(Object.entries(progress.lessons).map(([k, v]) => [k, v.title]));
   const entityMap: Record<string, Entity> = lesson ? Object.fromEntries([...lesson.cards.flatMap((c) => [c.entity, c.place, ...(c.people ?? []).map((x) => x.entity)]), ...(lesson.extra ?? [])].filter((e): e is Entity => !!e).map((e) => [e.id, e])) : {};
@@ -257,7 +263,7 @@ export function LessonPlayer() {
 
       {panel && <EntityPanel entity={panel} edges={lesson.edges} labels={labels} lessonTitle={lesson.title} lessonHref={lessonHref(lesson.id, lesson.pathId)} lessonTitles={lessonTitles} onClose={() => setPanel(null)} />}
       <div ref={stage} className="mt-4" key={step}>
-        {step === 0 && (
+        {slot?.kind === "intro" && (
           <section data-testid="lesson-intro" className="fade-in">
             <p className="eyebrow">{path?.title ?? "Lesson"}</p>
             <h1 className="mt-2 font-serif text-4xl leading-tight" tabIndex={-1} data-step-heading>{lesson.title}</h1>
@@ -266,24 +272,24 @@ export function LessonPlayer() {
             <Overview cards={lesson.cards} />
             <ul className="mt-5 grid gap-1 text-ink-2">
               <li>About {lesson.minutes} minutes</li>
-              <li>{lesson.cards.length} records to read, then {lesson.activities.length} questions</li>
+              <li>{lesson.cards.length} short steps, each followed by a question, then {Math.max(0, lesson.activities.length - order.filter((o, k) => o.kind === "act" && order[k - 1]?.kind === "card").length)} to put it together</li>
               <li>Practises: {skills.map((s) => SKILLS[s].label.toLowerCase()).join(", ")}</li>
             </ul>
             {progress.lessons[lesson.id]?.finished && <p className="mt-3 text-sm text-ink-2">You&rsquo;ve finished this lesson before. Replaying is good practice, but earns no new XP.</p>}
             <button type="button" className="btn btn-primary mt-6 w-full sm:w-auto" onClick={() => go(1)} data-testid="continue">Start</button>
           </section>
         )}
-        {step >= cardStart && step < actStart && (
+        {cardAt && (
           <div className="fade-in">
-            <Card card={lesson.cards[step - cardStart]} review={lesson.review} onOpen={setPanel} metBefore={metBefore} context={<LessonContext cards={lesson.cards} current={lesson.cards[step - cardStart]} onPick={(c) => go(cardStart + lesson.cards.indexOf(c))} />} />
+            <Card card={cardAt} review={lesson.review} onOpen={setPanel} metBefore={metBefore} context={<LessonContext cards={lesson.cards} current={cardAt} onPick={(c) => go(stepOfCard(lesson.cards.indexOf(c)))} />} />
             <div className="mt-6 flex gap-2">
               <button type="button" className="btn btn-secondary" onClick={() => go(step - 1)}>Back</button>
-              <button type="button" className="btn btn-primary flex-1 sm:flex-none" onClick={() => go(step + 1)} data-testid="continue">{step + 1 === actStart ? "Start the questions" : "Next"}</button>
+              <button type="button" className="btn btn-primary flex-1 sm:flex-none" onClick={() => go(step + 1)} data-testid="continue">{order[step + 1]?.kind === "act" ? "Check yourself" : "Next"}</button>
             </div>
           </div>
         )}
-        {step >= actStart && step < summaryAt && (() => {
-          const i = step - actStart;
+        {actAt >= 0 && (() => {
+          const i = actAt;
           const a = lesson.activities[i];
           return (
             <div className="fade-in">
@@ -319,12 +325,13 @@ export function LessonPlayer() {
               </div>
             )}
             {growth && progress.atlas && <ConnectExercise lessonId={lesson.id} nodes={progress.atlas.nodes} edges={progress.atlas.edges} />}
+            <MeanwhileQuiz cards={lesson.cards} continent={continentOfPath(lesson.pathId)} />
             <h2 className="mt-6 font-serif text-2xl">Key events, in order</h2>
             <ol className="relative mt-3 space-y-3 border-l-2 border-bronze/50 pl-5" data-testid="recap-timeline">
               {[...lesson.cards].sort((a, b) => (a.year ?? 0) - (b.year ?? 0)).map((c) => (
                 <li key={c.id} className="relative">
-                  <span aria-hidden className="absolute -left-[1.65rem] top-1 h-3 w-3 rounded-full border-2 border-paper bg-bronze" />
-                  <span className="block text-xs font-semibold tabular-nums text-bronze">{c.when}{c.where ? ` · ${c.where}` : ""}</span>
+                  <span aria-hidden className="absolute -left-[1.65rem] top-1 h-3 w-3 rounded-full border-2 border-paper bg-bronze" style={c.year !== undefined ? { background: ERA_COLOR[eraOf(c.year)!.id] } : undefined} />
+                  <span className="block text-xs font-semibold tabular-nums text-bronze">{c.when}{c.where ? ` · ${c.where}` : ""}{c.year !== undefined ? <span className="font-normal text-ink-2"> · {eraOf(c.year)!.label}</span> : null}</span>
                   <span className="font-medium">{c.title}</span>
                   {c.claims.length > 0 && <span className="block text-xs text-ink-2">{c.claims.length} sourced statement{c.claims.length > 1 ? "s" : ""}</span>}
                 </li>
@@ -368,8 +375,8 @@ export function LessonPlayer() {
       </div>
       <LessonSide
         lesson={lesson}
-        focus={step >= cardStart && step < actStart ? lesson.cards[step - cardStart] : step >= actStart && step < summaryAt ? aboutOf(lesson.activities[step - actStart], lesson.cards) : undefined}
-        hidden={step >= actStart && step < summaryAt && !answers[step - actStart]}
+        focus={cardAt ?? (actAt >= 0 ? aboutOf(lesson.activities[actAt], lesson.cards) : undefined)}
+        hidden={actAt >= 0 && !answers[actAt]}
         path={path}
         progress={progress}
         growth={growth}

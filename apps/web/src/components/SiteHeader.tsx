@@ -17,20 +17,32 @@ export function Wordmark() {
   );
 }
 
-/** The sections, and the older addresses that belong to each. */
+/** Four sections, and the older addresses that belong to each. */
 export const SECTIONS = [
-  // The learning loop first: learn a step, connect it in your atlas, practise it, see your progress.
   { id: "learn", primary: true, icon: "book" as IconName, label: "Learn", href: "/learn", match: (p: string) => (p.startsWith("/learn") && !p.startsWith("/learn/review")) || p.startsWith("/challenges") },
-  { id: "my-atlas", primary: true, icon: "idea" as IconName, label: "My atlas", href: "/my-atlas", match: (p: string) => p.startsWith("/my-atlas") },
+  { id: "explore", primary: true, icon: "compass" as IconName, label: "Explore", href: "/atlas", match: (p: string) => ["/atlas", "/history", "/explore", "/stories", "/journey", "/connections"].some((x) => p.startsWith(x)) },
   { id: "review", primary: true, icon: "checked" as IconName, label: "Review", href: "/learn/review", match: (p: string) => p.startsWith("/learn/review") },
-  { id: "profile", primary: true, icon: "person" as IconName, label: "Profile", href: "/profile", match: (p: string) => p.startsWith("/profile") },
-  // Then the ways to explore freely.
-  { id: "discover", primary: false, icon: "compass" as IconName, label: "Discover", href: "/", match: (p: string) => p === "/" },
-  { id: "explore", primary: false, icon: "network" as IconName, label: "Explore", href: "/connections", match: (p: string) => p.startsWith("/connections") },
-  { id: "map", primary: false, icon: "map" as IconName, label: "World Map", href: "/atlas", match: (p: string) => p.startsWith("/atlas") || p.startsWith("/history") || p.startsWith("/explore") },
-  { id: "stories", primary: false, icon: "timeline" as IconName, label: "Stories", href: "/stories", match: (p: string) => p.startsWith("/stories") || p.startsWith("/journey") },
-  { id: "collection", primary: false, icon: "bookmark" as IconName, label: "Saved", href: "/collection", match: (p: string) => p.startsWith("/collection") },
+  { id: "my-atlas", primary: true, icon: "idea" as IconName, label: "My Atlas", href: "/my-atlas", match: (p: string) => ["/my-atlas", "/collection", "/profile"].some((x) => p.startsWith(x)) },
 ] as const;
+
+/** What sits inside a section, shown as tabs under the header. */
+export const SUBNAV: Partial<Record<(typeof SECTIONS)[number]["id"], { label: string; href: string; match: (p: string) => boolean }[]>> = {
+  explore: [
+    { label: "World Map", href: "/atlas", match: (p) => ["/atlas", "/history", "/explore"].some((x) => p.startsWith(x)) },
+    { label: "Stories", href: "/stories", match: (p) => p.startsWith("/stories") || p.startsWith("/journey") },
+    { label: "Connections", href: "/connections", match: (p) => p.startsWith("/connections") },
+  ],
+  "my-atlas": [
+    { label: "Atlas", href: "/my-atlas", match: (p) => p.startsWith("/my-atlas") },
+    { label: "Saved", href: "/collection", match: (p) => p.startsWith("/collection") },
+    { label: "Profile", href: "/profile", match: (p) => p.startsWith("/profile") },
+  ],
+};
+
+const strip = (pathname: string) => {
+  const p = BASE_PATH && pathname.startsWith(BASE_PATH) ? pathname.slice(BASE_PATH.length) || "/" : pathname;
+  return p.length > 1 ? p.replace(/\/$/, "") : p;
+};
 
 export function currentSection(pathname: string) {
   const p = BASE_PATH && pathname.startsWith(BASE_PATH) ? pathname.slice(BASE_PATH.length) || "/" : pathname;
@@ -61,7 +73,6 @@ export function SiteHeader({ children, search = true }: { children?: React.React
               >
                 <Icon name={s.icon} size={s.primary ? 22 : 18} />
                 {s.label}
-                {s.id === "collection" && saved > 0 && <span className={`absolute right-1.5 top-1 rounded-full px-1.5 text-[10px] tabular-nums ${active === s.id ? "bg-paper/30" : "bg-paper-3"}`}>{saved}</span>}
                 {s.id === "review" && due > 0 && <span className={`absolute right-1.5 top-1.5 rounded-full px-1.5 text-[10px] font-semibold tabular-nums ${active === s.id ? "bg-paper/30" : "bg-oxblood text-white"}`} aria-label={`${due} due`}>{due}</span>}
               </Link>
             </div>
@@ -87,6 +98,18 @@ export function SiteHeader({ children, search = true }: { children?: React.React
         </button>
         <div className="ml-auto md:ml-0 lg:ml-auto"><ThemeToggle /></div>
       </div>
+      {active && SUBNAV[active] && (
+        <nav aria-label="In this section" className="flex gap-1 overflow-x-auto border-t border-line px-4 sm:px-6 [&>*]:shrink-0" data-testid="subnav">
+          {SUBNAV[active]!.map((t) => {
+            const on = t.match(strip(pathname));
+            return (
+              <Link key={t.href} href={t.href} aria-current={on ? "page" : undefined} className={`border-b-2 px-3 py-2 text-sm font-medium ${on ? "border-bronze text-ink" : "border-transparent text-ink-2 hover:text-ink"}`}>
+                {t.label}{t.label === "Saved" && saved > 0 && <span className="ml-1 rounded-full bg-paper-3 px-1.5 text-[11px] tabular-nums">{saved}</span>}
+              </Link>
+            );
+          })}
+        </nav>
+      )}
       {searching && (
         <div className="border-t border-line px-4 py-2 md:hidden">
           <SearchBox size="compact" placeholder="Search history…" />

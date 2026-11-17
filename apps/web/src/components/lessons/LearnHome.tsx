@@ -4,12 +4,16 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useMemo, useState } from "react";
 import { CHECKED_PATH, lessonHref, PATHS, pathById, SKILLS, type PathDef, type Skill } from "@/lib/lessons";
-import { setGoal, today, toggleBookmark, totalXp, useProgress, type Progress } from "@/lib/progress";
+import { setGoal, setInterests, today, toggleBookmark, totalXp, useProgress, type Progress } from "@/lib/progress";
+import { CATEGORY_LABELS } from "@/lib/categories";
+import { recommendedPaths } from "@/lib/recommend";
+import { CONTINENT_LABELS } from "@/lib/world-index";
 import { badges, lessonsOn, streaks } from "@/lib/achievements";
 import { ReviewBadge } from "../ui";
 import { JourneyCatalog } from "./JourneyCatalog";
 
 const DAY = 86400000;
+const INTERESTS: [string, string][] = [...["war", "politics", "state", "culture", "health", "disaster"].map((t) => [t, CATEGORY_LABELS[t as keyof typeof CATEGORY_LABELS]] as [string, string]), ...Object.entries(CONTINENT_LABELS)];
 const iso = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 
 /** The lesson to offer first: an unfinished one, else the next in the last path used, else the first checked lesson. */
@@ -192,6 +196,7 @@ export function LearnHome() {
   const step = useMemo(() => nextStep(p), [p]);
   const reviewable = p.mistakes.filter((m) => m.activity).length;
   const started = Object.keys(p.lessons).length > 0;
+  const pick = (id: string) => { router.push(`/learn?path=${id}`, { scroll: false }); document.getElementById("path-title")?.scrollIntoView({ behavior: "smooth", block: "start" }); };
 
   return (
     <div className="mx-auto max-w-6xl px-4 pb-16 pt-8 sm:px-6">
@@ -229,12 +234,36 @@ export function LearnHome() {
         </aside>
       </div>
 
-      <section className="mt-14" aria-labelledby="choose" id="choose-section">
-        <h2 id="choose" className="font-serif text-3xl">Choose a journey</h2>
-        <p className="mt-1 max-w-2xl text-ink-2">By question, topic, period, region or place. No journey covers everything.</p>
-        <div className="mt-4">
-          <JourneyCatalog current={path.id} onPick={(id) => { router.push(`/learn?path=${id}`, { scroll: false }); document.getElementById("path-title")?.scrollIntoView({ behavior: "smooth", block: "start" }); }} />
+      <section className="mt-14" aria-labelledby="choose" id="choose-section" data-testid="recommended">
+        <h2 id="choose" className="font-serif text-3xl">Recommended journeys</h2>
+        <p className="mt-1 max-w-2xl text-ink-2">Three to start with. Pick what interests you and they change.</p>
+        <div className="mt-3 flex flex-wrap gap-1.5" role="group" aria-label="Your interests">
+          {INTERESTS.map(([id, label]) => (
+            <button key={id} type="button" aria-pressed={(p.interests ?? []).includes(id)} className="chip !min-h-8 !text-sm" onClick={() => setInterests((p.interests ?? []).includes(id) ? (p.interests ?? []).filter((x) => x !== id) : [...(p.interests ?? []), id])}>{label}</button>
+          ))}
         </div>
+        <ul className="mt-4 grid gap-3 md:grid-cols-3">
+          {recommendedPaths(p).map(({ path: x, why }) => {
+            const done = x.lessons.filter((l) => p.lessons[l.id]?.finished).length;
+            return (
+              <li key={x.id}>
+                <button type="button" className={`card card-link flex h-full w-full flex-col p-4 text-left ${x.id === path.id ? "!border-bronze" : ""}`} onClick={() => pick(x.id)} data-testid="recommended-path">
+                  <span className="text-xs font-semibold uppercase tracking-wider text-bronze">{why}</span>
+                  <span className="mt-1 font-serif text-xl leading-tight">{x.title}</span>
+                  <span className="mt-1 line-clamp-2 text-sm text-ink-2">{x.blurb}</span>
+                  <span className="mt-auto pt-3 text-xs tabular-nums text-ink-2">{x.lessons.length} lessons{done ? ` · ${done} done` : ""}</span>
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+        <details className="mt-6" data-testid="browse-all">
+          <summary className="cursor-pointer font-semibold text-ink-2 hover:text-ink">Browse all {PATHS.length} journeys</summary>
+          <p className="mt-2 max-w-2xl text-sm text-ink-2">By question, topic, period, region or place. No journey covers everything.</p>
+          <div className="mt-3">
+            <JourneyCatalog current={path.id} onPick={pick} />
+          </div>
+        </details>
       </section>
 
       <section className="mt-14 grid gap-4 md:grid-cols-2">

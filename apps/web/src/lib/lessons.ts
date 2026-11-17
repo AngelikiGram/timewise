@@ -297,6 +297,9 @@ export const ERAS: { id: string; label: string; from: number; to: number }[] = [
   { id: "since-1945", label: "Since 1945", from: 1946, to: 2026 },
 ];
 const eraById = (id: string) => ERAS.find((e) => e.id === id);
+/** One colour per era, used the same way on every timeline, recap and path; always shown with the era's name. */
+export const ERA_COLOR: Record<string, string> = { antiquity: "#7a5c99", "middle-ages": "#2f6f8f", "early-modern": "#3d7f4e", "long-19th": "#a8642a", "world-wars": "#9b2f2f", "since-1945": "#56607a" };
+export const eraOf = (year?: number) => (year === undefined ? undefined : ERAS.find((e) => year >= e.from && year <= e.to) ?? (year < ERAS[0].from ? ERAS[0] : ERAS[ERAS.length - 1]));
 /** Countries with a path, and those without enough records for one. */
 export const PLACE_PATHS = PLACE_CATALOG;
 
@@ -343,6 +346,8 @@ export const PATHS: PathDef[] = [
   ...[17, 18, 19].map(periodPath),
 ];
 export const pathById = (id: string) => PATHS.find((p) => p.id === id);
+/** The continent a journey is about, when it is about one place; the checked journey is Austria, in Europe. */
+export const continentOfPath = (id: string) => (id === CHECKED_PATH.id ? "europe" : id.startsWith("place-") ? PLACE_CATALOG[id.slice(6)]?.continent ?? null : null);
 
 type RegionEvent = { id: string; title: { en?: string; de?: string }; description?: string; category: string; start: string; end?: string; precision: Precision; lng?: number; lat?: number; links: number; home?: string; multi?: boolean; inside?: boolean; url: string };
 const fileCache = new Map<string, Promise<RegionEvent[]>>();

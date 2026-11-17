@@ -85,3 +85,27 @@ export function ConnectExercise({ lessonId, nodes, edges }: { lessonId: string; 
     </section>
   );
 }
+
+/**
+ * "Restore the hidden link": one stored, sourced edge is hidden, and the reader restores it, either by its
+ * relation (when the atlas holds at least three kinds) or by the missing entity. Null when the answer
+ * would be ambiguous.
+ */
+export function restoreLinkQuestion(e: AtlasEdge, nodes: Record<string, AtlasNode>, edges: Record<string, AtlasEdge>): Activity | null {
+  const all = Object.values(edges);
+  const from = nodes[e.from], to = nodes[e.to];
+  if (!from || !to) return null;
+  const sources = e.source.url ? [e.source] : [];
+  const explanation = `${from.label} ${e.label} ${to.label}${e.date ? ` (${e.date})` : ""}.`;
+  const kinds = [...new Set(all.map((x) => x.label))];
+  const pairLabels = all.filter((x) => (x.from === e.from && x.to === e.to) || (x.from === e.to && x.to === e.from)).map((x) => x.label);
+  if (kinds.length >= 3 && pairLabels.length === 1) {
+    const options = [e.label, ...kinds.filter((k) => k !== e.label).slice(0, 3)].sort();
+    return { kind: "choice", skill: "cause", prompt: `Restore the hidden link: how are ${from.label} and ${to.label} connected?`, context: `${from.label} → ? → ${to.label}`, options: options.map((k) => ({ id: k, label: k })), answer: e.label, explanation, sources };
+  }
+  const taken = all.filter((x) => x.from === e.from && x.label === e.label).map((x) => x.to);
+  const others = Object.values(nodes).filter((n) => n.type === to.type && n.id !== e.from && !taken.includes(n.id)).slice(0, 3);
+  if (others.length < 2) return null;
+  const options = [to, ...others].map((n) => ({ id: n.id, label: n.label })).sort((a, b) => a.label.localeCompare(b.label));
+  return { kind: "choice", skill: "cause", prompt: `Restore the hidden link: ${from.label} ${e.label} …?`, options, answer: to.id, explanation, sources };
+}

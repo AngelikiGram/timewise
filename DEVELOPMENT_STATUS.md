@@ -274,6 +274,44 @@ Tests: atlas and coverage specs pass on the new build (22). The admin and archiv
 
 Tests: 25 unit, 61 Python, 67 of 69 browser tests on the new build; the two world-map hover tests pass alone and are the known flake under full-suite load. Admin and archival specs need the API's port 3000 origin and weren't run.
 
+## Simpler navigation, alternating lessons, and an atlas with a learning purpose (2026-11-17)
+
+From an outside review of the site: too many sections, too many journeys at once, reading separated from practice, and an atlas that only collected records.
+
+**Implemented and tested:**
+- **Four main sections:** Learn, Explore, Review and My Atlas. Explore holds World Map, Stories and Connections as tabs; My Atlas holds Atlas, Saved and Profile. Old addresses still land in the right section.
+- **Three recommended journeys** on Learn instead of the whole catalogue: one you started, the hand-checked journey, and ones matching the interests you choose right there. All journeys stay one click away under "Browse all".
+- **Lessons alternate reading and practice:** each record is followed by one question about it, with feedback, before the next record. Questions about several records, such as putting them in order, come at the end.
+- **Era colours:** one colour per era on lesson timelines and the lesson recap, always shown with the era's name.
+- **Home map fallback:** if the map can't start (no WebGL, or its style never arrives within 15 seconds), the period's records are drawn as dots by longitude and latitude, still clickable, with a note saying why.
+- **Moving progress between devices:** Profile now loads a progress file as well as downloading one, after a confirmation.
+- **"Meanwhile, elsewhere…" after a lesson:** two events from other continents in the same years. For each, the reader decides "coincidence" or "documented connection", and the answer comes from the Wikidata statements on both records, linked when one exists. A missing statement is described as just that, not as proof of no link.
+- **Restore a hidden link (My Atlas):** one of your stored, sourced links is hidden, and you restore it by its relation or by the missing entity. The answer is explained with its source, and the result goes to Review like any other answer.
+- **My Atlas graph:**
+  - Only sourced links and documented Wikidata statements are drawn; "same lesson" is no longer a link. Lesson-mates are listed separately in the side panel as "not a historical link".
+  - People are placed above the focus, places below, earlier events left and later events right.
+  - Nodes glide to their new places when the focus changes (no motion with reduced-motion settings).
+  - Nodes are labelled cards with a type shape and icon; links have arrows and relation labels.
+
+**Partially implemented:**
+- **Teaching meaning before dates:** the lesson flow now alternates, but opening questions such as "why was crossing the Alps so difficult?" and annotated images need written, sourced content that doesn't exist yet. None was invented.
+- **Detective cases:** one case exists (the Ringstrasse opening); expanding it into a series needs new sourced exhibits for each case.
+
+**Planned:**
+- Optional account sync. There is no backend for accounts; export and import are the honest substitute for now.
+- Five carefully reviewed journeys. Only one journey is checked by hand. Reviewing more needs a person to compare each claim with its source; nothing was marked reviewed.
+
+**Tests:**
+- Typecheck clean; 64 unit tests pass, including lesson order, recommendations, eras and restore-a-link.
+- Full browser run: 160 passed and 3 failed. Two home-map tests passed when rerun alone. The admin "linking puts a record on the site" test fails on the local database's state; it doesn't touch this work.
+- Screenshots checked:
+  - Learn recommendations
+  - a question straight after the first record
+  - the lesson-end quiz, answered
+  - a restore question in My Atlas
+  - the Explore tabs
+  - the atlas graph before, during and after a focus change
+
 ## What makes TIMEWISE different: the lesson workspace (2026-11-17)
 
 From a comparison with other history-learning products, and a mockup of a lesson screen. The identity: **learn one topic in short steps, then build a personal, source-backed map of how its people, places and events connect.** The loop: explore a connection, learn a short explanation, practise recalling it, and see it come back in a later lesson.

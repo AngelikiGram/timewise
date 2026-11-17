@@ -6,7 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 import { accuracy, badges, streaks } from "@/lib/achievements";
 import { CATEGORY_LABELS } from "@/lib/categories";
 import { lessonHref, PATHS, PLACE_PATHS, SKILLS, type Skill } from "@/lib/lessons";
-import { dueReviews, exportProgress, resetProgress, setInterests, setProfile, useProgress, type Progress } from "@/lib/progress";
+import { dueReviews, exportProgress, importProgress, resetProgress, setInterests, setProfile, useProgress, type Progress } from "@/lib/progress";
 import { TYPE_LABEL, type EntityType } from "@/lib/entities";
 import { CONTINENT_LABELS } from "@/lib/world-index";
 import { Icon } from "../icons";
@@ -71,6 +71,7 @@ export function ProfileView() {
   const shared = useMemo(() => { const t = params.get("share"); return t ? decode(t) : null; }, [params]);
   const [copied, setCopied] = useState(false);
   const [name, setName] = useState("");
+  const [imported, setImported] = useState("");
   useEffect(() => setName(p.profile?.name ?? ""), [p.profile?.name]);
 
   const state = useMemo(() => countryState(p), [p]);
@@ -230,11 +231,21 @@ export function ProfileView() {
 
       <section className="mt-10 rounded-xl border border-line p-4" aria-labelledby="data-title">
         <h2 id="data-title" className="font-serif text-xl">Your data</h2>
-        <p className="mt-1 text-sm text-ink-2">You&rsquo;re using TIMEWISE as a guest: everything is stored in this browser only. There are no accounts or sync yet, so there&rsquo;s nothing to sign in to.</p>
-        <div className="mt-3 flex flex-wrap gap-2">
+        <p className="mt-1 text-sm text-ink-2">Everything is stored in this browser only; there are no accounts or sync. To keep learning on another device, download your progress here and load the file there.</p>
+        <div className="mt-3 flex flex-wrap gap-2" data-testid="progress-file">
           <button type="button" className="btn btn-secondary btn-sm" onClick={() => { const blob = new Blob([exportProgress()], { type: "application/json" }); const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "timewise-progress.json"; a.click(); }}>Download my progress</button>
+          <label className="btn btn-secondary btn-sm cursor-pointer">Load a progress file
+            <input type="file" accept="application/json,.json" className="sr-only" data-testid="import-progress" onChange={async (e) => {
+              const f = e.target.files?.[0];
+              e.target.value = "";
+              if (!f) return;
+              if (!window.confirm("Replace the progress in this browser with the file's? This can't be undone, so download the current progress first if you need it.")) return;
+              try { importProgress(await f.text()); setImported("Progress loaded."); } catch { setImported("That file isn't a TIMEWISE progress file."); }
+            }} />
+          </label>
           <button type="button" className="btn btn-ghost btn-sm text-oxblood" onClick={() => { if (window.confirm("Delete all progress, saved items, notes and your atlas from this browser? This can't be undone.")) resetProgress(); }}>Delete all my progress</button>
         </div>
+        {imported && <p className="mt-2 text-sm" role="status">{imported}</p>}
       </section>
 
       <section className="mt-10" aria-labelledby="done-title">
