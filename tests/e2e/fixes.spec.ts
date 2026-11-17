@@ -17,6 +17,8 @@ test("a country map shows what happened inside it by default, and labels the res
   await page.goto("/atlas/austria");
   await openList(page);
   const scope = page.getByTestId("scope-filter");
+  await expect(page.getByTestId("country-mode").getByRole("radio", { name: "In Austria" })).toHaveAttribute("aria-checked", "true");
+  await scope.getByText("Fine-tune what’s included").click();
   await expect(scope).toContainText("Happened here");
   await expect(scope.getByRole("checkbox", { name: /Happened here/ })).toBeChecked();
   await expect(scope.getByRole("checkbox", { name: /located elsewhere/ })).not.toBeChecked();
@@ -83,17 +85,17 @@ test("a search result can be chosen by touch", async ({ page }, info) => {
 test("journeys can be browsed by question, topic, period, region and place", async ({ page }) => {
   await page.goto("/stories");
   const catalog = page.getByTestId("journey-catalog");
-  await expect(catalog.getByTestId("path-card")).toHaveCount(55);
+  expect(await catalog.getByTestId("path-card").count()).toBeGreaterThan(150);
   await catalog.getByRole("radio", { name: /By place/ }).click();
   await expect(catalog.getByTestId("path-card").first()).not.toContainText("Checked by hand");
   await catalog.getByPlaceholder(/Filter by name/).fill("Japan");
   await catalog.getByTestId("path-card").first().click();
   await expect(page).toHaveURL(/path=place-japan/);
-  await expect(page.getByTestId("path-map")).toContainText("Japan through the centuries");
+  await expect(page.getByTestId("path-map")).toContainText("Japan:");
 });
 
 test("a generated journey says how it chose its records and shows them on a map and timeline", async ({ page }) => {
-  await page.goto("/learn/lesson?id=p-japan-19&path=place-japan");
+  await page.goto("/learn/lesson?id=p-japan-long-19th&path=place-japan");
   const intro = page.getByTestId("lesson-intro");
   await expect(intro).toContainText("Assembled automatically", { timeout: 40000 });
   await expect(intro).toContainText("not checked by hand");

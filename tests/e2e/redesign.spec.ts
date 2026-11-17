@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 import { mainSearch, openList } from "./helpers";
 
 test("the five sections are reachable, and the current one is marked", async ({ page }) => {
-  for (const [label, path] of [["Stories", "/stories"], ["Learn", "/challenges"], ["Learn", "/learn"], ["My Collection", "/collection"]] as const) {
+  for (const [label, path] of [["Stories", "/stories"], ["Learn", "/challenges"], ["Learn", "/learn"], ["Saved", "/collection"]] as const) {
     await page.goto(path);
     await expect(page.getByRole("link", { name: label, exact: true }).filter({ visible: true })).toHaveAttribute("aria-current", "page");
   }
@@ -31,6 +31,7 @@ test("filters are in the URL, so a view can be shared", async ({ page }) => {
   await page.goto("/atlas/austria?from=1800&to=1899&cat=war");
   await openList(page);
   await expect(page.getByRole("button", { name: /Wars & battles/ })).toHaveAttribute("aria-pressed", "true", { timeout: 15000 });
+  await expect(page.getByTestId("atlas-count")).toContainText("on the map", { timeout: 20000 });
   const dates = await page.getByTestId("atlas-list").getByRole("button").evaluateAll((els) => els.slice(0, 10).map((e) => e.textContent ?? ""));
   expect(dates.length).toBeGreaterThan(0);
   for (const d of dates) {

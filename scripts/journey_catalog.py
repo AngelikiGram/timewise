@@ -13,12 +13,23 @@ DATA = Path("apps/web/public/data")
 CENTURIES = [15, 16, 17, 18, 19]
 CONTINENTS = ["europe", "asia", "africa", "north_america", "south_america", "oceania"]
 TOPICS = ["war", "politics", "culture", "state"]
-PLACES = 24  # the countries with the most imported records
+# Every country gets a path, staged by era. A stage needs four qualifying records inside the country.
+ERAS = [("antiquity", -3500, 499), ("middle-ages", 500, 1499), ("early-modern", 1500, 1799), ("long-19th", 1800, 1913), ("world-wars", 1914, 1945), ("since-1945", 1946, 2026)]
 
 
 def ok(e):
     return (e.get("title", {}).get("en") and len(e.get("description") or "") >= 20 and e.get("home") and not e.get("multi")
             and e.get("lng") is not None and e.get("precision") in ("day", "month", "year") and not e["start"].startswith("-"))
+
+
+def place_ok(e):
+    # Place paths may reach into antiquity, where dates are often given to the decade.
+    return (e.get("title", {}).get("en") and len(e.get("description") or "") >= 20 and e.get("home") and not e.get("multi")
+            and e.get("lng") is not None and e.get("precision") in ("day", "month", "year", "decade") and e.get("inside"))
+
+
+def year(e):
+    return -int(e["start"][1:5]) if e["start"].startswith("-") else int(e["start"][:4])
 
 
 def century(e):
@@ -45,11 +56,10 @@ for ct in CONTINENTS:
         if len(cs) >= 2:
             out["topic"][f"{t}-{ct}"] = cs
 regions = json.loads((DATA / "regions.json").read_text("utf-8"))["regions"]
-countries = sorted([r for r in regions if not r.get("kind")], key=lambda r: -(r.get("imported") or 0))[:PLACES]
-for r in countries:
-    ev = [e for e in json.loads((DATA / f"regions/{r['id']}.json").read_text("utf-8"))["events"] if ok(e) and e.get("inside")]
-    cs = [c for c in CENTURIES + [20] if enough([e for e in ev if century(e) == c], False)]
-    if len(cs) >= 2:
-        out["place"][r["id"]] = {"label": r["label"]["en"], "centuries": cs}
+for r in sorted([r for r in regions if not r.get("kind")], key=lambda r: r["label"]["en"]):
+    ev = [e for e in json.loads((DATA / f"regions/{r['id']}.json").read_text("utf-8"))["events"] if place_ok(e)]
+    eras = [name for name, lo, hi in ERAS if enough([e for e in ev if lo <= year(e) <= hi], False)]
+    if eras:
+        out["place"][r["id"]] = {"label": r["label"]["en"], "continent": r.get("continent"), "eras": eras}
 Path("apps/web/src/lib/journey-catalog.json").write_text(json.dumps(out, indent=1), "utf-8")
 print({k: len(v) for k, v in out.items()}, sum(len(v) for v in out["region"].values()))

@@ -92,7 +92,7 @@ export function ActivityView({ activity, seed, onAnswer, onNext, nextLabel = "Co
       <p className="text-xs font-semibold uppercase tracking-wider text-bronze">{SKILLS[activity.skill].label}</p>
       <h2 className="mt-1 font-serif text-2xl leading-tight sm:text-3xl" tabIndex={-1} data-step-heading>{activity.prompt}</h2>
       {activity.kind === "choice" && activity.context && <blockquote className="mt-3 rounded-md border-l-4 border-bronze bg-paper-3/60 px-4 py-3 leading-relaxed">{activity.context}</blockquote>}
-      {activity.kind === "order" ? <Order activity={activity} seed={seed} done={!!result} onCheck={answer} /> : <Choice activity={activity} seed={seed} done={!!result} onCheck={answer} />}
+      {activity.kind === "order" ? <Order activity={activity} seed={seed} done={!!result} onCheck={answer} /> : activity.kind === "timeline" ? <TimelineSlot activity={activity} done={!!result} onCheck={answer} /> : <Choice activity={activity} seed={seed} done={!!result} onCheck={answer} />}
       {result && <Feedback ok={result.ok} activity={activity} correct={result.correct} onNext={onNext} nextLabel={nextLabel} />}
     </section>
   );
@@ -161,6 +161,59 @@ function Order({ activity, seed, done, onCheck }: { activity: Extract<Activity, 
       {!done && (
         <button type="button" className="btn btn-primary mt-4 w-full sm:w-auto" onClick={() => onCheck({ ok: items.every((it, i) => correctAt(it.id, i)), correct: activity.items.map((x) => x.label).join(" → ") })}>
           Check my order
+        </button>
+      )}
+    </>
+  );
+}
+
+/** Place a record among dated ones: the gaps between them are the choices. */
+function TimelineSlot({ activity, done, onCheck }: { activity: Extract<Activity, { kind: "timeline" }>; done: boolean; onCheck: (a: Answer) => void }) {
+  const [picked, setPicked] = useState<number | null>(null);
+  const n = activity.anchors.length;
+  const slotLabel = (i: number) => (i === 0 ? `Before ${activity.anchors[0].label}` : i === n ? `After ${activity.anchors[n - 1].label}` : `Between ${activity.anchors[i - 1].label} and ${activity.anchors[i].label}`);
+  const slot = (i: number) => {
+    const state = done ? (i === activity.answer ? "right" : picked === i ? "wrong" : "") : picked === i ? "picked" : "";
+    return (
+      <button
+        key={`s${i}`}
+        type="button"
+        role="radio"
+        aria-checked={picked === i}
+        aria-label={slotLabel(i)}
+        disabled={done}
+        onClick={() => setPicked(i)}
+        className={`relative z-10 grid h-11 w-11 shrink-0 place-items-center rounded-full border-2 border-dashed text-lg font-semibold transition-colors ${
+          state === "picked" ? "border-bronze bg-bronze text-paper" : state === "right" ? "border-solid border-navy bg-navy text-on-accent" : state === "wrong" ? "border-solid border-oxblood bg-oxblood text-white" : "border-bronze/70 bg-paper-2 text-bronze hover:bg-bronze-soft"
+        }`}
+      >
+        {state === "right" ? "✓" : state === "wrong" ? "✗" : "+"}
+      </button>
+    );
+  };
+  return (
+    <>
+      <div className="mt-4 rounded-xl border-2 border-bronze bg-bronze-soft/40 px-4 py-3 font-serif text-lg" data-testid="timeline-target">{activity.target}</div>
+      <p className="mt-2 text-sm text-ink-2">Choose the gap where it belongs. Dates appear on the others; its own date appears once you check.</p>
+      <div role="radiogroup" aria-label="Places on the timeline" className="relative mt-4 overflow-x-auto pb-2">
+        <div className="relative flex min-w-max items-start gap-2 px-1">
+          <span aria-hidden className="absolute inset-x-6 top-[21px] h-0.5 bg-line" />
+          {activity.anchors.map((a, i) => (
+            <div key={a.id} className="flex items-start gap-2">
+              {slot(i)}
+              <div className="relative z-10 flex w-36 flex-col items-center text-center sm:w-40">
+                <span className="mt-3 h-4 w-4 rounded-full border-2 border-paper-2 bg-ink-2" aria-hidden />
+                <span className="mt-1.5 text-xs font-semibold tabular-nums text-ink">{a.when}</span>
+                <span className="mt-0.5 line-clamp-3 text-xs leading-snug text-ink-2">{a.label}</span>
+              </div>
+            </div>
+          ))}
+          {slot(n)}
+        </div>
+      </div>
+      {!done && (
+        <button type="button" className="btn btn-primary mt-3 w-full sm:w-auto" disabled={picked === null} onClick={() => onCheck({ ok: picked === activity.answer, correct: slotLabel(activity.answer) })}>
+          Check
         </button>
       )}
     </>

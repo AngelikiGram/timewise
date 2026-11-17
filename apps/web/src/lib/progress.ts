@@ -3,6 +3,7 @@
 // Personal progress, kept in this browser only. There are no accounts yet, so nothing here leaves the
 // device, and clearing site data or switching browsers starts afresh. Readers must cope with it empty.
 import { useSyncExternalStore } from "react";
+import { edgeKey, type Edge, type Entity } from "./entities";
 
 export type SavedItem = {
   /** Wikidata QID for imported events, the curated id for checked ones. */
@@ -20,7 +21,13 @@ export type Collection = { id: string; name: string; itemIds: string[]; createdA
 export type StoryProgress = { chapterId: string; step: number; done?: number; finished: boolean; updatedAt: string; visited: string[] };
 export type ChallengeResult = { id: string; score: number; max: number; at: string; mode: "challenge" | "practice"; xp: number };
 /** Something answered wrongly, to come back to. Lesson mistakes keep the question, so it can be asked again. */
-export type Mistake = { challengeId: string; prompt: string; correct: string; at: string; activity?: unknown; skill?: string };
+export type Mistake = { challengeId: string; prompt: string; correct: string; at: string; activity?: unknown; skill?: string; box?: number; due?: string };
+/**
+ * An entity in the learner's own atlas. The four states are kept apart on purpose: seeing a name is not
+ * the same as opening it, saving it, or using it in an exercise.
+ */
+export type AtlasNode = Entity & { encountered?: string; explored?: string; saved?: string; practised?: string; lessons: string[] };
+export type AtlasEdge = Edge & { lessons: string[]; at: string };
 /** A lesson's state: where the reader is, and how the last finished attempt went. */
 export type LessonProgress = { step: number; steps: number; finished: boolean; score?: number; max?: number; updatedAt: string; title: string; pathId: string };
 /** One answer, for skill progress. */
@@ -39,6 +46,16 @@ export type Progress = {
   skills: SkillEntry[];
   /** Days (YYYY-MM-DD, local) with any lesson activity. Only used to show activity, never to take anything away. */
   days: string[];
+  /** Lessons a day the reader would like to do; optional, 0 means no goal. */
+  goal?: number;
+  /** Themes and places the reader chose, used to suggest paths. */
+  interests?: string[];
+  /** Profile settings. Shareable only means a link can be made; nothing is uploaded. */
+  profile?: { name?: string; shareable: boolean };
+  /** The learner's history atlas: entities met and the sourced edges between them. */
+  atlas?: { nodes: Record<string, AtlasNode>; edges: Record<string, AtlasEdge> };
+  /** Review answers, kept apart from atlas size: more nodes isn't more knowledge. */
+  reviewLog?: { ok: number; total: number };
 };
 
 const KEY = "tw-progress-v1";
@@ -185,17 +202,29 @@ export function saveLessonStep(id: string, info: { step: number; steps: number; 
 }
 
 /** One answered question: counts towards its skill, and a wrong answer goes to review with the question. */
-export function logAnswer(lessonId: string, skill: string, ok: boolean, review: { prompt: string; correct: string; activity: unknown }) {
+const INTERVAL_DAYS = [0, 1, 3, 7];
+export function logAnswer(lessonId: string, skill: string, ok: boolean, review: { prompt: string; correct: string; activity: unknown }, fromReview = false) {
   update((p) => {
     const at = now();
+    const was = p.mistakes.find((m) => m.prompt === review.prompt);
     const others = p.mistakes.filter((m) => m.prompt !== review.prompt);
+    let mistakes = others;
+    if (!ok) mistakes = [...others, { challengeId: lessonId, prompt: review.prompt, correct: review.correct, at, activity: review.activity, skill, box: 0, due: at }];
+    else if (was) {
+      const box = (was.box ?? 0) + 1;
+      if (box < INTERVAL_DAYS.length) mistakes = [...others, { ...was, box, due: new Date(Date.now() + INTERVAL_DAYS[box] * 86400000).toISOString() }];
+    }
+    const log = p.reviewLog ?? { ok: 0, total: 0 };
     return markDay({
       ...p,
       skills: [...p.skills, { skill, ok, at }].slice(-600),
-      mistakes: ok ? others : [...others, { challengeId: lessonId, prompt: review.prompt, correct: review.correct, at, activity: review.activity, skill }].slice(-60),
+      mistakes: mistakes.slice(-60),
+      reviewLog: fromReview ? { ok: log.ok + (ok ? 1 : 0), total: log.total + 1 } : log,
     });
   });
 }
+/** Questions due for review now; later ones wait for their day. */
+export const dueReviews = (p: Progress, at = Date.now()) => p.mistakes.filter((m) => m.activity && (!m.due || Date.parse(m.due) <= at));
 
 /** A finished lesson. XP is earned once per lesson, like a challenge, so replays can't farm it. */
 export function finishLesson(id: string, score: number, max: number): number {
@@ -211,6 +240,77 @@ export function finishLesson(id: string, score: number, max: number): number {
     });
   });
   return xp;
+}
+
+export const setGoal = (goal: number) => update((p) => ({ ...p, goal }));
+export const setInterests = (interests: string[]) => update((p) => ({ ...p, interests }));
+export const setProfile = (profile: { name?: string; shareable: boolean }) => update((p) => ({ ...p, profile }));
+
+/** Keep a question to try again later, whether or not it was answered correctly. */
+export function queueReview(lessonId: string, review: { prompt: string; correct: string; activity: unknown; skill?: string }) {
+  update((p) => (p.mistakes.some((m) => m.prompt === review.prompt) ? p : { ...p, mistakes: [...p.mistakes, { challengeId: lessonId, ...review, at: now() }].slice(-60) }));
+}
+
+// ---------------------------------------------------------------- the personal atlas
+
+const emptyAtlas = () => ({ nodes: {} as Record<string, AtlasNode>, edges: {} as Record<string, AtlasEdge> });
+const merge = (old: AtlasNode | undefined, e: Entity): AtlasNode => ({ ...e, ...Object.fromEntries(Object.entries(old ?? {}).filter(([, v]) => v !== undefined)), lessons: old?.lessons ?? [] }) as AtlasNode;
+
+/** Entities shown in a lesson the learner viewed. Encountered only: not explored, not learned. */
+export function encounterEntities(lessonId: string, entities: Entity[]) {
+  update((p) => {
+    const atlas = p.atlas ?? emptyAtlas();
+    const nodes = { ...atlas.nodes };
+    for (const e of entities) {
+      const n = merge(nodes[e.id], e);
+      nodes[e.id] = { ...n, encountered: n.encountered ?? now(), lessons: n.lessons.includes(lessonId) ? n.lessons : [...n.lessons, lessonId] };
+    }
+    return { ...p, atlas: { ...atlas, nodes } };
+  });
+}
+/** The learner opened an entity's panel. */
+export function exploreEntity(e: Entity) {
+  update((p) => {
+    const atlas = p.atlas ?? emptyAtlas();
+    const n = merge(atlas.nodes[e.id], e);
+    return { ...p, atlas: { ...atlas, nodes: { ...atlas.nodes, [e.id]: { ...n, explored: n.explored ?? now() } } } };
+  });
+}
+export function toggleSaveEntity(e: Entity) {
+  update((p) => {
+    const atlas = p.atlas ?? emptyAtlas();
+    const n = merge(atlas.nodes[e.id], e);
+    return { ...p, atlas: { ...atlas, nodes: { ...atlas.nodes, [e.id]: { ...n, saved: n.saved ? undefined : now() } } } };
+  });
+}
+export type AtlasGrowth = { newByType: Record<string, number>; earlier: { id: string; label: string; lessons: string[] }[]; newEdges: number };
+/**
+ * A finished lesson: its central entities are practised, and its sourced edges join the atlas. Returns what
+ * was new, and which entities were already known from earlier lessons.
+ */
+export function completeLessonAtlas(lessonId: string, central: Entity[], edges: Edge[], extra: Entity[] = []): AtlasGrowth {
+  const growth: AtlasGrowth = { newByType: {}, earlier: [], newEdges: 0 };
+  update((p) => {
+    const atlas = p.atlas ?? emptyAtlas();
+    const nodes = { ...atlas.nodes };
+    const at = now();
+    for (const e of [...central, ...extra]) {
+      const old = nodes[e.id];
+      const before = (old?.lessons ?? []).filter((l) => l !== lessonId);
+      if (!old?.practised && !before.length) growth.newByType[e.type] = (growth.newByType[e.type] ?? 0) + 1;
+      if (before.length) growth.earlier.push({ id: e.id, label: e.label, lessons: before });
+      const n = merge(old, e);
+      nodes[e.id] = { ...n, encountered: n.encountered ?? at, practised: central.includes(e) ? n.practised ?? at : n.practised, lessons: n.lessons.includes(lessonId) ? n.lessons : [...n.lessons, lessonId] };
+    }
+    const all = { ...atlas.edges };
+    for (const e of edges) {
+      const k = edgeKey(e);
+      if (!all[k]) growth.newEdges++;
+      all[k] = { ...e, lessons: [...new Set([...(all[k]?.lessons ?? []), lessonId])], at: all[k]?.at ?? at };
+    }
+    return { ...p, atlas: { nodes, edges: all } };
+  });
+  return growth;
 }
 
 export function clearMistake(prompt: string) {

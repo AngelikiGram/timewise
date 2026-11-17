@@ -3,7 +3,30 @@
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { finishLesson, logAnswer, readProgress, saveLessonStep, useProgress } from "@/lib/progress";
+import { finishLesson, logAnswer, queueReview, readProgress, saveLessonStep, useProgress } from "@/lib/progress";
+import type { Activity } from "@/lib/lessons";
+import type { Entity } from "@/lib/entities";
+import { completeLessonAtlas, encounterEntities, type AtlasGrowth } from "@/lib/progress";
+import { EntityPanel } from "../atlas/EntityPanel";
+import { ConnectExercise } from "../atlas/ConnectExercise";
+
+/** The entities a finished lesson practised: its records, their places, and the people it names. */
+const centralOf = (l: Lesson): Entity[] => {
+  const seen = new Map<string, Entity>();
+  for (const c of l.cards) for (const e of [c.entity, c.place, ...(c.people ?? []).map((x) => x.entity)]) if (e && !seen.has(e.id)) seen.set(e.id, e);
+  return [...seen.values()];
+};
+const PLURAL: Record<string, [string, string]> = { event: ["event", "events"], person: ["person", "people"], place: ["place", "places"], country: ["country", "countries"], organization: ["organisation", "organisations"], object: ["object", "objects"] };
+function describeGrowth(g: AtlasGrowth) {
+  const parts = Object.entries(g.newByType).map(([t, n]) => `${n} new ${PLURAL[t]?.[n === 1 ? 0 : 1] ?? t}`);
+  if (g.newEdges) parts.push(`${g.newEdges} sourced connection${g.newEdges === 1 ? "" : "s"}`);
+  if (g.earlier.length) parts.push(`${g.earlier.length} link${g.earlier.length === 1 ? "" : "s"} to earlier lessons`);
+  return parts.length ? parts.join(", ") : "nothing new this time, but you practised what's already there";
+}
+
+/** The text a question is filed under in Review, the same whether it was missed or added by hand. */
+const reviewPrompt = (a: Activity) => `${a.prompt}${a.kind === "choice" && a.context ? ` ${a.context}` : a.kind === "timeline" ? ` ${a.target}` : ""}`;
+const correctOf = (a: Activity) => (a.kind === "choice" ? a.options.find((o) => o.id === a.answer)?.label ?? "" : a.kind === "order" ? a.items.map((x) => x.label).join(" → ") : a.answer === 0 ? `Before ${a.anchors[0].label}` : a.answer === a.anchors.length ? `After ${a.anchors[a.anchors.length - 1].label}` : `Between ${a.anchors[a.answer - 1].label} and ${a.anchors[a.answer].label}`);
 import { lessonHref, loadLesson, nextInPath, pathById, SKILLS, type LearnCard, type Lesson, type Skill } from "@/lib/lessons";
 import { CreditedImage, ReviewBadge, SaveButton } from "../ui";
 import { ActivityView, MiniMap, Sources, type Answer } from "./activities";
@@ -38,11 +61,30 @@ function Overview({ cards }: { cards: LearnCard[] }) {
   );
 }
 
-function Card({ card, review }: { card: LearnCard; review: Lesson["review"] }) {
+function EntityButton({ entity, onOpen, met, children, className = "" }: { entity: Entity; onOpen: (e: Entity) => void; met?: boolean; children: React.ReactNode; className?: string }) {
+  return (
+    <button type="button" onClick={() => onOpen(entity)} className={`underline decoration-bronze/60 decoration-dotted decoration-2 underline-offset-4 hover:decoration-solid ${className}`} data-entity={entity.id} aria-label={`${entity.label}: open details${met ? ", met before" : ""}`}>
+      {children}{met && <span className="ml-1 align-super text-[0.6em] text-bronze" aria-hidden>●</span>}
+    </button>
+  );
+}
+
+function Card({ card, review, onOpen, metBefore }: { card: LearnCard; review: Lesson["review"]; onOpen: (e: Entity) => void; metBefore: (id: string) => boolean }) {
   return (
     <article data-testid="learn-card">
-      <p className="text-xs font-semibold uppercase tracking-wider text-bronze">{card.when}{card.where ? ` · ${card.where}` : ""}</p>
-      <h2 className="mt-1 font-serif text-3xl leading-tight" tabIndex={-1} data-step-heading>{card.title}</h2>
+      <p className="text-xs font-semibold uppercase tracking-wider text-bronze">{card.when}{card.where ? <> · {card.place ? <EntityButton entity={card.place} onOpen={onOpen} met={metBefore(card.place.id)} className="uppercase tracking-wider">{card.where}</EntityButton> : card.where}</> : ""}</p>
+      <h2 className="mt-1 font-serif text-3xl leading-tight" tabIndex={-1} data-step-heading><EntityButton entity={card.entity} onOpen={onOpen} met={metBefore(card.entity.id)} className="text-left">{card.title}</EntityButton></h2>
+      {(card.people?.length ?? 0) > 0 && (
+        <p className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm" data-testid="card-people">
+          <span className="text-ink-2">People:</span>
+          {card.people!.map((x) => x.entity
+            ? <EntityButton key={x.name} entity={x.entity} onOpen={onOpen} met={metBefore(x.entity.id)}>{x.name}</EntityButton>
+            : <span key={x.name} title="Not linked: this name's identity hasn't been resolved">{x.name}</span>)}
+        </p>
+      )}
+      {[card.entity, card.place, ...(card.people ?? []).map((x) => x.entity)].some((e) => e && metBefore(e.id)) && (
+        <p className="mt-2 text-sm text-bronze" data-testid="seen-before">● You&rsquo;ve met {[card.entity, card.place, ...(card.people ?? []).map((x) => x.entity)].filter((e): e is Entity => !!e && metBefore(e.id)).map((e) => e.label).join(", ")} in an earlier lesson. Open the name to see where.</p>
+      )}
       {card.summary && (
         <p className="mt-3 text-lg leading-relaxed">
           {card.summary}
@@ -92,6 +134,8 @@ export function LessonPlayer() {
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Record<number, Answer>>({});
   const [xp, setXp] = useState<number | null>(null);
+  const [panel, setPanel] = useState<Entity | null>(null);
+  const [growth, setGrowth] = useState<AtlasGrowth | null>(null);
   const started = useRef(false);
   const stage = useRef<HTMLDivElement>(null);
 
@@ -133,8 +177,21 @@ export function LessonPlayer() {
 
   // Finish once the summary is reached.
   useEffect(() => {
-    if (lesson && step === summaryAt && steps > 2 && xp === null) setXp(finishLesson(lesson.id, score, asked));
+    if (lesson && step === summaryAt && steps > 2 && xp === null) {
+      setXp(finishLesson(lesson.id, score, asked));
+      setGrowth(completeLessonAtlas(lesson.id, centralOf(lesson), lesson.edges, lesson.extra));
+    }
   }, [step, summaryAt, steps, lesson, score, asked, xp]);
+
+  // A card's entities are encountered when it's shown: seen, not yet explored or learned.
+  useEffect(() => {
+    if (!lesson || step < 1 || step > lesson.cards.length) return;
+    const c = lesson.cards[step - 1];
+    encounterEntities(lesson.id, [c.entity, ...(c.place ? [c.place] : []), ...(c.people ?? []).flatMap((x) => (x.entity ? [x.entity] : []))]);
+  }, [lesson, step]);
+  const metBefore = (id: string) => (progress.atlas?.nodes[id]?.lessons ?? []).some((l) => l !== lesson?.id && progress.lessons[l]);
+  const lessonTitles = Object.fromEntries(Object.entries(progress.lessons).map(([k, v]) => [k, v.title]));
+  const labels = lesson ? Object.fromEntries([...lesson.cards.flatMap((c) => [c.entity, c.place, ...(c.people ?? []).map((x) => x.entity)]), ...(lesson.extra ?? [])].filter((e): e is Entity => !!e).map((e) => [e.id, e.label])) : {};
 
   const next = lesson ? nextInPath(lesson.pathId, lesson.id) : undefined;
   const skills = useMemo(() => [...new Set(lesson?.activities.map((a) => a.skill) ?? [])] as Skill[], [lesson]);
@@ -190,6 +247,7 @@ export function LessonPlayer() {
         <span className="text-sm tabular-nums text-ink-2">{step + 1}/{steps}</span>
       </div>
 
+      {panel && <EntityPanel entity={panel} edges={lesson.edges} labels={labels} lessonTitle={lesson.title} lessonHref={lessonHref(lesson.id, lesson.pathId)} lessonTitles={lessonTitles} onClose={() => setPanel(null)} />}
       <div ref={stage} className="mt-4" key={step}>
         {step === 0 && (
           <section data-testid="lesson-intro" className="fade-in">
@@ -209,7 +267,7 @@ export function LessonPlayer() {
         )}
         {step >= cardStart && step < actStart && (
           <div className="fade-in">
-            <Card card={lesson.cards[step - cardStart]} review={lesson.review} />
+            <Card card={lesson.cards[step - cardStart]} review={lesson.review} onOpen={setPanel} metBefore={metBefore} />
             <div className="mt-6 flex gap-2">
               <button type="button" className="btn btn-secondary" onClick={() => go(step - 1)}>Back</button>
               <button type="button" className="btn btn-primary flex-1 sm:flex-none" onClick={() => go(step + 1)} data-testid="continue">{step + 1 === actStart ? "Start the questions" : "Next"}</button>
@@ -226,7 +284,7 @@ export function LessonPlayer() {
                 seed={(id.length + i) * 7 + 3}
                 onAnswer={(r) => {
                   setAnswers((all) => ({ ...all, [i]: r }));
-                  logAnswer(lesson.id, a.skill, r.ok, { prompt: `${a.prompt}${a.kind === "choice" && a.context ? ` ${a.context}` : ""}`, correct: r.correct, activity: a });
+                  logAnswer(lesson.id, a.skill, r.ok, { prompt: reviewPrompt(a), correct: r.correct, activity: a });
                 }}
                 onNext={() => go(step + 1)}
                 nextLabel={step + 1 === summaryAt ? "See what you learned" : "Continue"}
@@ -243,14 +301,37 @@ export function LessonPlayer() {
               <div className="card p-4"><p className="font-serif text-3xl tabular-nums">{xp ?? 0}</p><p className="text-sm text-ink-2">{xp ? "XP earned" : "XP (earned once per lesson)"}</p></div>
               <div className="card col-span-2 p-4 sm:col-span-1"><p className="text-sm font-semibold">Skills practised</p><p className="text-sm text-ink-2">{skills.map((s) => SKILLS[s].label).join(", ")}</p></div>
             </div>
-            <h2 className="mt-6 font-serif text-2xl">What you learned</h2>
-            <ul className="mt-2 grid gap-2">
-              {lesson.cards.map((c) => (
-                <li key={c.id} className="rounded-md border border-line bg-paper-2 px-3 py-2">
-                  <span className="font-medium">{c.title}</span> <span className="text-ink-2">· {c.when}{c.where ? ` · ${c.where}` : ""}</span>
+            {growth && (
+              <div className="mt-5 rounded-xl bg-bronze-soft/50 p-4" data-testid="atlas-growth">
+                <p className="font-semibold">Your atlas grew: {describeGrowth(growth)}.</p>
+                {growth.earlier.length > 0 && <p className="mt-1 text-sm">Already in your atlas from earlier lessons: {growth.earlier.map((e) => e.label).join(", ")}.</p>}
+                <Link href={`/my-atlas?back=${encodeURIComponent(lessonHref(lesson.id, lesson.pathId))}`} className="link mt-2 inline-block text-sm">Open my atlas →</Link>
+              </div>
+            )}
+            {growth && progress.atlas && <ConnectExercise lessonId={lesson.id} nodes={progress.atlas.nodes} edges={progress.atlas.edges} />}
+            <h2 className="mt-6 font-serif text-2xl">Key events, in order</h2>
+            <ol className="relative mt-3 space-y-3 border-l-2 border-bronze/50 pl-5" data-testid="recap-timeline">
+              {[...lesson.cards].sort((a, b) => (a.year ?? 0) - (b.year ?? 0)).map((c) => (
+                <li key={c.id} className="relative">
+                  <span aria-hidden className="absolute -left-[1.65rem] top-1 h-3 w-3 rounded-full border-2 border-paper bg-bronze" />
+                  <span className="block text-xs font-semibold tabular-nums text-bronze">{c.when}{c.where ? ` · ${c.where}` : ""}</span>
+                  <span className="font-medium">{c.title}</span>
                   {c.claims.length > 0 && <span className="block text-xs text-ink-2">{c.claims.length} sourced statement{c.claims.length > 1 ? "s" : ""}</span>}
                 </li>
               ))}
+            </ol>
+            <h2 className="mt-6 font-serif text-2xl">Revisit later</h2>
+            <p className="mt-1 text-sm text-ink-2">Questions you missed are already waiting in Review. Add any others you&rsquo;d like to see again.</p>
+            <ul className="mt-2 grid gap-1.5" data-testid="revisit">
+              {lesson.activities.map((a, i) => {
+                const queued = progress.mistakes.some((m) => m.prompt === reviewPrompt(a));
+                return (
+                  <li key={i} className="flex items-center gap-2 rounded-md border border-line bg-paper-2 px-3 py-2 text-sm">
+                    <span className="min-w-0 flex-1">{a.prompt}{a.kind === "timeline" ? ` ${a.target}` : ""}</span>
+                    <button type="button" className="btn btn-ghost btn-sm shrink-0" disabled={queued} onClick={() => queueReview(lesson.id, { prompt: reviewPrompt(a), correct: correctOf(a), activity: a, skill: a.skill })}>{queued ? "In review" : "Add to review"}</button>
+                  </li>
+                );
+              })}
             </ul>
             {lesson.gaps.length > 0 && (
               <div className="mt-4 rounded-md border border-dashed border-line p-3 text-sm text-ink-2">

@@ -24,7 +24,9 @@ export const SECTIONS = [
   { id: "explore", icon: "network" as IconName, label: "Explore", href: "/connections", match: (p: string) => p.startsWith("/connections") },
   { id: "map", icon: "map" as IconName, label: "World Map", href: "/atlas", match: (p: string) => p.startsWith("/atlas") || p.startsWith("/history") || p.startsWith("/explore") },
   { id: "stories", icon: "timeline" as IconName, label: "Stories", href: "/stories", match: (p: string) => p.startsWith("/stories") || p.startsWith("/journey") },
-  { id: "collection", icon: "bookmark" as IconName, label: "My Collection", href: "/collection", match: (p: string) => p.startsWith("/collection") },
+  { id: "my-atlas", icon: "idea" as IconName, label: "My atlas", href: "/my-atlas", match: (p: string) => p.startsWith("/my-atlas") },
+  { id: "profile", icon: "person" as IconName, label: "Profile", href: "/profile", match: (p: string) => p.startsWith("/profile") },
+  { id: "collection", icon: "bookmark" as IconName, label: "Saved", href: "/collection", match: (p: string) => p.startsWith("/collection") },
 ] as const;
 
 export function currentSection(pathname: string) {

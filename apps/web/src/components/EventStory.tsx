@@ -6,6 +6,7 @@ import { CATEGORY_LABELS, categoryVar } from "@/lib/categories";
 import { DATE_FORM_LABEL, dateForm, precisionNote, type Precision } from "@/lib/dates";
 import { enrich, type Enrichment, type Linked } from "@/lib/wikidata";
 import { CreditedImage, NoteField, ReportIssue, ReviewBadge, SaveButton } from "./ui";
+import { EvidenceObjects } from "./EvidenceObjects";
 
 export type StoryItem = {
   id: string; title: { en: string; de?: string }; description?: string; category: string; start: string; end?: string;
@@ -13,6 +14,7 @@ export type StoryItem = {
   conflict?: boolean; lng?: number; lat?: number; loc?: "event" | "place" | "area"; url: string; links?: number; checked?: boolean; inside?: boolean; country?: string;
   /** Countries Wikidata ties it to, when more than one. */
   nc?: number;
+  home?: string;
   /** Records merged into this entry, kept as provenance. */
   also?: { id: string; title: string; source: "wikidata" | "checked" }[];
   multi?: boolean;
@@ -34,6 +36,13 @@ function lead(text: string): [string, string] {
   const head = sentences.slice(0, 2).join("").trim();
   return [head, text.slice(head.length).trim()];
 }
+
+const TABS = [
+  { id: "why", label: "Why it matters" },
+  { id: "before", label: "What came before" },
+  { id: "after", label: "What changed" },
+  { id: "evidence", label: "Records from the time" },
+] as const;
 
 export function EventStory({ item, when, place, href, onBack, onPick, known, connected, meanwhile }: {
   item: StoryItem;
@@ -78,8 +87,9 @@ export function EventStory({ item, when, place, href, onBack, onPick, known, con
       <a key={`external-${l.id}`} href={`https://www.wikidata.org/wiki/${l.id}`} target="_blank" rel="noopener noreferrer" className="text-ink underline decoration-line underline-offset-2 hover:text-bronze">{l.label}</a>
     );
   // "Why it matters" uses only what the record itself states: what it was part of and what it led to.
-  const matters: [string, Linked[]][] = data ? ([["Part of", data.partOf], ["Recorded consequences", data.effects], ["Recorded causes", data.causes]] as [string, Linked[]][]).filter(([, l]) => l.length > 0) : [];
-  const sequence: [string, Linked[]][] = data ? ([["Came before", data.before], ["Came next", data.after]] as [string, Linked[]][]).filter(([, l]) => l.length > 0) : [];
+  const before: [string, Linked[]][] = data ? ([["Recorded causes", data.causes], ["Came before", data.before]] as [string, Linked[]][]).filter(([, l]) => l.length > 0) : [];
+  const after: [string, Linked[]][] = data ? ([["Recorded consequences", data.effects], ["Came next", data.after]] as [string, Linked[]][]).filter(([, l]) => l.length > 0) : [];
+  const [tab, setTab] = useState<(typeof TABS)[number]["id"]>("why");
 
   const share = async () => {
     try {
@@ -179,37 +189,39 @@ export function EventStory({ item, when, place, href, onBack, onPick, known, con
           )}
         </section>
 
-        {/* 3. Why it matters */}
-        {(matters.length > 0 || item.checked || (item.links ?? 0) > 0) && (
-          <section aria-labelledby="why-it-matters">
-            <h3 id="why-it-matters" className="eyebrow">Why it matters</h3>
-            {matters.map(([heading, list]) => (
-              <div key={heading} className="mt-3 border-l-2 pl-3" style={{ borderColor: categoryVar(item.category) }}>
-                <p className="font-serif text-lg">{heading}</p>
-                <div className="mt-1 flex flex-wrap gap-x-3 gap-y-1">{list.slice(0, 6).map(linkTo)}</div>
-              </div>
+        {/* 3. Four short tabs instead of one long page: why it matters, before, after, evidence. */}
+        <section aria-label="About this event" data-testid="event-tabs">
+          <div role="tablist" aria-label="About this event" className="-mx-1 flex gap-1 overflow-x-auto px-1 pb-1 [&>*]:shrink-0">
+            {TABS.map((t) => (
+              <button key={t.id} type="button" role="tab" id={`tab-${t.id}`} aria-selected={tab === t.id} aria-controls={`panel-${t.id}`} onClick={() => setTab(t.id)} className={`rounded-full px-3 py-1.5 text-sm font-medium transition-colors ${tab === t.id ? "bg-bronze text-paper" : "text-ink-2 hover:bg-paper-3 hover:text-ink"}`}>
+                {t.label}
+              </button>
             ))}
-            {matters.length > 0 && <p className="mt-2 text-xs text-ink-2">As recorded by Wikidata&rsquo;s editors, not reviewed here.</p>}
-            {item.checked && <p className="mt-2 leading-relaxed">This event is part of a hand-checked story. <Link href={item.url} className="link">See its evidence →</Link></p>}
-            {!item.checked && (item.links ?? 0) > 0 && (
-              <p className="mt-2 text-sm text-ink-2">Wikipedia has an article on it in {item.links} {item.links === 1 ? "language" : "languages"}: a measure of how widely it is written about, not of its importance.</p>
+          </div>
+          <div role="tabpanel" id={`panel-${tab}`} aria-labelledby={`tab-${tab}`} className="mt-3" data-testid={`panel-${tab}`}>
+            {tab === "why" && (
+              <>
+                {data?.partOf.length ? <div className="border-l-2 pl-3" style={{ borderColor: categoryVar(item.category) }}><p className="text-sm font-semibold">Part of</p><div className="mt-1 flex flex-wrap gap-x-3 gap-y-1">{data.partOf.slice(0, 6).map(linkTo)}</div></div> : null}
+                {item.checked && <p className="mt-2 leading-relaxed">This event is part of a hand-checked story. <Link href={item.url} className="link">See its evidence →</Link></p>}
+                {!item.checked && (item.links ?? 0) > 0 && <p className="mt-2 text-sm text-ink-2">Written about in {item.links} Wikipedia {item.links === 1 ? "language" : "languages"}: how widely it&rsquo;s documented, not how important it was.</p>}
+                {data && !data.partOf.length && !item.checked && <p className="mt-2 text-sm text-ink-2">Wikidata doesn&rsquo;t record what this was part of. See what came before and what changed.</p>}
+                {connected}
+              </>
             )}
-          </section>
-        )}
-
-        {/* 4. Connected events and meanwhile, elsewhere */}
-        {(sequence.length > 0 || connected) && (
-          <section aria-labelledby="connected">
-            <h3 id="connected" className="eyebrow">Connected events</h3>
-            {sequence.map(([heading, list]) => (
-              <div key={heading} className="mt-3">
-                <p className="text-sm font-semibold">{heading}</p>
-                <div className="mt-1 flex flex-wrap gap-x-3 gap-y-1">{list.slice(0, 6).map(linkTo)}</div>
-              </div>
-            ))}
-            {connected}
-          </section>
-        )}
+            {tab === "before" && (
+              before.length ? before.map(([heading, list]) => (
+                <div key={heading} className="mb-3"><p className="text-sm font-semibold">{heading}</p><div className="mt-1 flex flex-wrap gap-x-3 gap-y-1">{list.slice(0, 8).map(linkTo)}</div></div>
+              )) : <p className="text-sm text-ink-2">{data ? "Wikidata records no causes or predecessors for this." : "Loading what Wikidata records…"}</p>
+            )}
+            {tab === "after" && (
+              after.length ? after.map(([heading, list]) => (
+                <div key={heading} className="mb-3"><p className="text-sm font-semibold">{heading}</p><div className="mt-1 flex flex-wrap gap-x-3 gap-y-1">{list.slice(0, 8).map(linkTo)}</div></div>
+              )) : <p className="text-sm text-ink-2">{data ? "Wikidata records no effects or successors for this." : "Loading what Wikidata records…"}</p>
+            )}
+            {tab === "evidence" && <EvidenceObjects title={title} start={item.start} precision={item.precision} austrian={item.checked || item.country === "austria" || item.home === "austria"} />}
+            {(tab === "before" || tab === "after") && (before.length > 0 || after.length > 0) && <p className="mt-2 text-xs text-ink-2">As recorded in Wikidata statements, not reviewed here.</p>}
+          </div>
+        </section>
         {meanwhile}
 
         <NoteField id={item.id} title={title} href={href} />

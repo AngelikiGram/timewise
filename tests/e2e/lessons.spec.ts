@@ -49,7 +49,7 @@ test("a checked lesson: read, answer, see why with sources, finish and move on",
   }
   expect(asked).toBeGreaterThanOrEqual(3);
   const summary = page.getByTestId("lesson-summary");
-  await expect(summary).toContainText("What you learned");
+  await expect(summary).toContainText("Key events, in order");
   await expect(summary).toContainText("causes and effects");
   await expect(summary).toContainText(/\d+ XP|XP earned/);
   await expect(page.getByTestId("next-lesson")).toContainText("The year of revolution");

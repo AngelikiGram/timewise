@@ -1,6 +1,6 @@
 # Development status
 
-Last updated: 2026-11-16. **TIMEWISE 2.0 Phase 1 (correct the existing interface) is done. Phase 2 is partly done:** the database, API, Europeana connector, review screen and a worldwide Wikidata import (all 197 countries, unreviewed) work. Phases 3–6 aren't started. This isn't production-ready.
+Last updated: 2026-11-17. **TIMEWISE 2.0 Phase 1 (correct the existing interface) is done. Phase 2 is partly done:** the database, API, Europeana connector, review screen and a worldwide Wikidata import (all 197 countries, unreviewed) work. Phases 3–6 aren't started. This isn't production-ready.
 
 ## Checks on 2026-11-10
 
@@ -273,6 +273,91 @@ Tests: atlas and coverage specs pass on the new build (22). The admin and archiv
 **Limits:** everything imported is unreviewed. "Best documented" means most Wikipedia languages, which favours famous and European topics. Continents and countries are present-day groupings. Wikipedia summaries and Wikidata connections are shown as their editors wrote them.
 
 Tests: 25 unit, 61 Python, 67 of 69 browser tests on the new build; the two world-map hover tests pass alone and are the known flake under full-suite load. Admin and archival specs need the API's port 3000 origin and weren't run.
+
+## Paths for every country, profiles, and My History Atlas (2026-11-17)
+
+From two briefs: "Duolingo for history", for every country; and "My History Atlas", a personal network that grows with lessons.
+
+**Learning paths: implemented and tested.**
+- **Every country with enough records has a staged path:** 167 of 197 countries, 512 stages, by era (Antiquity, Middle Ages, 1500–1800, 1800–1914, 1914–1945, since 1945).
+  - A stage needs four qualifying records located inside the country.
+  - `scripts/journey_catalog.py` lists them.
+  - The other 30 countries show "not enough records yet" on the learning map.
+- **Austria: Empire to Republic**, the checked path, with period milestones.
+- **New questions:**
+  - "Where on the timeline does this belong?": choose the gap between dated records.
+  - **People**, for the checked path: the people the collection names.
+  - **People**, for other paths: humans recorded by a Wikidata statement (participant, founder, creator…), checked as human through the Query Service.
+- **Recap:** key events in order, plus "Revisit later", which can add any question to Review.
+- **Review is spaced.** A wrong answer is due now; each right answer moves it 1, 3, then 7 days out, then retires it. Review accuracy is tracked apart from everything else.
+- **Learn page:** a daily goal (none to 3 lessons), the current and best streak with encouraging wording, eight badges for things actually done, and a review reminder.
+
+**Profile** (`/profile`): implemented and tested.
+- Private by default. "Shareable" makes a link that carries a summary (lessons, paths, accuracy, badges, countries). Nothing is uploaded.
+- Continue where you stopped, current paths with Resume, quiz accuracy by skill, interests that suggest paths, completed lessons and paths, and badges.
+- **Learning map:** a world map coloured by path progress.
+- Saved items by type, the review queue, and download or delete of all progress.
+- There are no accounts: the page says so, and shows no login or sync controls.
+
+**Event cards and evidence:** implemented and tested.
+- Four tabs: Why it matters, What came before, What changed, and Records from the time.
+- **Records from the time** searches Europeana live (public API key) by the event's name and years. For Austrian events it looks in the Austrian National Library's holdings first.
+  - Each item shows its holder, year and rights.
+  - The tab says these are evidence about the event, not the event, and that matches are by name and date.
+  - It also links to ANNO newspapers from the event's day (1700–1950, day precision), and offers searches on Europeana and the Library of Congress.
+  - ANNO and the Library of Congress turn away scripts, so they are links only.
+
+**Country views:** implemented and tested.
+- "In Austria", "Involving Austria" and "Worldwide, same years" are explicit choices. The four detailed scopes are folded under "Fine-tune".
+- A Map / Timeline / Stories switch:
+  - Timeline: every listed event by century.
+  - Stories: the country's path and the stories that involve it.
+
+**My History Atlas** (`/my-atlas`): stages 1–3 implemented and tested.
+- **Identity:**
+  - `lib/entities.ts` gives one canonical id per entity: a Wikidata QID where known, otherwise `tw:<id>`.
+  - `data/curated/austria/identities.json` resolves 14 of the 16 names in the checked collection by hand, each with the evidence (the item's description and dates against the event the name appears in), plus four checked events matched to their Wikidata items.
+  - Franz Ferdinand and Theodor von Latour stay unlinked, with the reason.
+  - No name is ever linked by matching alone.
+- **Edges:** every edge has from, to, a precise label ("took place in", "led to", "participated in", "is named in the record of"…), a source, and a date when known. Sharing a lesson is never stored as an edge; it is lesson membership, drawn dashed as "same lesson (not a historical link)".
+- **Entity panel:** names in lesson cards (the record, its place, resolved people) open a panel inside the lesson. It shows:
+  - type, dates and a sourced description
+  - a licensed image or an icon
+  - how the entity connects to this lesson
+  - up to three sourced relationships
+  - "You've met this before" with the earlier lesson
+  - Explore connections, and Save to my atlas
+
+  Escape or close returns to the same card.
+- **Four separate states:**
+  - **Encountered:** the card was shown.
+  - **Explored:** the panel was opened, or the entity was opened by its link in the atlas.
+  - **Saved**
+  - **Practised:** the lesson was finished.
+
+  Finishing a lesson adds its central entities and sourced edges, and says, for example, "Your atlas grew: 4 new events, 3 new places, 1 new person, 6 sourced connections".
+- **No duplicates:** an entity met again in another lesson extends the same node (unit-tested). The card shows "You've met … in an earlier lesson".
+- **The atlas page:**
+  - Left: search, type filters with a distinct shape per type, a path filter, "Explore next" (unexplored entities one sourced link from something explored, with the reason), and the whole atlas as a keyboard-accessible list.
+  - Centre: the focus and up to six neighbours on fixed ring slots, with stable positions as "Show more" reveals up to twelve. Labelled edges, with sourced edges first. Unexplored links can be previewed from Wikidata, drawn dotted. Back, Reset view, and "Back to the lesson" when arriving from one.
+  - Right: details, image, sources, the four states, sourced relationships, and the lessons it appeared in.
+  - Bottom: a year filter.
+  - Phones: the entity, then its connections as cards.
+- **"Connect what you learned"** after a lesson: one question built from the stored edges (event to place, person to event, which relationship, or dated events in order with distinct years). It prefers links to earlier lessons, gives its source after answering, and sends wrong answers to Review. Nothing discovered is ever removed.
+
+**Limits:**
+- People are linked only in the checked collection, and wherever a lesson's Wikidata statements name a human.
+- The checked collection's people are recorded as "named in the record of" their event, because the collection doesn't say what role they played.
+- Historical-map layers (OpenHistoricalMap) aren't added yet.
+- There are no accounts or sync.
+
+**Security upgrade (2026-11-17):** Next.js 16.4.4 → 16.4.6, fixing a published advisory. `next build` now runs on the first try. Typecheck, 60 unit tests and the build pass. The full browser run gave 153 passed and 5 failed; the three non-API failures passed when rerun alone, and the two archival-material tests need the local API. `npm audit` still reports a critical advisory in `maplibre-gl` ≤ 6.4.0 (an XSS sanitiser bypass in `DOM.sanitize`, used by popups' `setHTML`). TIMEWISE never calls `setHTML`; popups use DOM nodes. The fix requires MapLibre 6, a major upgrade that hasn't been done yet.
+
+**Tests:**
+- Typecheck clean; 60 unit tests pass (9 new in `tests/unit/atlas.test.ts`).
+- Browser tests: `tests/e2e/atlas-learning.spec.ts` (8 tests) covers this completion criterion: open a name, see a sourced relationship, save it, refresh, find it in the atlas; and meet the same person in a second lesson, with no duplicate.
+- Full run: 143 passed. Every failure was rerun with one worker and passed after updating tests to the new labels, except the two archival-material tests, which need the local API.
+- Screenshots checked: the entity panel, the atlas page, a lesson summary and the profile.
 
 ## Stories with a documented flow, a time graph, and brushing (2026-11-16)
 

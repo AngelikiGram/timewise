@@ -4,7 +4,8 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useMemo, useState } from "react";
 import { CHECKED_PATH, lessonHref, PATHS, pathById, SKILLS, type PathDef, type Skill } from "@/lib/lessons";
-import { today, toggleBookmark, totalXp, useProgress, type Progress } from "@/lib/progress";
+import { setGoal, today, toggleBookmark, totalXp, useProgress, type Progress } from "@/lib/progress";
+import { badges, lessonsOn, streaks } from "@/lib/achievements";
 import { ReviewBadge } from "../ui";
 import { JourneyCatalog } from "./JourneyCatalog";
 
@@ -21,6 +22,43 @@ export function nextStep(p: Progress): { id: string; title: string; pathId: stri
     if (l) return { id: l.id, title: l.title, pathId: path.id, resume: false };
   }
   return { id: CHECKED_PATH.lessons[0].id, title: CHECKED_PATH.lessons[0].title, pathId: CHECKED_PATH.id, resume: false };
+}
+
+/** Today's goal and streak, and the badges earned so far. Encouraging only: nothing is ever taken away. */
+function Today({ p }: { p: Progress }) {
+  const goal = p.goal ?? 1;
+  const done = lessonsOn(p);
+  const { current, best } = streaks(p.days);
+  const pathsDone = PATHS.filter((x) => x.lessons.every((l) => p.lessons[l.id]?.finished)).length;
+  const list = badges(p, pathsDone);
+  const pct = goal ? Math.min(100, Math.round((done / goal) * 100)) : 0;
+  return (
+    <div className="card p-4" data-testid="today">
+      <div className="flex items-center gap-4">
+        <div className="relative h-16 w-16 shrink-0" role="img" aria-label={goal ? `${done} of ${goal} lessons today` : `${done} lessons today`}>
+          <svg viewBox="0 0 36 36" className="h-16 w-16 -rotate-90"><circle cx="18" cy="18" r="15.5" fill="none" stroke="var(--line)" strokeWidth="4" /><circle cx="18" cy="18" r="15.5" fill="none" stroke="var(--bronze)" strokeWidth="4" strokeLinecap="round" strokeDasharray={`${(pct / 100) * 97.4} 97.4`} /></svg>
+          <span className="absolute inset-0 grid place-items-center text-sm font-semibold tabular-nums">{done}{goal ? `/${goal}` : ""}</span>
+        </div>
+        <div className="min-w-0">
+          <p className="text-sm font-semibold">{goal && done >= goal ? "Today's goal reached" : "Today"}</p>
+          <label className="mt-1 flex items-center gap-1.5 text-xs text-ink-2">Daily goal
+            <select value={goal} onChange={(e) => setGoal(Number(e.target.value))} className="rounded border border-line bg-paper-2 px-1 py-0.5 text-ink" data-testid="goal">
+              <option value={0}>none</option><option value={1}>1 lesson</option><option value={2}>2 lessons</option><option value={3}>3 lessons</option>
+            </select>
+          </label>
+        </div>
+      </div>
+      <p className="mt-3 text-sm" data-testid="streak"><strong className="tabular-nums">{current}</strong> day{current === 1 ? "" : "s"} in a row{best > current ? <span className="text-ink-2"> · best {best}</span> : null}</p>
+      <p className="text-xs text-ink-2">{current ? "Nice rhythm. A break never costs you what you've learned." : "Any day is a good day to start. Breaks never cost you progress."}</p>
+      <ul className="mt-3 flex flex-wrap gap-1.5" aria-label="Badges" data-testid="badges">
+        {list.map((b) => (
+          <li key={b.id} title={`${b.label}: ${b.help}`} className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] ${b.earned ? "bg-bronze text-paper" : "border border-dashed border-line text-ink-2"}`}>
+            {b.earned ? "★" : "☆"} {b.label}<span className="sr-only">{b.earned ? " (earned)" : ` (not yet: ${b.help})`}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
 }
 
 function Week({ days }: { days: string[] }) {
@@ -176,6 +214,7 @@ export function LearnHome() {
         </div>
 
         <aside className="grid content-start gap-4">
+          <Today p={p} />
           <Week days={p.days} />
           <Skills p={p} />
           <div className="card p-4" data-testid="review-card">

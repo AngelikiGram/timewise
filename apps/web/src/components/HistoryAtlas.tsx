@@ -17,6 +17,7 @@ import { byDate, centuryLabel, centuryOf, formatImportedDate, formatYear, yearOf
 import { remember } from "@/lib/recent";
 import { markExplored } from "@/lib/progress";
 import { asset } from "@/lib/paths";
+import { Icon } from "./icons";
 
 export type Region = { id: string; label: { en: string }; note?: string; imported: number; bbox?: number[] | null; kind?: string; continent?: string | null };
 
@@ -113,6 +114,59 @@ function bucketLabel(b: number, size: number) {
   return formatYear(b);
 }
 
+/** Every listed event in date order, grouped by century: a timeline you can read as a list. */
+function TimelineList({ items, selected, onPick, dateOf }: { items: Item[]; selected?: string; onPick: (e: Item) => void; dateOf: (e: Item) => string }) {
+  const groups = new Map<number, Item[]>();
+  for (const e of items) { const c = centuryOf(yearOf(e.start)); groups.set(c, [...(groups.get(c) ?? []), e]); }
+  if (!items.length) return <p className="text-ink-2">Nothing matches these filters.</p>;
+  return (
+    <ol className="mx-auto max-w-3xl">
+      {[...groups.entries()].sort((a, b) => a[0] - b[0]).map(([c, list]) => (
+        <li key={c} className="mb-6">
+          <h3 className="sticky top-0 z-10 bg-paper py-1 font-serif text-xl">{centuryLabel(c)} <span className="text-sm text-ink-2">· {list.length}</span></h3>
+          <ol className="mt-1 border-l-2 border-bronze/40 pl-4">
+            {list.slice(0, 200).map((e) => (
+              <li key={e.id} className="relative">
+                <span aria-hidden className="absolute -left-[1.4rem] top-3 h-2.5 w-2.5 rounded-full bg-bronze" />
+                <button type="button" onClick={() => onPick(e)} aria-current={selected === e.id ? "true" : undefined} className={`flex w-full gap-3 rounded-md px-2 py-1.5 text-left hover:bg-paper-3 ${selected === e.id ? "bg-paper-3 font-semibold" : ""}`}>
+                  <span className="w-28 shrink-0 text-xs tabular-nums text-ink-2">{dateOf(e)}</span>
+                  <span className="min-w-0 flex-1">{e.title.en ?? e.title.de}</span>
+                </button>
+              </li>
+            ))}
+            {list.length > 200 && <li className="px-2 py-1 text-xs text-ink-2">and {list.length - 200} more: narrow the timeline to see them.</li>}
+          </ol>
+        </li>
+      ))}
+    </ol>
+  );
+}
+
+/** Stories and the learning path for this place. */
+function RegionStories({ regionId, label, isCountry }: { regionId: string; label: string; isCountry: boolean }) {
+  const [stories, setStories] = useState<{ id: string; title: string; count: number; from: number; to: number; places: string[] }[] | null>(null);
+  useEffect(() => { fetch(asset("/data/stories/index.json")).then((r) => r.json()).then((d) => setStories(d.stories), () => setStories([])); }, []);
+  const mine = (stories ?? []).filter((s) => s.places.includes(label));
+  const path = isCountry ? `place-${regionId}` : `region-${regionId}`;
+  return (
+    <div className="mx-auto max-w-3xl">
+      <Link href={`/learn?path=${path}`} className="card card-link flex items-center gap-3 p-4">
+        <span className="grid h-11 w-11 place-items-center rounded-xl bg-bronze text-paper"><Icon name="book" size={22} /></span>
+        <span className="flex-1"><span className="block font-serif text-xl">Learn {label} step by step</span><span className="text-sm text-ink-2">Short lessons, stage by stage</span></span>
+        <Icon name="forward" size={18} />
+      </Link>
+      <h3 className="mt-6 font-serif text-xl">Stories involving {label}</h3>
+      {!stories && <p className="mt-2 text-ink-2">Loading…</p>}
+      {stories && !mine.length && <p className="mt-2 text-ink-2">No story involves {label} yet. Stories follow documented links, and few are recorded here.</p>}
+      <ul className="mt-2 grid gap-2">
+        {mine.slice(0, 30).map((st) => (
+          <li key={st.id}><Link href={`/stories/read?id=${st.id}`} className="card card-link flex items-center gap-3 p-3"><span className="flex-1 font-medium">{st.title}</span><span className="text-xs tabular-nums text-ink-2">{st.from < 0 ? `${-st.from} BC` : st.from}–{st.to < 0 ? `${-st.to} BC` : st.to} · {st.count} steps</span></Link></li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
 export function HistoryAtlas({ region, regions }: { region: Region; regions: Region[] }) {
   const router = useRouter();
   const theme = useAppearance();
@@ -125,6 +179,7 @@ export function HistoryAtlas({ region, regions }: { region: Region; regions: Reg
   const [categories, setCategories] = useState<string[]>([]);
   const [source, setSource] = useState<"all" | "checked">("all");
   const [scopes, setScopes] = useState<Scope[]>(["here"]);
+  const [pane, setPane] = useState<"map" | "timeline" | "stories">("map");
   const [stack, setStack] = useState<Item[] | null>(null);
   const [inView, setInView] = useState(false);
   const [bounds, setBounds] = useState<[number, number, number, number] | null>(null);
@@ -621,7 +676,25 @@ export function HistoryAtlas({ region, regions }: { region: Region; regions: Reg
       </div>
       {isCountry && (
         <fieldset data-testid="scope-filter">
-          <legend className="text-xs font-semibold uppercase tracking-wider text-ink-2">What to include</legend>
+          <legend className="text-xs font-semibold uppercase tracking-wider text-ink-2">Which events</legend>
+          <div role="radiogroup" aria-label="Which events" className="mt-1.5 grid grid-cols-3 gap-1 rounded-lg border border-line bg-paper-2 p-1 text-[0.8rem]" data-testid="country-mode">
+            {([
+              ["in", `In ${region.label.en}`, "Located inside today's borders"],
+              ["involving", `Involving ${region.label.en}`, "Also those tied to it but located elsewhere, or spanning several countries"],
+              ["world", "Worldwide, same years", "Everything on the world map in the chosen years"],
+            ] as const).map(([mode, label, help]) => {
+              const on = mode === "in" ? scopes.join() === "here" : mode === "involving" ? scopes.includes("associated") && scopes.includes("multi") : false;
+              return (
+                <button key={mode} type="button" role="radio" aria-checked={on} title={help} onClick={() => {
+                  if (mode === "in") setScopes(["here"]);
+                  else if (mode === "involving") setScopes(["here", "associated", "multi"]);
+                  else router.push(`/atlas${range ? `?from=${range[0]}&to=${range[1]}` : ""}`);
+                }} className={`rounded-md px-1.5 py-1.5 leading-tight transition-colors ${on ? "bg-bronze text-paper" : "text-ink-2 hover:bg-paper-3 hover:text-ink"}`}>{label}</button>
+              );
+            })}
+          </div>
+          <details className="mt-2">
+          <summary className="cursor-pointer text-xs text-ink-2 hover:text-ink">Fine-tune what&rsquo;s included</summary>
           <div className="mt-1.5 grid gap-1">
             {(Object.keys(SCOPE_LABEL) as Scope[]).map((sc) => (
               <label key={sc} className="flex items-start gap-2 text-sm" title={SCOPE_HELP[sc]}>
@@ -630,6 +703,7 @@ export function HistoryAtlas({ region, regions }: { region: Region; regions: Reg
               </label>
             ))}
           </div>
+          </details>
           <p className="mt-1 text-xs text-ink-2">Borders are today&rsquo;s, used to sort records, not to show where borders ran at the time.</p>
         </fieldset>
       )}
@@ -851,6 +925,21 @@ export function HistoryAtlas({ region, regions }: { region: Region; regions: Reg
         {/* Centre: the map, with the timeline beneath */}
         <main className="relative flex min-w-0 flex-1 flex-col">
           <div className="relative min-h-0 flex-1">
+            <div role="tablist" aria-label="View" className="absolute left-1/2 top-3 z-30 flex -translate-x-1/2 rounded-full border border-line bg-paper-2/95 p-1 text-sm shadow-sm" data-testid="atlas-view">
+              {([["map", "Map"], ["timeline", "Timeline"], ["stories", "Stories"]] as const).map(([v, label]) => (
+                <button key={v} type="button" role="tab" aria-selected={pane === v} onClick={() => setPane(v)} className={`rounded-full px-3 py-1 font-medium ${pane === v ? "bg-navy text-on-accent [[data-theme=dark]_&]:bg-bronze" : "text-ink-2 hover:text-ink"}`}>{label}</button>
+              ))}
+            </div>
+            {pane === "timeline" && (
+              <div className="absolute inset-0 z-20 overflow-y-auto bg-paper px-4 pb-6 pt-16 sm:px-8" data-testid="atlas-timeline-view">
+                <TimelineList items={filtered} selected={selected?.id} onPick={(e) => select(e, false)} dateOf={dateOf} />
+              </div>
+            )}
+            {pane === "stories" && (
+              <div className="absolute inset-0 z-20 overflow-y-auto bg-paper px-4 pb-6 pt-16 sm:px-8" data-testid="atlas-stories-view">
+                <RegionStories regionId={region.id} label={region.label.en} isCountry={isCountry} />
+              </div>
+            )}
             {/* MapLibre makes its container position: relative, so the absolute frame is a separate wrapper. */}
             <div className="absolute inset-0">
               <div key={mapAttempt} ref={container} data-testid="history-map" data-ready={ready} className="h-full w-full" role="region" aria-label={`Map of events in ${region.label.en}. Every event is also in the list.`} />

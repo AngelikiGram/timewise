@@ -1,0 +1,30 @@
+{
+  "note": "Canonical Wikidata identifiers for names and events in the checked Austria collection. Resolved by hand on 2026-11-17: a name is linked only when the candidate item's own description and dates fit the event it is named for; never by name alone. Ambiguous or unmatched names stay unlinked, with the reason.",
+  "retrievedAt": "2026-11-17",
+  "people": {
+    "Carl von Ghega": { "wikidata": "Q699456", "evidence": "Wikidata: 'Austrian railway designer (1802–1860)'; named for the Semmering line, 1848–1854." },
+    "Karl Renner": { "wikidata": "Q11726", "evidence": "Wikidata: 'first President of Austria (1870–1950)'; named for German-Austria, 1918, and Saint-Germain, 1919." },
+    "Klemens von Metternich": { "wikidata": "Q45662", "evidence": "Wikidata: 'Austrian diplomat, foreign minister and Chancellor (1773–1859)'; named for the March 1848 uprising." },
+    "Alfred I. zu Windisch-Graetz": { "wikidata": "Q455008", "evidence": "Wikidata: 'Alfred I, Prince of Windisch-Grätz, Austrian marshall (1787–1862)'; named for October 1848." },
+    "Franz Joseph I": { "wikidata": "Q51056", "evidence": "Wikidata: 'Emperor of Austria and King of Hungary (1830–1916)'; named for 1857 and 1867. Other candidates of the same name lived in the 18th century." },
+    "Helmuth von Moltke": { "wikidata": "Q44205", "evidence": "Wikidata: 'Helmuth von Moltke the Elder, German Field Marshal (1800–1891)'; named for Königgrätz, 1866. The Younger (1848–1916) was a child then." },
+    "Ludwig von Benedek": { "wikidata": "Q78563", "evidence": "Wikidata: 'Austrian marshall (1804–1881)'; named for Königgrätz, 1866." },
+    "Ferenc Deák": { "wikidata": "Q508823", "evidence": "Wikidata: 'Hungarian politician (1803–1876)'; named for the Compromise of 1867. Other candidates are a researcher and a writer." },
+    "Victor Adler": { "wikidata": "Q366845", "evidence": "Wikidata: 'foreign minister of Austria, editor (1852–1918)'; named for the Linz Program, 1882." },
+    "Gavrilo Princip": { "wikidata": "Q80492", "evidence": "Wikidata: 'Bosnian Serb assassin (1894–1918)'; named for Sarajevo, 1914." },
+    "Charles I": { "wikidata": "Q51068", "evidence": "Wikidata: 'Charles I of Austria, last monarch of Austria-Hungary (r. 1916–1918)'; named for the end of the monarchy in 1918. The name alone also matches Charles I of England, so it was resolved by this event." },
+    "Max Reinhardt": { "wikidata": "Q78639", "evidence": "Wikidata: 'Austrian-American theater director and actor (1873–1943)'; named for the Salzburg Festival, 1920." },
+    "Hugo von Hofmannsthal": { "wikidata": "Q51513", "evidence": "Wikidata: 'Austrian novelist, librettist, poet, dramatist (1874–1929)'; named for the Salzburg Festival, 1920." },
+    "Alexander Moissi": { "wikidata": "Q112362", "evidence": "Wikidata: 'Albanian-born Austrian actor (1879–1935)'; named for the Salzburg Festival, 1920." }
+  },
+  "unresolved": {
+    "Theodor von Latour": "No Wikidata item found under this name; left unlinked.",
+    "Franz Ferdinand": "The top match is a rock band, and the archduke's candidate item showed inconsistent dates when checked; left unlinked until resolved."
+  },
+  "events": {
+    "koniggratz-1866": { "wikidata": "Q154942", "evidence": "Same name, year and place as the imported record (dedupe match)." },
+    "german-austria-state": { "wikidata": "Q268970", "evidence": "Republic of German-Austria: same year and place (dedupe match)." },
+    "saint-germain-1919": { "wikidata": "Q192924", "evidence": "Treaty of Saint-Germain-en-Laye: same year and place (dedupe match)." },
+    "carinthia-1920": { "wikidata": "Q692136", "evidence": "Carinthian Plebiscite: same year and place (dedupe match)." }
+  }
+}

@@ -12,15 +12,17 @@ import { claimsFor, collection, eventsByDate, formatWhen, placeById, sourceById,
 import { ESTABLISH_OPTIONS, shuffle } from "./challenges";
 import { formatImportedDate, formatYear, yearOf, type Precision } from "./dates";
 import { asset } from "./paths";
-import { fetchRecord } from "./record";
+import { fetchNodeFacts, fetchRecord } from "./record";
 import { CONTINENT_LABELS, loadRegions } from "./world-index";
+import { checkedEventId, countryId, personId, wikidataUrl, type Edge, type Entity } from "./entities";
 import catalog from "./journey-catalog.json";
 
-export type Skill = "chronology" | "geography" | "evidence" | "cause";
+export type Skill = "chronology" | "geography" | "evidence" | "people" | "cause";
 export const SKILLS: Record<Skill, { label: string; help: string }> = {
   chronology: { label: "Chronology", help: "Putting events in order and placing them in time." },
   geography: { label: "Geography", help: "Knowing where things happened." },
   evidence: { label: "Evidence", help: "Telling what a source says, and how firmly." },
+  people: { label: "People", help: "Connecting people to the events they're recorded in." },
   cause: { label: "Cause and consequence", help: "Following documented causes and effects." },
 };
 
@@ -29,6 +31,8 @@ export type Review = "source_checked" | "imported";
 export type OrderItem = { id: string; label: string; when: string };
 export type MapPoint = { label: string; lng: number; lat: number; answer?: boolean };
 export type Activity =
+  /** Place a record on a timeline of other, dated records: choose the gap it belongs in. */
+  | { kind: "timeline"; skill: Skill; prompt: string; target: string; anchors: OrderItem[]; answer: number; explanation: string; sources: SourceRef[] }
   | { kind: "order"; skill: Skill; prompt: string; items: OrderItem[]; explanation: string; sources: SourceRef[] }
   | { kind: "choice"; skill: Skill; prompt: string; context?: string; options: { id: string; label: string }[]; answer: string; explanation: string; sources: SourceRef[]; map?: MapPoint[]; note?: string };
 
@@ -46,6 +50,10 @@ export type LearnCard = {
   image?: { url: string; page: string; title: string; creator: string; created: string; license: string; caveat?: string };
   explore?: string;
   saveHref: string;
+  /** The record as an entity, and the named place and people that can be opened from the card. */
+  entity: Entity;
+  place?: Entity;
+  people?: { name: string; entity?: Entity }[];
 };
 
 export type Lesson = {
@@ -60,6 +68,10 @@ export type Lesson = {
   activities: Activity[];
   /** Said plainly at the end: what this lesson couldn't ask, and why. */
   gaps: string[];
+  /** Sourced relationships among this lesson's entities: what finishing it adds to the learner's atlas. */
+  edges: Edge[];
+  /** Entities reached through those relationships that aren't cards of their own. */
+  extra?: Entity[];
   related: { label: string; href: string }[];
 };
 
@@ -85,9 +97,9 @@ const periodOf = (iso: string) => collection.periods.find((p) => p.start <= iso 
 
 export const CHECKED_PATH: PathDef = {
   id: "austria",
-  title: inv.question.en,
+  title: "Austria: Empire to Republic",
   kind: "question",
-  blurb: "Six short lessons from railways to a new republic. Every statement is checked against a linked source.",
+  blurb: `${inv.question.en} Six short lessons, from railways to a new republic, every statement checked against a linked source.`,
   why: "Written from the hand-checked Austria collection: one lesson per chapter of its investigation, using every event and claim in that chapter.",
   difficulty: "Medium",
   icon: "checked",
@@ -130,7 +142,17 @@ function checkedLesson(id: string): Lesson | null {
       image: e.media,
       explore: p ? `/connections?id=${p.wikidata}` : undefined,
       saveHref: `/explore?event=${e.id}`,
+      entity: { id: checkedEventId(e.id), label: e.title.en, type: "event", dates: formatWhen(e.when), year: yearOf(e.when.start), description: e.summary.en, source: firstSources(e.id)[0] },
+      place: p ? { id: p.wikidata, label: p.label.en, type: "place", description: `${p.region}, in today's ${countryName(p.modernCountry)}`, source: { label: `Wikidata ${p.wikidata}`, url: wikidataUrl(p.wikidata) } } : undefined,
+      people: e.people.map((name) => ({ name, entity: personId(name) ? { id: personId(name)!, label: name, type: "person" as const, source: { label: `Wikidata ${personId(name)}`, url: wikidataUrl(personId(name)!) } } : undefined })),
     };
+  });
+  const edges: Edge[] = cards.flatMap((c) => {
+    const src = c.entity.source ?? { label: "TIMEWISE checked collection", url: "" };
+    return [
+      ...(c.place ? [{ from: c.entity.id, to: c.place.id, label: "took place in", source: src, date: c.when }] : []),
+      ...(c.people ?? []).filter((x) => x.entity).map((x) => ({ from: x.entity!.id, to: c.entity.id, label: "is named in the record of", source: src, date: c.when })),
+    ];
   });
 
   const activities: Activity[] = [];
@@ -197,6 +219,40 @@ function checkedLesson(id: string): Lesson | null {
       sources: judged.evidence.map((e) => src(e.sourceId)),
     });
   }
+  // Where does one of this chapter's events sit among others from the collection?
+  if (events.length) {
+    const t = events[(seed >>> 5) % events.length];
+    const others = eventsByDate.filter((e) => e.id !== t.id && e.when.start.slice(0, 4) !== t.when.start.slice(0, 4));
+    const step = Math.max(1, Math.floor(others.length / 4));
+    const anchors = [0, 1, 2, 3].map((i) => others[Math.min(others.length - 1, i * step + ((seed >>> 2) % step))]).filter((v, i, a) => a.indexOf(v) === i).sort((a, b) => a.when.start.localeCompare(b.when.start));
+    const slot = anchors.filter((a) => a.when.start < t.when.start).length;
+    activities.push({
+      kind: "timeline", skill: "chronology",
+      prompt: "Where on the timeline does this belong?",
+      target: t.title.en,
+      anchors: anchors.map((a) => ({ id: a.id, label: a.title.en, when: formatWhen(a.when) })),
+      answer: slot,
+      explanation: `${t.title.en}: ${formatWhen(t.when)}. ${anchors.map((a) => `${a.title.en}: ${formatWhen(a.when)}`).join(". ")}.`,
+      sources: [...firstSources(t.id).slice(0, 1), ...anchors.flatMap((a) => firstSources(a.id).slice(0, 1))],
+    });
+  }
+  // A person the collection names for an event, against people named for other events.
+  const withPeople = events.filter((e) => e.people.length);
+  if (withPeople.length) {
+    const e = withPeople[seed % withPeople.length];
+    const person = e.people[0];
+    const decoys = [...new Set(collection.events.filter((x) => !x.people.includes(person) && x.id !== e.id).flatMap((x) => x.people))].slice(0, 3);
+    if (decoys.length >= 2) {
+      activities.push({
+        kind: "choice", skill: "people",
+        prompt: `Who is connected to this: ${e.title.en}?`,
+        options: shuffle([person, ...decoys], seed + 9).map((n) => ({ id: n, label: n })),
+        answer: person,
+        explanation: `The checked collection names ${person} for ${e.title.en} (${formatWhen(e.when)}). The others are named for different events.`,
+        sources: firstSources(e.id),
+      });
+    }
+  }
   gaps.push("The checked collection doesn't record causes and effects yet, so this lesson has no cause-and-consequence question.");
 
   const index = CHECKED_PATH.lessons.findIndex((l) => l.id === id);
@@ -211,6 +267,7 @@ function checkedLesson(id: string): Lesson | null {
     cards,
     activities,
     gaps,
+    edges,
     related: [
       ...placed.slice(0, 2).map((e) => ({ label: `Explore connections of ${placeById.get(e.placeId!)!.label.en}`, href: `/connections?id=${placeById.get(e.placeId!)!.wikidata}` })),
       { label: "Follow the guided story", href: "/journeys/austria-1848-1921" },
@@ -230,7 +287,18 @@ const TOPIC_LABEL: Record<string, string> = { war: "Wars and battles", politics:
 const IMPORTED_SKILLS: Skill[] = ["chronology", "geography", "evidence", "cause"];
 const REGION_CATALOG = catalog.region as Record<string, number[]>;
 const TOPIC_CATALOG = catalog.topic as Record<string, number[]>;
-const PLACE_CATALOG = catalog.place as Record<string, { label: string; centuries: number[] }>;
+const PLACE_CATALOG = catalog.place as Record<string, { label: string; continent?: string; eras: string[] }>;
+export const ERAS: { id: string; label: string; from: number; to: number }[] = [
+  { id: "antiquity", label: "Antiquity", from: -3500, to: 499 },
+  { id: "middle-ages", label: "Middle Ages", from: 500, to: 1499 },
+  { id: "early-modern", label: "1500–1800", from: 1500, to: 1799 },
+  { id: "long-19th", label: "1800–1914", from: 1800, to: 1913 },
+  { id: "world-wars", label: "1914–1945", from: 1914, to: 1945 },
+  { id: "since-1945", label: "Since 1945", from: 1946, to: 2026 },
+];
+const eraById = (id: string) => ERAS.find((e) => e.id === id);
+/** Countries with a path, and those without enough records for one. */
+export const PLACE_PATHS = PLACE_CATALOG;
 
 const stub = (id: string, title: string, skills = IMPORTED_SKILLS): LessonStub => ({ id, title, minutes: 3, skills });
 const regionPath = (ct: string, centuries: number[]): PathDef => ({
@@ -259,19 +327,19 @@ const topicPath = (key: string, centuries: number[]): PathDef => {
     lessons: centuries.map((c) => stub(`t-${topic}-${ct}-${c}`, `${TOPIC_LABEL[topic]}, ${CONTINENT_LABELS[ct]}, ${centuryName(c)}`)),
   };
 };
-const placePath = (country: string, label: string, centuries: number[]): PathDef => ({
-  id: `place-${country}`, kind: "place", review: "imported", difficulty: "Medium", icon: "place",
-  title: `${label} through the centuries`,
-  blurb: `One lesson per century, inside today's ${label}.`,
-  why: `Each lesson takes the four records located inside today's ${label} in that century, written about in the most Wikipedia languages. Today's borders are used only to sort records.`,
-  lessons: centuries.map((c) => stub(`p-${country}-${c}`, `${label} in the ${centuryName(c)}`, ["chronology", "evidence", "cause"])),
+const placePath = (country: string, label: string, eras: string[]): PathDef => ({
+  id: `place-${country}`, kind: "place", review: "imported", difficulty: eras.length > 3 ? "Medium" : "Easy", icon: "place",
+  title: eras.length > 1 ? `${label}: ${eraById(eras[0])!.label} to ${eraById(eras[eras.length - 1])!.label.replace("Since 1945", "today")}` : `${label}: ${eraById(eras[0])!.label}`,
+  blurb: `${eras.length} stage${eras.length > 1 ? "s" : ""}, one lesson each, inside today's ${label}.`,
+  why: `Each stage takes the four records located inside today's ${label} in that era, written about in the most Wikipedia languages. Today's borders are used only to sort records.`,
+  lessons: eras.map((e, i) => ({ ...stub(`p-${country}-${e}`, `${label}, ${eraById(e)!.label}`, ["chronology", "evidence", "people", "cause"] as Skill[]), milestone: `Stage ${i + 1} · ${eraById(e)!.label}` })),
 });
 
 export const PATHS: PathDef[] = [
   CHECKED_PATH,
   ...Object.entries(REGION_CATALOG).map(([ct, cs]) => regionPath(ct, cs)),
   ...Object.entries(TOPIC_CATALOG).map(([k, cs]) => topicPath(k, cs)),
-  ...Object.entries(PLACE_CATALOG).map(([k, v]) => placePath(k, v.label, v.centuries)),
+  ...Object.entries(PLACE_CATALOG).map(([k, v]) => placePath(k, v.label, v.eras)),
   ...[17, 18, 19].map(periodPath),
 ];
 export const pathById = (id: string) => PATHS.find((p) => p.id === id);
@@ -290,10 +358,12 @@ function loadRegionFile(id: string) {
  * Four records of one century: well documented, dated to the year or better, with a description.
  * From four different countries, unless `sameCountry` (place journeys), where they must lie inside it.
  */
-export function pickEvents(events: RegionEvent[], century: number, n = 4, opts: { category?: string; sameCountry?: boolean } = {}): RegionEvent[] {
+export function pickEvents(events: RegionEvent[], when: number | [number, number], n = 4, opts: { category?: string; sameCountry?: boolean } = {}): RegionEvent[] {
+  const [lo, hi] = typeof when === "number" ? [when * 100, when * 100 + 99] : when;
+  const precisions = opts.sameCountry ? ["day", "month", "year", "decade"] : ["day", "month", "year"];
   const eligible = events
-    .filter((e) => e.title.en && e.description && e.description.length >= 20 && e.home && !e.multi && e.lng !== undefined && ["day", "month", "year"].includes(e.precision) && !e.start.startsWith("-"))
-    .filter((e) => Math.floor(yearOf(e.start) / 100) === century && (!opts.category || e.category === opts.category) && (!opts.sameCountry || e.inside))
+    .filter((e) => e.title.en && e.description && e.description.length >= 20 && e.home && !e.multi && e.lng !== undefined && precisions.includes(e.precision) && (opts.sameCountry || !e.start.startsWith("-")))
+    .filter((e) => yearOf(e.start) >= lo && yearOf(e.start) <= hi && (!opts.category || e.category === opts.category) && (!opts.sameCountry || e.inside))
     .sort((a, b) => b.links - a.links);
   const out: RegionEvent[] = [];
   for (const e of eligible) {
@@ -304,7 +374,7 @@ export function pickEvents(events: RegionEvent[], century: number, n = 4, opts: 
   return out;
 }
 
-type Spec = { file: string; century: number; title: string; why: string; category?: string; sameCountry?: boolean; overview: { label: string; href: string } };
+type Spec = { file: string; century: number | [number, number]; title: string; why: string; category?: string; sameCountry?: boolean; overview: { label: string; href: string } };
 /** What a generated lesson id means: which data file, which century, which filter, and why. */
 export function parseLesson(id: string): Spec | null {
   let m = id.match(/^w-([a-z_]+)-(\d+)$/);
@@ -319,11 +389,11 @@ export function parseLesson(id: string): Spec | null {
     const name = CONTINENT_LABELS[m[2]];
     return { file: m[2], century: c, category: m[1], title: `${TOPIC_LABEL[m[1]]}, ${name}, ${centuryName(c)}`, why: `the four records filed under "${TOPIC_LABEL[m[1]].toLowerCase()}" from ${name} in the ${centuryName(c)} written about in the most Wikipedia languages, each from a different country`, overview: { label: `Open the ${name} map`, href: `/atlas/${m[2]}?cat=${m[1]}` } };
   }
-  m = id.match(/^p-([a-z_]+)-(\d+)$/);
+  m = id.match(/^p-([a-z_]+)-([a-z0-9-]+)$/);
   const place = m ? PLACE_CATALOG[m[1]] : undefined;
-  if (m && place) {
-    const c = Number(m[2]);
-    return { file: m[1], century: c, sameCountry: true, title: `${place.label} in the ${centuryName(c)}`, why: `the four records located inside today's ${place.label} in the ${centuryName(c)} written about in the most Wikipedia languages`, overview: { label: `Open the ${place.label} map`, href: `/atlas/${m[1]}?from=${c * 100}&to=${c * 100 + 99}` } };
+  const era = m ? eraById(m[2]) : undefined;
+  if (m && place && era) {
+    return { file: m[1], century: [era.from, era.to], sameCountry: true, title: `${place.label}, ${era.label}`, why: `the four records located inside today's ${place.label} in ${era.label === "Since 1945" ? "the years since 1945" : era.label} written about in the most Wikipedia languages`, overview: { label: `Open the ${place.label} map`, href: `/atlas/${m[1]}?from=${era.from}&to=${era.to}` } };
   }
   return null;
 }
@@ -337,7 +407,7 @@ async function importedLesson(id: string, pathId: string, signal?: AbortSignal):
   const title = spec.title;
   const base = { id, pathId, title, minutes: 3, review: "imported" as const, related: [spec.overview] };
   if (picked.length < 4) {
-    return { ...base, intro: "", cards: [], activities: [], gaps: [`Fewer than four suitable records are available for ${title}, so this lesson can't be built honestly.`] };
+    return { ...base, intro: "", cards: [], activities: [], edges: [], gaps: [`Fewer than four suitable records are available for ${title}, so this lesson can't be built honestly.`] };
   }
   const seed = hash(id);
   const wd = (e: RegionEvent): SourceRef => ({ label: `Wikidata: ${e.title.en}`, url: e.url });
@@ -354,7 +424,10 @@ async function importedLesson(id: string, pathId: string, signal?: AbortSignal):
     claims: [],
     explore: `/connections?id=${e.id}`,
     saveHref: `/connections?id=${e.id}`,
+    entity: { id: e.id, label: e.title.en!, type: "event", dates: when(e), year: yearOf(e.start), description: e.description, source: wd(e), qid: e.id },
+    place: e.home ? { id: countryId(e.home), label: country(e.home), type: "country", description: "Present-day country, used only to sort records", source: wd(e) } : undefined,
   }));
+  const edges: Edge[] = cards.filter((c) => c.place).map((c) => ({ from: c.entity.id, to: c.place!.id, label: "located in present-day", source: c.entity.source!, date: c.when }));
   const byDate = [...picked].sort((a, b) => a.start.localeCompare(b.start));
   const activities: Activity[] = [
     {
@@ -391,38 +464,75 @@ async function importedLesson(id: string, pathId: string, signal?: AbortSignal):
     sources: [wd(r)],
   });
 
-  // Follow a documented connection: only from a Wikidata statement of cause or effect.
+  // Where on the timeline: the latest-but-one record placed among the other three.
+  {
+    const t = byDate[(seed >>> 3) % byDate.length];
+    const anchors = byDate.filter((x) => x.id !== t.id);
+    activities.push({
+      kind: "timeline", skill: "chronology",
+      prompt: "Where on the timeline does this belong?",
+      target: t.title.en!,
+      anchors: anchors.map((a) => ({ id: a.id, label: a.title.en!, when: when(a) })),
+      answer: anchors.filter((a) => a.start < t.start).length,
+      explanation: `${t.title.en}: ${when(t)}. The others: ${anchors.map((a) => `${a.title.en}, ${when(a)}`).join("; ")}. Dates are Wikidata's.`,
+      sources: [wd(t)],
+    });
+  }
+
+  // Documented statements of the records: causes and effects, and the people involved.
   const gaps: string[] = [];
+  /** Entities a statement brought in that aren't cards: a cause, an effect, a person. */
+  const linked: Entity[] = [];
   if (spec.sameCountry) gaps.push("All four records are in one country, so there's no geography question.");
-  let found = false;
-  let unreachable = false;
-  for (const e of picked.slice(0, 2)) {
-    try {
-      const rec = await fetchRecord(e.id, signal);
-      const link = rec.links.find((l) => l.documented && ["caused by", "led to", "immediate cause"].includes(l.relation));
-      if (!link) continue;
-      const decoys = picked.filter((x) => x.id !== e.id && !rec.links.some((l) => l.target === x.id)).slice(0, 3);
-      const verb = link.relation === "led to" ? `Which of these does Wikidata say ${e.title.en} led to?` : `Which of these does Wikidata list as a cause of ${e.title.en}?`;
+  const records = await Promise.allSettled(picked.slice(0, 3).map((e) => fetchRecord(e.id, signal)));
+  if (signal?.aborted) throw new DOMException("aborted", "AbortError");
+  const ok = records.map((r, i) => (r.status === "fulfilled" ? { e: picked[i], rec: r.value } : null)).filter(Boolean) as { e: RegionEvent; rec: Awaited<ReturnType<typeof fetchRecord>> }[];
+  if (!ok.length) gaps.push("Wikidata couldn't be reached, so the cause and people questions were left out.");
+
+  const causal = ok.map(({ e, rec }) => ({ e, rec, link: rec.links.find((l) => l.documented && ["caused by", "led to", "immediate cause"].includes(l.relation)) })).find((x) => x.link);
+  if (causal) {
+    const { e, rec, link } = causal as { e: RegionEvent; rec: (typeof ok)[number]["rec"]; link: NonNullable<(typeof causal)["link"]> };
+    const decoys = picked.filter((x) => x.id !== e.id && !rec.links.some((l) => l.target === x.id)).slice(0, 3);
+    activities.push({
+      kind: "choice",
+      skill: "cause",
+      prompt: link.relation === "led to" ? `Which of these does Wikidata say ${e.title.en} led to?` : `Which of these does Wikidata list as a cause of ${e.title.en}?`,
+      options: shuffle([{ id: link.target, label: link.label }, ...decoys.map((d) => ({ id: d.id, label: d.title.en! }))], seed + 7),
+      answer: link.target,
+      explanation: `A Wikidata statement links ${e.title.en} to ${link.label} as "${link.relation}". ${link.references ? `It gives ${link.references} reference${link.references > 1 ? "s" : ""}.` : "It gives no reference, so treat it with care."} The other options are records from this lesson that no statement connects this way.`,
+      sources: [{ label: "The statement on Wikidata", url: `https://www.wikidata.org/wiki/${link.statementOn}#${link.prop}` }],
+      note: "A documented link in crowd-edited data, not a TIMEWISE judgement.",
+    });
+    const stmt = { label: "Wikidata statement", url: `https://www.wikidata.org/wiki/${link.statementOn}#${link.prop}` };
+    edges.push(link.relation === "led to" ? { from: e.id, to: link.target, label: "led to", source: stmt } : { from: link.target, to: e.id, label: "led to", source: stmt });
+    linked.push({ id: link.target, label: link.label, type: "event", source: { label: `Wikidata ${link.target}`, url: wikidataUrl(link.target) }, qid: link.target });
+  } else if (ok.length) gaps.push("Wikidata records no causes or effects for these records, so there's no cause-and-consequence question.");
+
+  // People: a human Wikidata records as taking part in, founding, creating or leading one record, against
+  // humans recorded for the other records.
+  const PEOPLE = ["participant", "winner", "founded by", "discoverer or inventor", "creator", "author", "chairperson", "head of state"];
+  const candidates = ok.flatMap(({ e, rec }) => rec.links.filter((l) => l.documented && l.group === "people" && PEOPLE.includes(l.relation)).map((l) => ({ e, l })));
+  if (candidates.length) {
+    const facts = await fetchNodeFacts([...new Set(candidates.map((c) => c.l.target))], signal).catch(() => ({} as Record<string, { human?: boolean }>));
+    const humans = candidates.filter((c) => facts[c.l.target]?.human);
+    const q = humans[0];
+    const decoys = q ? [...new Map(humans.filter((h) => h.e.id !== q.e.id && h.l.target !== q.l.target).map((h) => [h.l.target, h.l])).values()].slice(0, 3) : [];
+    if (q && decoys.length >= 2) {
       activities.push({
         kind: "choice",
-        skill: "cause",
-        prompt: verb,
-        options: shuffle([{ id: link.target, label: link.label }, ...decoys.map((d) => ({ id: d.id, label: d.title.en! }))], seed + 7),
-        answer: link.target,
-        explanation: `A Wikidata statement links ${e.title.en} to ${link.label} as "${link.relation}". ${link.references ? `It gives ${link.references} reference${link.references > 1 ? "s" : ""}.` : "It gives no reference, so treat it with care."} The other options are records from this lesson that no statement connects this way.`,
-        sources: [{ label: "The statement on Wikidata", url: `https://www.wikidata.org/wiki/${link.statementOn}#${link.prop}` }],
+        skill: "people",
+        prompt: `Who does Wikidata record as "${q.l.relation}" for ${q.e.title.en}?`,
+        options: shuffle([{ id: q.l.target, label: q.l.label }, ...decoys.map((d) => ({ id: d.target, label: d.label }))], seed + 11),
+        answer: q.l.target,
+        explanation: `A Wikidata statement names ${q.l.label} as "${q.l.relation}" for ${q.e.title.en}. The others are recorded for other events in this lesson.`,
+        sources: [{ label: "The statement on Wikidata", url: `https://www.wikidata.org/wiki/${q.l.statementOn}#${q.l.prop}` }],
         note: "A documented link in crowd-edited data, not a TIMEWISE judgement.",
       });
-      found = true;
-      break;
-    } catch (err) {
-      if ((err as Error).name === "AbortError") throw err;
-      unreachable = true;
-      gaps.push("Wikidata couldn't be reached, so the cause-and-consequence question was left out.");
-      break;
-    }
-  }
-  if (!found && !unreachable) gaps.push("Wikidata records no causes or effects for these records, so there's no cause-and-consequence question.");
+      const VERB: Record<string, string> = { participant: "participated in", winner: "won", "founded by": "founded", "discoverer or inventor": "discovered or invented", creator: "created", author: "wrote", chairperson: "chaired", "head of state": "was head of state of" };
+      edges.push({ from: q.l.target, to: q.e.id, label: VERB[q.l.relation] ?? q.l.relation, source: { label: "Wikidata statement", url: `https://www.wikidata.org/wiki/${q.l.statementOn}#${q.l.prop}` } });
+      linked.push({ id: q.l.target, label: q.l.label, type: "person", source: { label: `Wikidata ${q.l.target}`, url: wikidataUrl(q.l.target) }, qid: q.l.target });
+    } else gaps.push("Not enough people are recorded for these events to ask a fair people question.");
+  } else if (ok.length) gaps.push("Wikidata records no people for these events, so there's no people question.");
 
   return {
     ...base,
@@ -430,6 +540,8 @@ async function importedLesson(id: string, pathId: string, signal?: AbortSignal):
     cards,
     activities,
     gaps,
+    edges,
+    extra: linked,
     related: [...base.related, ...picked.slice(0, 2).map((e) => ({ label: `Explore connections of ${e.title.en}`, href: `/connections?id=${e.id}` }))],
   };
 }

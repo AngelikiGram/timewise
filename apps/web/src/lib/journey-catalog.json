@@ -160,260 +160,1518 @@
   ]
  },
  "place": {
-  "united_states": {
-   "label": "United States",
-   "centuries": [
-    16,
-    17,
-    18,
-    19,
-    20
+  "afghanistan": {
+   "label": "Afghanistan",
+   "continent": "asia",
+   "eras": [
+    "antiquity",
+    "middle-ages",
+    "early-modern",
+    "long-19th",
+    "world-wars",
+    "since-1945"
    ]
   },
-  "germany": {
-   "label": "Germany",
-   "centuries": [
-    15,
-    16,
-    17,
-    18,
-    19,
-    20
+  "albania": {
+   "label": "Albania",
+   "continent": "europe",
+   "eras": [
+    "middle-ages",
+    "long-19th",
+    "world-wars",
+    "since-1945"
    ]
   },
-  "france": {
-   "label": "France",
-   "centuries": [
-    15,
-    16,
-    17,
-    18,
-    19,
-    20
+  "algeria": {
+   "label": "Algeria",
+   "continent": "africa",
+   "eras": [
+    "antiquity",
+    "middle-ages",
+    "early-modern",
+    "long-19th",
+    "since-1945"
    ]
   },
-  "spain": {
-   "label": "Spain",
-   "centuries": [
-    15,
-    16,
-    17,
-    18,
-    19,
-    20
+  "angola": {
+   "label": "Angola",
+   "continent": "africa",
+   "eras": [
+    "since-1945"
    ]
   },
-  "united_kingdom": {
-   "label": "United Kingdom",
-   "centuries": [
-    15,
-    16,
-    17,
-    18,
-    19,
-    20
+  "antigua_and_barbuda": {
+   "label": "Antigua and Barbuda",
+   "continent": "north_america",
+   "eras": [
+    "since-1945"
    ]
   },
-  "italy": {
-   "label": "Italy",
-   "centuries": [
-    15,
-    16,
-    17,
-    18,
-    19,
-    20
+  "argentina": {
+   "label": "Argentina",
+   "continent": "south_america",
+   "eras": [
+    "long-19th",
+    "world-wars",
+    "since-1945"
    ]
   },
-  "india": {
-   "label": "India",
-   "centuries": [
-    15,
-    16,
-    17,
-    18,
-    19,
-    20
+  "armenia": {
+   "label": "Armenia",
+   "continent": "asia",
+   "eras": [
+    "early-modern",
+    "world-wars",
+    "since-1945"
    ]
   },
-  "turkey": {
-   "label": "Turkey",
-   "centuries": [
-    15,
-    16,
-    17,
-    18,
-    19,
-    20
-   ]
-  },
-  "russia": {
-   "label": "Russia",
-   "centuries": [
-    15,
-    16,
-    17,
-    18,
-    19,
-    20
-   ]
-  },
-  "japan": {
-   "label": "Japan",
-   "centuries": [
-    15,
-    16,
-    18,
-    19,
-    20
-   ]
-  },
-  "china": {
-   "label": "People's Republic of China",
-   "centuries": [
-    15,
-    16,
-    17,
-    18,
-    19,
-    20
-   ]
-  },
-  "ukraine": {
-   "label": "Ukraine",
-   "centuries": [
-    16,
-    17,
-    18,
-    19,
-    20
-   ]
-  },
-  "poland": {
-   "label": "Poland",
-   "centuries": [
-    15,
-    16,
-    17,
-    18,
-    19,
-    20
-   ]
-  },
-  "greece": {
-   "label": "Greece",
-   "centuries": [
-    15,
-    16,
-    17,
-    18,
-    19,
-    20
+  "australia": {
+   "label": "Australia",
+   "continent": "oceania",
+   "eras": [
+    "long-19th",
+    "world-wars",
+    "since-1945"
    ]
   },
   "austria": {
    "label": "Austria",
-   "centuries": [
-    15,
-    16,
-    17,
-    18,
-    19,
-    20
+   "continent": "europe",
+   "eras": [
+    "middle-ages",
+    "early-modern",
+    "long-19th",
+    "world-wars",
+    "since-1945"
    ]
   },
-  "indonesia": {
-   "label": "Indonesia",
-   "centuries": [
-    15,
-    16,
-    17,
-    18,
-    19,
-    20
+  "azerbaijan": {
+   "label": "Azerbaijan",
+   "continent": "asia",
+   "eras": [
+    "middle-ages",
+    "early-modern",
+    "long-19th",
+    "world-wars",
+    "since-1945"
    ]
   },
-  "portugal": {
-   "label": "Portugal",
-   "centuries": [
-    16,
-    17,
-    18,
-    19,
-    20
+  "bangladesh": {
+   "label": "Bangladesh",
+   "continent": "asia",
+   "eras": [
+    "long-19th",
+    "world-wars",
+    "since-1945"
    ]
   },
-  "brazil": {
-   "label": "Brazil",
-   "centuries": [
-    16,
-    17,
-    18,
-    19,
-    20
-   ]
-  },
-  "switzerland": {
-   "label": "Switzerland",
-   "centuries": [
-    15,
-    16,
-    17,
-    18,
-    19,
-    20
-   ]
-  },
-  "netherlands": {
-   "label": "Kingdom of the Netherlands",
-   "centuries": [
-    15,
-    16,
-    17,
-    18,
-    19,
-    20
+  "belarus": {
+   "label": "Belarus",
+   "continent": "europe",
+   "eras": [
+    "middle-ages",
+    "early-modern",
+    "long-19th",
+    "world-wars",
+    "since-1945"
    ]
   },
   "belgium": {
    "label": "Belgium",
-   "centuries": [
-    15,
-    16,
-    17,
-    18,
-    19,
-    20
+   "continent": "europe",
+   "eras": [
+    "middle-ages",
+    "early-modern",
+    "long-19th",
+    "world-wars",
+    "since-1945"
    ]
   },
-  "mexico": {
-   "label": "Mexico",
-   "centuries": [
-    15,
-    17,
-    18,
-    19,
-    20
+  "benin": {
+   "label": "Benin",
+   "continent": "africa",
+   "eras": [
+    "since-1945"
+   ]
+  },
+  "bhutan": {
+   "label": "Bhutan",
+   "continent": "asia",
+   "eras": [
+    "since-1945"
+   ]
+  },
+  "bolivia": {
+   "label": "Bolivia",
+   "continent": "south_america",
+   "eras": [
+    "long-19th",
+    "since-1945"
+   ]
+  },
+  "bosnia_and_herzegovina": {
+   "label": "Bosnia and Herzegovina",
+   "continent": "europe",
+   "eras": [
+    "antiquity",
+    "middle-ages",
+    "early-modern",
+    "long-19th",
+    "world-wars",
+    "since-1945"
+   ]
+  },
+  "botswana": {
+   "label": "Botswana",
+   "continent": "africa",
+   "eras": [
+    "since-1945"
+   ]
+  },
+  "brazil": {
+   "label": "Brazil",
+   "continent": "south_america",
+   "eras": [
+    "early-modern",
+    "long-19th",
+    "world-wars",
+    "since-1945"
+   ]
+  },
+  "brunei": {
+   "label": "Brunei",
+   "continent": "asia",
+   "eras": [
+    "since-1945"
+   ]
+  },
+  "bulgaria": {
+   "label": "Bulgaria",
+   "continent": "europe",
+   "eras": [
+    "antiquity",
+    "middle-ages",
+    "early-modern",
+    "long-19th",
+    "world-wars",
+    "since-1945"
+   ]
+  },
+  "burkina_faso": {
+   "label": "Burkina Faso",
+   "continent": "africa",
+   "eras": [
+    "since-1945"
+   ]
+  },
+  "burundi": {
+   "label": "Burundi",
+   "continent": "africa",
+   "eras": [
+    "since-1945"
+   ]
+  },
+  "cambodia": {
+   "label": "Cambodia",
+   "continent": "asia",
+   "eras": [
+    "since-1945"
+   ]
+  },
+  "cameroon": {
+   "label": "Cameroon",
+   "continent": "africa",
+   "eras": [
+    "long-19th",
+    "world-wars",
+    "since-1945"
    ]
   },
   "canada": {
    "label": "Canada",
-   "centuries": [
-    16,
-    17,
-    18,
-    19,
-    20
+   "continent": "north_america",
+   "eras": [
+    "early-modern",
+    "long-19th",
+    "world-wars",
+    "since-1945"
+   ]
+  },
+  "central_african_republic": {
+   "label": "Central African Republic",
+   "continent": "africa",
+   "eras": [
+    "since-1945"
+   ]
+  },
+  "chad": {
+   "label": "Chad",
+   "continent": "africa",
+   "eras": [
+    "since-1945"
+   ]
+  },
+  "chile": {
+   "label": "Chile",
+   "continent": "south_america",
+   "eras": [
+    "early-modern",
+    "long-19th",
+    "world-wars",
+    "since-1945"
+   ]
+  },
+  "colombia": {
+   "label": "Colombia",
+   "continent": "south_america",
+   "eras": [
+    "early-modern",
+    "long-19th",
+    "world-wars",
+    "since-1945"
+   ]
+  },
+  "comoros": {
+   "label": "Comoros",
+   "continent": "africa",
+   "eras": [
+    "since-1945"
+   ]
+  },
+  "costa_rica": {
+   "label": "Costa Rica",
+   "continent": "north_america",
+   "eras": [
+    "since-1945"
+   ]
+  },
+  "croatia": {
+   "label": "Croatia",
+   "continent": "europe",
+   "eras": [
+    "middle-ages",
+    "early-modern",
+    "long-19th",
+    "world-wars",
+    "since-1945"
+   ]
+  },
+  "cuba": {
+   "label": "Cuba",
+   "continent": "north_america",
+   "eras": [
+    "long-19th",
+    "since-1945"
+   ]
+  },
+  "cyprus": {
+   "label": "Cyprus",
+   "continent": "asia",
+   "eras": [
+    "antiquity",
+    "since-1945"
    ]
   },
   "czech_republic": {
    "label": "Czech Republic",
-   "centuries": [
-    16,
-    17,
-    18,
-    19,
-    20
+   "continent": "europe",
+   "eras": [
+    "middle-ages",
+    "early-modern",
+    "long-19th",
+    "world-wars",
+    "since-1945"
+   ]
+  },
+  "democratic_republic_of_the_congo": {
+   "label": "Democratic Republic of the Congo",
+   "continent": "africa",
+   "eras": [
+    "since-1945"
+   ]
+  },
+  "denmark": {
+   "label": "Denmark",
+   "continent": "europe",
+   "eras": [
+    "middle-ages",
+    "early-modern",
+    "long-19th",
+    "world-wars",
+    "since-1945"
+   ]
+  },
+  "dominican_republic": {
+   "label": "Dominican Republic",
+   "continent": "north_america",
+   "eras": [
+    "early-modern",
+    "long-19th",
+    "since-1945"
+   ]
+  },
+  "ecuador": {
+   "label": "Ecuador",
+   "continent": "south_america",
+   "eras": [
+    "early-modern",
+    "long-19th",
+    "since-1945"
+   ]
+  },
+  "egypt": {
+   "label": "Egypt",
+   "continent": "africa",
+   "eras": [
+    "antiquity",
+    "middle-ages",
+    "early-modern",
+    "long-19th",
+    "world-wars",
+    "since-1945"
+   ]
+  },
+  "el_salvador": {
+   "label": "El Salvador",
+   "continent": "north_america",
+   "eras": [
+    "long-19th",
+    "since-1945"
+   ]
+  },
+  "equatorial_guinea": {
+   "label": "Equatorial Guinea",
+   "continent": "africa",
+   "eras": [
+    "since-1945"
+   ]
+  },
+  "eritrea": {
+   "label": "Eritrea",
+   "continent": "africa",
+   "eras": [
+    "long-19th",
+    "since-1945"
+   ]
+  },
+  "estonia": {
+   "label": "Estonia",
+   "continent": "europe",
+   "eras": [
+    "middle-ages",
+    "early-modern",
+    "long-19th",
+    "world-wars",
+    "since-1945"
+   ]
+  },
+  "ethiopia": {
+   "label": "Ethiopia",
+   "continent": "africa",
+   "eras": [
+    "middle-ages",
+    "early-modern",
+    "long-19th",
+    "world-wars",
+    "since-1945"
+   ]
+  },
+  "finland": {
+   "label": "Finland",
+   "continent": "europe",
+   "eras": [
+    "early-modern",
+    "long-19th",
+    "world-wars",
+    "since-1945"
+   ]
+  },
+  "france": {
+   "label": "France",
+   "continent": "europe",
+   "eras": [
+    "antiquity",
+    "middle-ages",
+    "early-modern",
+    "long-19th",
+    "world-wars",
+    "since-1945"
+   ]
+  },
+  "gabon": {
+   "label": "Gabon",
+   "continent": "africa",
+   "eras": [
+    "since-1945"
+   ]
+  },
+  "georgia": {
+   "label": "Georgia",
+   "continent": "asia",
+   "eras": [
+    "middle-ages",
+    "early-modern",
+    "long-19th",
+    "world-wars",
+    "since-1945"
+   ]
+  },
+  "germany": {
+   "label": "Germany",
+   "continent": "europe",
+   "eras": [
+    "antiquity",
+    "middle-ages",
+    "early-modern",
+    "long-19th",
+    "world-wars",
+    "since-1945"
+   ]
+  },
+  "ghana": {
+   "label": "Ghana",
+   "continent": "africa",
+   "eras": [
+    "early-modern",
+    "long-19th",
+    "since-1945"
+   ]
+  },
+  "greece": {
+   "label": "Greece",
+   "continent": "europe",
+   "eras": [
+    "antiquity",
+    "middle-ages",
+    "early-modern",
+    "long-19th",
+    "world-wars",
+    "since-1945"
+   ]
+  },
+  "guatemala": {
+   "label": "Guatemala",
+   "continent": "north_america",
+   "eras": [
+    "long-19th",
+    "since-1945"
+   ]
+  },
+  "guinea": {
+   "label": "Guinea",
+   "continent": "africa",
+   "eras": [
+    "since-1945"
+   ]
+  },
+  "guinea_bissau": {
+   "label": "Guinea-Bissau",
+   "continent": "africa",
+   "eras": [
+    "since-1945"
+   ]
+  },
+  "guyana": {
+   "label": "Guyana",
+   "continent": "south_america",
+   "eras": [
+    "since-1945"
+   ]
+  },
+  "haiti": {
+   "label": "Haiti",
+   "continent": "north_america",
+   "eras": [
+    "early-modern",
+    "long-19th",
+    "since-1945"
+   ]
+  },
+  "honduras": {
+   "label": "Honduras",
+   "continent": "north_america",
+   "eras": [
+    "long-19th",
+    "since-1945"
+   ]
+  },
+  "hungary": {
+   "label": "Hungary",
+   "continent": "europe",
+   "eras": [
+    "middle-ages",
+    "early-modern",
+    "long-19th",
+    "world-wars",
+    "since-1945"
+   ]
+  },
+  "iceland": {
+   "label": "Iceland",
+   "continent": "europe",
+   "eras": [
+    "middle-ages",
+    "since-1945"
+   ]
+  },
+  "india": {
+   "label": "India",
+   "continent": "asia",
+   "eras": [
+    "antiquity",
+    "middle-ages",
+    "early-modern",
+    "long-19th",
+    "world-wars",
+    "since-1945"
+   ]
+  },
+  "indonesia": {
+   "label": "Indonesia",
+   "continent": "asia",
+   "eras": [
+    "middle-ages",
+    "early-modern",
+    "long-19th",
+    "world-wars",
+    "since-1945"
+   ]
+  },
+  "iran": {
+   "label": "Iran",
+   "continent": "asia",
+   "eras": [
+    "antiquity",
+    "middle-ages",
+    "early-modern",
+    "long-19th",
+    "world-wars",
+    "since-1945"
+   ]
+  },
+  "iraq": {
+   "label": "Iraq",
+   "continent": "asia",
+   "eras": [
+    "antiquity",
+    "middle-ages",
+    "early-modern",
+    "world-wars",
+    "since-1945"
+   ]
+  },
+  "ireland": {
+   "label": "Ireland",
+   "continent": "europe",
+   "eras": [
+    "middle-ages",
+    "early-modern",
+    "long-19th",
+    "world-wars",
+    "since-1945"
+   ]
+  },
+  "israel": {
+   "label": "Israel",
+   "continent": "asia",
+   "eras": [
+    "antiquity",
+    "middle-ages",
+    "long-19th",
+    "world-wars",
+    "since-1945"
+   ]
+  },
+  "italy": {
+   "label": "Italy",
+   "continent": "europe",
+   "eras": [
+    "antiquity",
+    "middle-ages",
+    "early-modern",
+    "long-19th",
+    "world-wars",
+    "since-1945"
+   ]
+  },
+  "ivory_coast": {
+   "label": "Ivory Coast",
+   "continent": "africa",
+   "eras": [
+    "since-1945"
+   ]
+  },
+  "japan": {
+   "label": "Japan",
+   "continent": "asia",
+   "eras": [
+    "middle-ages",
+    "early-modern",
+    "long-19th",
+    "world-wars",
+    "since-1945"
+   ]
+  },
+  "jordan": {
+   "label": "Jordan",
+   "continent": "asia",
+   "eras": [
+    "since-1945"
+   ]
+  },
+  "kazakhstan": {
+   "label": "Kazakhstan",
+   "continent": "asia",
+   "eras": [
+    "middle-ages",
+    "world-wars",
+    "since-1945"
+   ]
+  },
+  "kenya": {
+   "label": "Kenya",
+   "continent": "africa",
+   "eras": [
+    "world-wars",
+    "since-1945"
+   ]
+  },
+  "netherlands": {
+   "label": "Kingdom of the Netherlands",
+   "continent": "europe",
+   "eras": [
+    "middle-ages",
+    "early-modern",
+    "long-19th",
+    "world-wars",
+    "since-1945"
+   ]
+  },
+  "kosovo": {
+   "label": "Kosovo",
+   "continent": "europe",
+   "eras": [
+    "middle-ages",
+    "since-1945"
+   ]
+  },
+  "kuwait": {
+   "label": "Kuwait",
+   "continent": "asia",
+   "eras": [
+    "since-1945"
+   ]
+  },
+  "kyrgyzstan": {
+   "label": "Kyrgyzstan",
+   "continent": "asia",
+   "eras": [
+    "world-wars",
+    "since-1945"
+   ]
+  },
+  "laos": {
+   "label": "Laos",
+   "continent": "asia",
+   "eras": [
+    "since-1945"
+   ]
+  },
+  "latvia": {
+   "label": "Latvia",
+   "continent": "europe",
+   "eras": [
+    "middle-ages",
+    "early-modern",
+    "long-19th",
+    "world-wars",
+    "since-1945"
+   ]
+  },
+  "lebanon": {
+   "label": "Lebanon",
+   "continent": "asia",
+   "eras": [
+    "middle-ages",
+    "since-1945"
+   ]
+  },
+  "lesotho": {
+   "label": "Lesotho",
+   "continent": "africa",
+   "eras": [
+    "since-1945"
+   ]
+  },
+  "liberia": {
+   "label": "Liberia",
+   "continent": "africa",
+   "eras": [
+    "since-1945"
+   ]
+  },
+  "libya": {
+   "label": "Libya",
+   "continent": "africa",
+   "eras": [
+    "long-19th",
+    "world-wars",
+    "since-1945"
+   ]
+  },
+  "lithuania": {
+   "label": "Lithuania",
+   "continent": "europe",
+   "eras": [
+    "middle-ages",
+    "early-modern",
+    "long-19th",
+    "world-wars",
+    "since-1945"
+   ]
+  },
+  "luxembourg": {
+   "label": "Luxembourg",
+   "continent": "europe",
+   "eras": [
+    "since-1945"
+   ]
+  },
+  "madagascar": {
+   "label": "Madagascar",
+   "continent": "africa",
+   "eras": [
+    "since-1945"
+   ]
+  },
+  "malawi": {
+   "label": "Malawi",
+   "continent": "africa",
+   "eras": [
+    "since-1945"
+   ]
+  },
+  "malaysia": {
+   "label": "Malaysia",
+   "continent": "asia",
+   "eras": [
+    "early-modern",
+    "long-19th",
+    "world-wars",
+    "since-1945"
+   ]
+  },
+  "mali": {
+   "label": "Mali",
+   "continent": "africa",
+   "eras": [
+    "middle-ages",
+    "since-1945"
+   ]
+  },
+  "malta": {
+   "label": "Malta",
+   "continent": "europe",
+   "eras": [
+    "middle-ages",
+    "early-modern",
+    "since-1945"
+   ]
+  },
+  "mauritania": {
+   "label": "Mauritania",
+   "continent": "africa",
+   "eras": [
+    "since-1945"
+   ]
+  },
+  "mauritius": {
+   "label": "Mauritius",
+   "continent": "africa",
+   "eras": [
+    "since-1945"
+   ]
+  },
+  "mexico": {
+   "label": "Mexico",
+   "continent": "north_america",
+   "eras": [
+    "middle-ages",
+    "early-modern",
+    "long-19th",
+    "world-wars",
+    "since-1945"
+   ]
+  },
+  "moldova": {
+   "label": "Moldova",
+   "continent": "europe",
+   "eras": [
+    "early-modern",
+    "long-19th",
+    "world-wars",
+    "since-1945"
+   ]
+  },
+  "mongolia": {
+   "label": "Mongolia",
+   "continent": "asia",
+   "eras": [
+    "middle-ages",
+    "world-wars",
+    "since-1945"
+   ]
+  },
+  "montenegro": {
+   "label": "Montenegro",
+   "continent": "europe",
+   "eras": [
+    "early-modern",
+    "long-19th",
+    "world-wars"
+   ]
+  },
+  "morocco": {
+   "label": "Morocco",
+   "continent": "africa",
+   "eras": [
+    "middle-ages",
+    "early-modern",
+    "long-19th",
+    "world-wars",
+    "since-1945"
+   ]
+  },
+  "mozambique": {
+   "label": "Mozambique",
+   "continent": "africa",
+   "eras": [
+    "since-1945"
+   ]
+  },
+  "myanmar": {
+   "label": "Myanmar",
+   "continent": "asia",
+   "eras": [
+    "middle-ages",
+    "early-modern",
+    "long-19th",
+    "world-wars",
+    "since-1945"
+   ]
+  },
+  "namibia": {
+   "label": "Namibia",
+   "continent": "africa",
+   "eras": [
+    "since-1945"
+   ]
+  },
+  "nepal": {
+   "label": "Nepal",
+   "continent": "asia",
+   "eras": [
+    "early-modern",
+    "world-wars",
+    "since-1945"
+   ]
+  },
+  "new_zealand": {
+   "label": "New Zealand",
+   "continent": "oceania",
+   "eras": [
+    "long-19th",
+    "since-1945"
+   ]
+  },
+  "nicaragua": {
+   "label": "Nicaragua",
+   "continent": "north_america",
+   "eras": [
+    "long-19th",
+    "since-1945"
+   ]
+  },
+  "niger": {
+   "label": "Niger",
+   "continent": "africa",
+   "eras": [
+    "since-1945"
+   ]
+  },
+  "nigeria": {
+   "label": "Nigeria",
+   "continent": "africa",
+   "eras": [
+    "middle-ages",
+    "long-19th",
+    "since-1945"
+   ]
+  },
+  "north_korea": {
+   "label": "North Korea",
+   "continent": "asia",
+   "eras": [
+    "middle-ages",
+    "since-1945"
+   ]
+  },
+  "north_macedonia": {
+   "label": "North Macedonia",
+   "continent": "europe",
+   "eras": [
+    "middle-ages",
+    "long-19th",
+    "world-wars",
+    "since-1945"
+   ]
+  },
+  "norway": {
+   "label": "Norway",
+   "continent": "europe",
+   "eras": [
+    "middle-ages",
+    "early-modern",
+    "long-19th",
+    "world-wars",
+    "since-1945"
+   ]
+  },
+  "oman": {
+   "label": "Oman",
+   "continent": "asia",
+   "eras": [
+    "since-1945"
+   ]
+  },
+  "pakistan": {
+   "label": "Pakistan",
+   "continent": "asia",
+   "eras": [
+    "antiquity",
+    "middle-ages",
+    "early-modern",
+    "long-19th",
+    "world-wars",
+    "since-1945"
+   ]
+  },
+  "palestine": {
+   "label": "Palestine",
+   "continent": "asia",
+   "eras": [
+    "antiquity",
+    "middle-ages",
+    "world-wars",
+    "since-1945"
+   ]
+  },
+  "panama": {
+   "label": "Panama",
+   "continent": "north_america",
+   "eras": [
+    "since-1945"
+   ]
+  },
+  "papua_new_guinea": {
+   "label": "Papua New Guinea",
+   "continent": "oceania",
+   "eras": [
+    "world-wars",
+    "since-1945"
+   ]
+  },
+  "paraguay": {
+   "label": "Paraguay",
+   "continent": "south_america",
+   "eras": [
+    "long-19th",
+    "world-wars",
+    "since-1945"
+   ]
+  },
+  "china": {
+   "label": "People's Republic of China",
+   "continent": "asia",
+   "eras": [
+    "antiquity",
+    "middle-ages",
+    "early-modern",
+    "long-19th",
+    "world-wars",
+    "since-1945"
+   ]
+  },
+  "peru": {
+   "label": "Peru",
+   "continent": "south_america",
+   "eras": [
+    "middle-ages",
+    "early-modern",
+    "long-19th",
+    "since-1945"
+   ]
+  },
+  "philippines": {
+   "label": "Philippines",
+   "continent": "asia",
+   "eras": [
+    "early-modern",
+    "long-19th",
+    "world-wars",
+    "since-1945"
+   ]
+  },
+  "poland": {
+   "label": "Poland",
+   "continent": "europe",
+   "eras": [
+    "middle-ages",
+    "early-modern",
+    "long-19th",
+    "world-wars",
+    "since-1945"
+   ]
+  },
+  "portugal": {
+   "label": "Portugal",
+   "continent": "europe",
+   "eras": [
+    "middle-ages",
+    "early-modern",
+    "long-19th",
+    "world-wars",
+    "since-1945"
+   ]
+  },
+  "qatar": {
+   "label": "Qatar",
+   "continent": "asia",
+   "eras": [
+    "since-1945"
+   ]
+  },
+  "republic_of_the_congo": {
+   "label": "Republic of the Congo",
+   "continent": "africa",
+   "eras": [
+    "since-1945"
+   ]
+  },
+  "romania": {
+   "label": "Romania",
+   "continent": "europe",
+   "eras": [
+    "antiquity",
+    "middle-ages",
+    "early-modern",
+    "long-19th",
+    "world-wars",
+    "since-1945"
+   ]
+  },
+  "russia": {
+   "label": "Russia",
+   "continent": "europe",
+   "eras": [
+    "middle-ages",
+    "early-modern",
+    "long-19th",
+    "world-wars",
+    "since-1945"
+   ]
+  },
+  "rwanda": {
+   "label": "Rwanda",
+   "continent": "africa",
+   "eras": [
+    "since-1945"
+   ]
+  },
+  "saudi_arabia": {
+   "label": "Saudi Arabia",
+   "continent": "asia",
+   "eras": [
+    "middle-ages",
+    "early-modern",
+    "long-19th",
+    "world-wars",
+    "since-1945"
+   ]
+  },
+  "senegal": {
+   "label": "Senegal",
+   "continent": "africa",
+   "eras": [
+    "early-modern",
+    "long-19th",
+    "since-1945"
+   ]
+  },
+  "serbia": {
+   "label": "Serbia",
+   "continent": "europe",
+   "eras": [
+    "antiquity",
+    "middle-ages",
+    "early-modern",
+    "long-19th",
+    "world-wars",
+    "since-1945"
+   ]
+  },
+  "seychelles": {
+   "label": "Seychelles",
+   "continent": "africa",
+   "eras": [
+    "since-1945"
+   ]
+  },
+  "sierra_leone": {
+   "label": "Sierra Leone",
+   "continent": "africa",
+   "eras": [
+    "since-1945"
+   ]
+  },
+  "singapore": {
+   "label": "Singapore",
+   "continent": "asia",
+   "eras": [
+    "since-1945"
+   ]
+  },
+  "slovakia": {
+   "label": "Slovakia",
+   "continent": "europe",
+   "eras": [
+    "middle-ages",
+    "early-modern",
+    "long-19th",
+    "world-wars",
+    "since-1945"
+   ]
+  },
+  "slovenia": {
+   "label": "Slovenia",
+   "continent": "europe",
+   "eras": [
+    "long-19th",
+    "world-wars",
+    "since-1945"
+   ]
+  },
+  "solomon_islands": {
+   "label": "Solomon Islands",
+   "continent": "oceania",
+   "eras": [
+    "world-wars"
+   ]
+  },
+  "somalia": {
+   "label": "Somalia",
+   "continent": "africa",
+   "eras": [
+    "since-1945"
+   ]
+  },
+  "south_africa": {
+   "label": "South Africa",
+   "continent": "africa",
+   "eras": [
+    "early-modern",
+    "long-19th",
+    "world-wars",
+    "since-1945"
+   ]
+  },
+  "south_korea": {
+   "label": "South Korea",
+   "continent": "asia",
+   "eras": [
+    "middle-ages",
+    "early-modern",
+    "long-19th",
+    "world-wars",
+    "since-1945"
+   ]
+  },
+  "south_sudan": {
+   "label": "South Sudan",
+   "continent": "africa",
+   "eras": [
+    "since-1945"
+   ]
+  },
+  "spain": {
+   "label": "Spain",
+   "continent": "europe",
+   "eras": [
+    "antiquity",
+    "middle-ages",
+    "early-modern",
+    "long-19th",
+    "world-wars",
+    "since-1945"
+   ]
+  },
+  "sri_lanka": {
+   "label": "Sri Lanka",
+   "continent": "asia",
+   "eras": [
+    "long-19th",
+    "since-1945"
+   ]
+  },
+  "sudan": {
+   "label": "Sudan",
+   "continent": "africa",
+   "eras": [
+    "long-19th",
+    "since-1945"
+   ]
+  },
+  "suriname": {
+   "label": "Suriname",
+   "continent": "south_america",
+   "eras": [
+    "since-1945"
+   ]
+  },
+  "sweden": {
+   "label": "Sweden",
+   "continent": "europe",
+   "eras": [
+    "middle-ages",
+    "early-modern",
+    "long-19th",
+    "since-1945"
+   ]
+  },
+  "switzerland": {
+   "label": "Switzerland",
+   "continent": "europe",
+   "eras": [
+    "middle-ages",
+    "early-modern",
+    "long-19th",
+    "world-wars",
+    "since-1945"
+   ]
+  },
+  "syria": {
+   "label": "Syria",
+   "continent": "asia",
+   "eras": [
+    "antiquity",
+    "middle-ages",
+    "world-wars",
+    "since-1945"
+   ]
+  },
+  "sao_tome_and_principe": {
+   "label": "S\u00e3o Tom\u00e9 and Pr\u00edncipe",
+   "continent": "africa",
+   "eras": [
+    "since-1945"
+   ]
+  },
+  "taiwan": {
+   "label": "Taiwan",
+   "continent": "asia",
+   "eras": [
+    "early-modern",
+    "long-19th",
+    "world-wars",
+    "since-1945"
+   ]
+  },
+  "tajikistan": {
+   "label": "Tajikistan",
+   "continent": "asia",
+   "eras": [
+    "world-wars",
+    "since-1945"
+   ]
+  },
+  "tanzania": {
+   "label": "Tanzania",
+   "continent": "africa",
+   "eras": [
+    "long-19th",
+    "world-wars",
+    "since-1945"
+   ]
+  },
+  "thailand": {
+   "label": "Thailand",
+   "continent": "asia",
+   "eras": [
+    "middle-ages",
+    "early-modern",
+    "long-19th",
+    "world-wars",
+    "since-1945"
+   ]
+  },
+  "the_gambia": {
+   "label": "The Gambia",
+   "continent": "africa",
+   "eras": [
+    "since-1945"
+   ]
+  },
+  "timor_leste": {
+   "label": "Timor-Leste",
+   "continent": "asia",
+   "eras": [
+    "since-1945"
+   ]
+  },
+  "togo": {
+   "label": "Togo",
+   "continent": "africa",
+   "eras": [
+    "since-1945"
+   ]
+  },
+  "tunisia": {
+   "label": "Tunisia",
+   "continent": "africa",
+   "eras": [
+    "antiquity",
+    "middle-ages",
+    "early-modern",
+    "long-19th",
+    "since-1945"
+   ]
+  },
+  "turkey": {
+   "label": "Turkey",
+   "continent": "asia",
+   "eras": [
+    "antiquity",
+    "middle-ages",
+    "early-modern",
+    "long-19th",
+    "world-wars",
+    "since-1945"
+   ]
+  },
+  "turkmenistan": {
+   "label": "Turkmenistan",
+   "continent": "asia",
+   "eras": [
+    "world-wars",
+    "since-1945"
+   ]
+  },
+  "uganda": {
+   "label": "Uganda",
+   "continent": "africa",
+   "eras": [
+    "since-1945"
+   ]
+  },
+  "ukraine": {
+   "label": "Ukraine",
+   "continent": "europe",
+   "eras": [
+    "middle-ages",
+    "early-modern",
+    "long-19th",
+    "world-wars",
+    "since-1945"
+   ]
+  },
+  "united_arab_emirates": {
+   "label": "United Arab Emirates",
+   "continent": "asia",
+   "eras": [
+    "since-1945"
+   ]
+  },
+  "united_kingdom": {
+   "label": "United Kingdom",
+   "continent": "europe",
+   "eras": [
+    "antiquity",
+    "middle-ages",
+    "early-modern",
+    "long-19th",
+    "world-wars",
+    "since-1945"
+   ]
+  },
+  "united_states": {
+   "label": "United States",
+   "continent": "north_america",
+   "eras": [
+    "early-modern",
+    "long-19th",
+    "world-wars",
+    "since-1945"
+   ]
+  },
+  "uruguay": {
+   "label": "Uruguay",
+   "continent": "south_america",
+   "eras": [
+    "long-19th",
+    "since-1945"
+   ]
+  },
+  "uzbekistan": {
+   "label": "Uzbekistan",
+   "continent": "asia",
+   "eras": [
+    "middle-ages",
+    "early-modern",
+    "long-19th",
+    "world-wars",
+    "since-1945"
+   ]
+  },
+  "venezuela": {
+   "label": "Venezuela",
+   "continent": "south_america",
+   "eras": [
+    "long-19th",
+    "world-wars",
+    "since-1945"
+   ]
+  },
+  "vietnam": {
+   "label": "Vietnam",
+   "continent": "asia",
+   "eras": [
+    "middle-ages",
+    "early-modern",
+    "long-19th",
+    "world-wars",
+    "since-1945"
+   ]
+  },
+  "yemen": {
+   "label": "Yemen",
+   "continent": "asia",
+   "eras": [
+    "middle-ages",
+    "since-1945"
+   ]
+  },
+  "zambia": {
+   "label": "Zambia",
+   "continent": "africa",
+   "eras": [
+    "since-1945"
+   ]
+  },
+  "zimbabwe": {
+   "label": "Zimbabwe",
+   "continent": "africa",
+   "eras": [
+    "since-1945"
    ]
   }
  }
