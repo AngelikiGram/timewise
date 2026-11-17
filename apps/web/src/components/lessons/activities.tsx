@@ -72,7 +72,7 @@ function Feedback({ ok, activity, correct, onNext, nextLabel }: { ok: boolean; a
       {!ok && <p className="mt-1 font-medium">The answer: {correct}</p>}
       <p className="mt-2 leading-relaxed">{activity.explanation}</p>
       {activity.kind === "choice" && activity.note && <p className="mt-1 text-sm text-ink-2">{activity.note}</p>}
-      {activity.kind === "choice" && activity.map && <MiniMap className="mt-3" points={activity.map} label={`Map of the answer options; the answer is ${correct}`} />}
+      {activity.kind === "choice" && activity.map && <MiniMap className="mt-3 max-w-xl" points={activity.map} label={`Map of the answer options; the answer is ${correct}`} />}
       <p className="mt-3 text-xs font-semibold uppercase tracking-wider text-ink-2">Sources</p>
       <Sources sources={activity.sources} />
       {!ok && <p className="mt-2 text-sm text-ink-2">Saved for review, so you can try it again later.</p>}

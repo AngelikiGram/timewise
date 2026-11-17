@@ -8,6 +8,7 @@ import type { Activity } from "@/lib/lessons";
 import type { Entity } from "@/lib/entities";
 import { completeLessonAtlas, encounterEntities, type AtlasGrowth } from "@/lib/progress";
 import { EntityPanel } from "../atlas/EntityPanel";
+import { aboutOf, LessonContext, LessonSide } from "./LessonSide";
 import { ConnectExercise } from "../atlas/ConnectExercise";
 
 /** The entities a finished lesson practised: its records, their places, and the people it names. */
@@ -69,7 +70,7 @@ function EntityButton({ entity, onOpen, met, children, className = "" }: { entit
   );
 }
 
-function Card({ card, review, onOpen, metBefore }: { card: LearnCard; review: Lesson["review"]; onOpen: (e: Entity) => void; metBefore: (id: string) => boolean }) {
+function Card({ card, review, onOpen, metBefore, context }: { card: LearnCard; review: Lesson["review"]; onOpen: (e: Entity) => void; metBefore: (id: string) => boolean; context?: React.ReactNode }) {
   return (
     <article data-testid="learn-card">
       <p className="text-xs font-semibold uppercase tracking-wider text-bronze">{card.when}{card.where ? <> · {card.place ? <EntityButton entity={card.place} onOpen={onOpen} met={metBefore(card.place.id)} className="uppercase tracking-wider">{card.where}</EntityButton> : card.where}</> : ""}</p>
@@ -91,11 +92,8 @@ function Card({ card, review, onOpen, metBefore }: { card: LearnCard; review: Le
           {card.summarySource && <span className="mt-1 block text-xs text-ink-2">{card.summarySource}, not checked by TIMEWISE.</span>}
         </p>
       )}
-      {card.image ? (
-        <CreditedImage className="mt-4" src={card.image.url} alt={card.image.title} credit={card.image} imgClassName="max-h-64 w-full rounded-md object-cover" />
-      ) : card.point ? (
-        <MiniMap className="mt-4" points={[{ label: card.where ?? card.title, lng: card.point[0], lat: card.point[1], answer: true }]} label={`Map: ${card.where ?? card.title}`} />
-      ) : null}
+      {context}
+      {card.image && <CreditedImage className="mt-4" src={card.image.url} alt={card.image.title} credit={card.image} imgClassName="max-h-56 w-full rounded-md object-cover" />}
       {card.claims.length > 0 && (
         <div className="mt-4 grid gap-3">
           {card.claims.map((c, i) => (
@@ -191,6 +189,7 @@ export function LessonPlayer() {
   }, [lesson, step]);
   const metBefore = (id: string) => (progress.atlas?.nodes[id]?.lessons ?? []).some((l) => l !== lesson?.id && progress.lessons[l]);
   const lessonTitles = Object.fromEntries(Object.entries(progress.lessons).map(([k, v]) => [k, v.title]));
+  const entityMap: Record<string, Entity> = lesson ? Object.fromEntries([...lesson.cards.flatMap((c) => [c.entity, c.place, ...(c.people ?? []).map((x) => x.entity)]), ...(lesson.extra ?? [])].filter((e): e is Entity => !!e).map((e) => [e.id, e])) : {};
   const labels = lesson ? Object.fromEntries([...lesson.cards.flatMap((c) => [c.entity, c.place, ...(c.people ?? []).map((x) => x.entity)]), ...(lesson.extra ?? [])].filter((e): e is Entity => !!e).map((e) => [e.id, e.label])) : {};
 
   const next = lesson ? nextInPath(lesson.pathId, lesson.id) : undefined;
@@ -238,14 +237,23 @@ export function LessonPlayer() {
 
   const pct = Math.round((step / (steps - 1)) * 100);
   return (
-    <div className="mx-auto max-w-2xl px-4 pb-16 pt-4 sm:px-6" data-testid="lesson" data-lesson={lesson.id}>
-      <div className="sticky top-14 z-20 -mx-4 flex items-center gap-3 bg-paper/95 px-4 py-3 backdrop-blur sm:-mx-6 sm:px-6">
+    <div className="mx-auto max-w-[1500px] px-4 pb-16 pt-3 sm:px-6" data-testid="lesson" data-lesson={lesson.id}>
+      <div className="sticky top-14 z-20 -mx-4 flex flex-wrap items-center gap-x-3 gap-y-1 bg-paper/95 px-4 py-2.5 backdrop-blur sm:-mx-6 sm:px-6">
         <Link href={`/learn?path=${lesson.pathId}`} className="btn btn-ghost btn-icon" aria-label="Leave the lesson (your place is saved)">✕</Link>
-        <div className="h-3 flex-1 overflow-hidden rounded-full bg-line" role="progressbar" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100} aria-label="Lesson progress">
-          <div className="h-full rounded-full bg-bronze transition-[width] duration-300 motion-reduce:transition-none" style={{ width: `${pct}%` }} />
+        <nav aria-label="Where you are" className="min-w-0 flex-1 truncate text-sm text-ink-2">
+          <Link href={`/learn?path=${lesson.pathId}`} className="hover:text-ink">{path?.title ?? "Lesson"}</Link>
+          <span aria-hidden> › </span><span className="text-ink">{lesson.title}</span>
+          {path && <span> · lesson {path.lessons.findIndex((l) => l.id === lesson.id) + 1} of {path.lessons.length}</span>}
+        </nav>
+        <div className="flex items-center gap-2" role="progressbar" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100} aria-label="Lesson progress">
+          <span className="text-sm tabular-nums text-ink-2">{step + 1}/{steps}</span>
+          <ol className="flex gap-1" aria-hidden>
+            {Array.from({ length: steps }, (_, i) => <li key={i} className={`h-2.5 w-2.5 rounded-full ${i < step ? "bg-bronze" : i === step ? "bg-oxblood ring-2 ring-oxblood/30" : "border border-bronze/60"}`} />)}
+          </ol>
         </div>
-        <span className="text-sm tabular-nums text-ink-2">{step + 1}/{steps}</span>
       </div>
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_380px]">
+      <div className="min-w-0">
 
       {panel && <EntityPanel entity={panel} edges={lesson.edges} labels={labels} lessonTitle={lesson.title} lessonHref={lessonHref(lesson.id, lesson.pathId)} lessonTitles={lessonTitles} onClose={() => setPanel(null)} />}
       <div ref={stage} className="mt-4" key={step}>
@@ -267,7 +275,7 @@ export function LessonPlayer() {
         )}
         {step >= cardStart && step < actStart && (
           <div className="fade-in">
-            <Card card={lesson.cards[step - cardStart]} review={lesson.review} onOpen={setPanel} metBefore={metBefore} />
+            <Card card={lesson.cards[step - cardStart]} review={lesson.review} onOpen={setPanel} metBefore={metBefore} context={<LessonContext cards={lesson.cards} current={lesson.cards[step - cardStart]} onPick={(c) => go(cardStart + lesson.cards.indexOf(c))} />} />
             <div className="mt-6 flex gap-2">
               <button type="button" className="btn btn-secondary" onClick={() => go(step - 1)}>Back</button>
               <button type="button" className="btn btn-primary flex-1 sm:flex-none" onClick={() => go(step + 1)} data-testid="continue">{step + 1 === actStart ? "Start the questions" : "Next"}</button>
@@ -289,6 +297,8 @@ export function LessonPlayer() {
                 onNext={() => go(step + 1)}
                 nextLabel={step + 1 === summaryAt ? "See what you learned" : "Continue"}
               />
+              {/* After answering: where it happened and when, among the lesson's other records. */}
+              {answers[i] && <LessonContext cards={lesson.cards} current={aboutOf(a, lesson.cards)} showMap={!(a.kind === "choice" && a.map)} />}
             </div>
           );
         })()}
@@ -354,6 +364,18 @@ export function LessonPlayer() {
             </ul>
           </section>
         )}
+      </div>
+      </div>
+      <LessonSide
+        lesson={lesson}
+        focus={step >= cardStart && step < actStart ? lesson.cards[step - cardStart] : step >= actStart && step < summaryAt ? aboutOf(lesson.activities[step - actStart], lesson.cards) : undefined}
+        hidden={step >= actStart && step < summaryAt && !answers[step - actStart]}
+        path={path}
+        progress={progress}
+        growth={growth}
+        onOpen={setPanel}
+        entities={entityMap}
+      />
       </div>
     </div>
   );

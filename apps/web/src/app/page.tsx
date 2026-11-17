@@ -48,8 +48,13 @@ export default function Home() {
       <main className="mx-auto max-w-[1500px] px-4 pb-12 pt-6 sm:px-6">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div>
-            <h1 className="font-serif text-3xl leading-tight sm:text-4xl">Explore history through connections</h1>
-            <p className="mt-1 text-ink-2">A map of events, people and places, and how they link.</p>
+            <h1 className="font-serif text-3xl leading-tight sm:text-4xl">Learn history in short steps, and see how it connects</h1>
+            <p className="mt-1 max-w-2xl text-ink-2">Each lesson adds its people, places and events to your own atlas, linked only where a source says so.</p>
+            <ol className="mt-3 flex flex-wrap gap-2 text-sm" aria-label="How TIMEWISE works" data-testid="loop">
+              {([["book", "Learn a short step"], ["idea", "Connect it in your atlas"], ["checked", "Practise it until it sticks"]] as const).map(([icon, text], i) => (
+                <li key={text} className="inline-flex items-center gap-2 rounded-full border border-line bg-paper-2 py-1 pl-1 pr-3"><span className="grid h-6 w-6 place-items-center rounded-full bg-bronze text-xs font-semibold text-paper">{i + 1}</span><Icon name={icon} size={16} className="text-bronze" />{text}</li>
+              ))}
+            </ol>
           </div>
           <div className="flex flex-wrap items-center gap-2">
             <LearnCta />

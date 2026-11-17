@@ -37,6 +37,21 @@ export default function AboutPage() {
           ))}
         </ul>
 
+        <section className="mt-10" aria-labelledby="different">
+          <h2 id="different" className="font-serif text-2xl">What TIMEWISE is for</h2>
+          <p className="mt-1 max-w-3xl text-ink-2">Not the most events or the flashiest globe. Learn one topic in short steps, then build a personal, source-backed map of how its people, places and events connect.</p>
+          <ul className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            {([
+              ["book", "One idea per step", "Short lessons, each with a map and a timeline."],
+              ["person", "Names you can open", "People, places and events open as short, sourced cards."],
+              ["idea", "Your own atlas", "What you meet, explore, save and practise is kept separately, and links come only from sources."],
+              ["checked", "Practice that explains", "Order events, place them, or pick the documented link, then see why."],
+            ] as const).map(([icon, title, text]) => (
+              <li key={title} className="card p-4"><Icon name={icon} size={22} className="text-bronze" /><p className="mt-2 font-semibold">{title}</p><p className="mt-1 text-sm text-ink-2">{text}</p></li>
+            ))}
+          </ul>
+        </section>
+
         <section className="mt-10" aria-labelledby="key">
           <h2 id="key" className="font-serif text-2xl">How to read a link</h2>
           <ul className="mt-3 grid gap-3 sm:grid-cols-3">

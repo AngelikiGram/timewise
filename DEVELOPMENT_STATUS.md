@@ -274,6 +274,29 @@ Tests: atlas and coverage specs pass on the new build (22). The admin and archiv
 
 Tests: 25 unit, 61 Python, 67 of 69 browser tests on the new build; the two world-map hover tests pass alone and are the known flake under full-suite load. Admin and archival specs need the API's port 3000 origin and weren't run.
 
+## What makes TIMEWISE different: the lesson workspace (2026-11-17)
+
+From a comparison with other history-learning products, and a mockup of a lesson screen. The identity: **learn one topic in short steps, then build a personal, source-backed map of how its people, places and events connect.** The loop: explore a connection, learn a short explanation, practise recalling it, and see it come back in a later lesson.
+
+**Implemented and tested:**
+- **Lesson workspace** (wide screens): a breadcrumb (path › lesson · lesson n of N) and step dots on top.
+  - **Main column:** one idea per step. The text comes first, then the lesson's map with the current record's place highlighted, then the lesson's timeline with the current year marked. Choosing a year on the timeline goes to that record's step.
+  - **Right column:**
+    - **Connections:** the current record and up to four sourced links, each labelled, plus its sources.
+    - **What joins My Atlas:** "seen in this lesson" while reading; what was added once the lesson is finished.
+    - **Path progress.**
+    - **Review prompt,** with the number due.
+  - Phones stack the right column under the step.
+- **Answers explained visually:** after each answer, the map and timeline show where and when the event was, among the lesson's other records, and the Connections panel shows its links. Before answering, the panel stays hidden so it can't give the answer away. A question with its own map doesn't repeat the lesson map.
+- **Navigation follows the loop:** Learn, My atlas, Review (with a due count) and Profile come first; then, smaller, Discover, Explore, World Map, Stories and Saved.
+- **Home:** "Learn history in short steps, and see how it connects", with the three steps: learn a short step, connect it in your atlas, practise it until it sticks.
+- **Sources page:** "What TIMEWISE is for", with the four features: one idea per step, names you can open, your own atlas, and practice that explains. No competitor is named in the app.
+
+**Tests:**
+- Typecheck clean; 60 unit tests pass.
+- Full browser run: 154 passed and 4 failed. The two non-API failures passed when rerun alone; the two archival-material tests need the local API.
+- Screenshots checked: a reading step, an answered geography question, and the home header.
+
 ## Paths for every country, profiles, and My History Atlas (2026-11-17)
 
 From two briefs: "Duolingo for history", for every country; and "My History Atlas", a personal network that grows with lessons.
