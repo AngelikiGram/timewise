@@ -1,6 +1,6 @@
 # Development status
 
-Last updated: 2026-11-17. **TIMEWISE 2.0 Phase 1 (correct the existing interface) is done. Phase 2 is partly done:** the database, API, Europeana connector, review screen and a worldwide Wikidata import (all 197 countries, unreviewed) work. Phases 3–6 aren't started. This isn't production-ready.
+Last updated: 2026-11-18. **TIMEWISE 2.0 Phase 1 (correct the existing interface) is done. Phase 2 is partly done:** the database, API, Europeana connector, review screen and a worldwide Wikidata import (all 197 countries, unreviewed) work. Phases 3–6 aren't started. This isn't production-ready.
 
 ## Checks on 2026-11-10
 
@@ -274,6 +274,38 @@ Tests: atlas and coverage specs pass on the new build (22). The admin and archiv
 
 Tests: 25 unit, 61 Python, 67 of 69 browser tests on the new build; the two world-map hover tests pass alone and are the known flake under full-suite load. Admin and archival specs need the API's port 3000 origin and weren't run.
 
+## Moving between the four ways in, and maps you can use (2026-11-18)
+
+**Implemented and tested:**
+- **Interest buttons:**
+  - In lists, they are just the name: ＋ to add, ✓ once added.
+  - On a person's or thing's own page: "Save to interests" or "In your interests ✓".
+- **Tabs that follow you:**
+  - Each mode tab opens on what you're looking at when it can: from Otto Wagner, "Explore a year" opens his busiest year and "Follow a thing" opens Art Nouveau. The target is shown on the tab.
+  - Otherwise a tab opens where you last were in that mode, and only then on a starting point.
+- **A way back:**
+  - "Back to …" and a short trail of the last pages visited in this tab of the browser.
+  - Changing the year adds a history step, so the browser's Back returns to the previous year.
+- **One map for every "Where":** a life, a thing and a year all use the same interactive map.
+  - **Zoom, full screen and a scale.**
+  - **A choice of base map:** muted, detailed or dark, all from OpenFreeMap. The points are framed again after switching.
+  - **Layers to switch,** with their counts: birth and death or works on a life; works, plus each thing, on a year. On a thing, colour shows the year, with a legend.
+  - **Grouping:** crowded points are grouped with a count, and a click zooms in until they split.
+  - **Hover** shows the name and one line about it.
+  - **Click** opens a card with its image and credit, and links on to the year, the people named on it, and the Wikidata statement.
+  - **From the lists:** choosing an item in a list ("on the map", or a building's name) flies the map there and opens its card.
+  - **Without WebGL** it falls back to the static outline map.
+
+**Tests:**
+- Typecheck clean; 69 unit tests pass.
+- New browser tests:
+  - Tabs carry context.
+  - "Back to …" and the browser's Back work.
+  - List buttons show only the name.
+  - The map has layers, a base map choice, and a card on click.
+- Full browser run: 166 passed and 5 failed. Three passed when rerun alone. The two admin tests depend on the local database.
+- Screenshots checked: clustering with a hover label, a list item opening its card on the map, the dark base map, and the trail with tab targets.
+
 ## Four ways in: follow a thing, explore a year, follow a life, follow your interests (2026-11-17)
 
 A small connected collection, built for all four modes at once: Vienna around 1900, a few places, 16 people and three "things", with shared records, images and sources.
@@ -308,7 +340,7 @@ A small connected collection, built for all four modes at once: Vienna around 19
 **Tests:**
 - Typecheck clean; 69 unit tests pass, including that every fact in the collection has a statement URL, that Freud and Klimt resolve to Q9215 and Q34661, and that the modes link to each other.
 - Browser tests: the year → life → thing → interests journey, and the decade filter.
-- Full browser run: 151 passed. The failures were the Austria journey tests and "a story remembers where you stopped", which fail the same way on the previous commit in this local setup but pass on the live site; they don't come from this work.
+- Full browser run: 151 passed. The Austria journey tests and "a story remembers where you stopped" failed because the local test server had stopped serving correctly; they pass with a fresh server (2026-11-18).
 - Screenshots checked: the home page with the begin cards, a life, a thing, a year, and interests.
 
 ## Simpler navigation, alternating lessons, and an atlas with a learning purpose (2026-11-17)

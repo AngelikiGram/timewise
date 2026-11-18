@@ -17,15 +17,15 @@ export function InterestsView() {
   const paths = recommendedPaths(p);
   return (
     <div className="mx-auto max-w-6xl px-4 pb-16 pt-6 sm:px-6" data-testid="interests-view">
-      <ModeBar on="interests" />
+      <ModeBar on="interests" here={{ href: "/explore/interests", label: "Your interests", mode: "interests" }} />
       <h1 className="mt-5 font-serif text-4xl">Your interests</h1>
       <p className="mt-1 max-w-2xl text-ink-2">Add things and people you care about, here or on their pages. Suggestions then combine the other ways in: a thing to follow, a life, a year.</p>
 
       <section className="mt-6" aria-labelledby="pick">
         <h2 id="pick" className="text-sm font-semibold uppercase tracking-wider text-ink-2">Things</h2>
-        <div className="mt-2 flex flex-wrap gap-2">{TOPICS.map((t) => <SaveInterest key={t.id} kind="topic" id={t.id} label={t.label} />)}</div>
+        <div className="mt-2 flex flex-wrap gap-2">{TOPICS.map((t) => <SaveInterest key={t.id} compact kind="topic" id={t.id} label={t.label} />)}</div>
         <h2 className="mt-4 text-sm font-semibold uppercase tracking-wider text-ink-2">People</h2>
-        <div className="mt-2 flex flex-wrap gap-2">{PEOPLE.slice(0, 8).map((x) => <SaveInterest key={x.id} kind="person" id={x.id} label={x.label} />)}</div>
+        <div className="mt-2 flex flex-wrap gap-2">{PEOPLE.map((x) => <SaveInterest key={x.id} compact kind="person" id={x.id} label={x.label} />)}</div>
       </section>
 
       <section className="mt-8" aria-labelledby="for-you">

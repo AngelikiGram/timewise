@@ -2,25 +2,32 @@
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import { useState } from "react";
 import { formatYear } from "@/lib/dates";
-import { linksOf, PEOPLE, personById, sharedWorks, topicsOf, wd, worksOf } from "@/lib/explore";
+import { linksOf, PEOPLE, type Person, personById, sharedWorks, topicsOf, wd, worksOf } from "@/lib/explore";
 import { Icon } from "../icons";
-import { MiniMap } from "../lessons/activities";
+import { ExploreMap, type MapItem } from "./ExploreMap";
 import { artistOf, ModeBar, NextSteps, Pictured, SaveInterest, Src } from "./shared";
 
 /** Follow a life: a documented person's years, works, places and the people around them. */
 export function LifeView() {
   const id = useSearchParams().get("id");
   const p = id ? personById(id) : undefined;
-  if (!p) return <LifeIndex />;
+  return p ? <Life p={p} key={p.id} /> : <LifeIndex />;
+}
 
+function Life({ p }: { p: Person }) {
   const works = worksOf(p.id);
   const dated = works.filter((w) => w.year != null);
   const b = p.born?.year, d = p.died?.year;
-  const points = [
-    ...(p.born?.point ? [{ label: `Born: ${p.born.place}`, lng: p.born.point[0], lat: p.born.point[1], answer: true }] : []),
-    ...works.filter((w) => w.point).map((w) => ({ label: "", lng: w.point![0], lat: w.point![1] })),
-    ...(p.died?.point ? [{ label: `Died: ${p.died.place}`, lng: p.died.point[0], lat: p.died.point[1], answer: true }] : []),
+  const points: MapItem[] = [
+    ...(p.born?.point ? [{ id: "born", label: `Born in ${p.born.place}`, lng: p.born.point[0], lat: p.born.point[1], layer: "life", year: p.born.year, sub: `${p.born.year}`, links: [{ href: `/explore/year?y=${p.born.year}`, label: `Explore ${p.born.year}` }, { href: p.born.source, label: "Source", external: true }] }] : []),
+    ...(p.died?.point ? [{ id: "died", label: `Died in ${p.died.place}`, lng: p.died.point[0], lat: p.died.point[1], layer: "life", year: p.died.year, sub: `${p.died.year}`, links: [{ href: `/explore/year?y=${p.died.year}`, label: `Explore ${p.died.year}` }, { href: p.died.source, label: "Source", external: true }] }] : []),
+    ...works.filter((w) => w.point).map((w) => {
+      const me = w.people.find((x) => x.id === p.id)!;
+      return { id: w.id, label: w.label, lng: w.point![0], lat: w.point![1], layer: "works", year: w.year, image: w.image, sub: [me.role, w.year, w.place].filter(Boolean).join(" · "),
+        links: [...(w.year ? [{ href: `/explore/year?y=${w.year}`, label: `Explore ${w.year}` }] : []), ...w.people.filter((x) => x.id !== p.id).map((x) => ({ href: `/explore/life?id=${x.id}`, label: personById(x.id)?.label ?? "Another life" })), { href: me.source, label: "Source", external: true }] };
+    }),
   ];
   const raw = [...(b != null ? [{ y: b, label: "Born", id: "born", life: true }] : []), ...dated.map((w) => ({ y: w.year!, label: w.label, id: w.id, life: false })), ...(d != null ? [{ y: d, label: "Died", id: "died", life: true }] : [])].sort((x, z) => x.y - z.y);
   const lo = raw[0]?.y ?? 1850, hi = raw[raw.length - 1]?.y ?? 1950;
@@ -31,11 +38,12 @@ export function LifeView() {
   const people = linksOf(p.id);
   const together = sharedWorks(p.id);
   const topics = topicsOf(p.id);
+  const [focus, setFocus] = useState<string | null>(null);
   const peak = dated.length ? dated[Math.floor(dated.length / 2)].year! : b ? b + 40 : 1900;
 
   return (
     <div className="mx-auto max-w-6xl px-4 pb-16 pt-6 sm:px-6" data-testid="life">
-      <ModeBar on="life" />
+      <ModeBar on="life" here={{ href: `/explore/life?id=${p.id}`, label: p.label, mode: "life" }} context={{ year: { href: `/explore/year?y=${peak}`, label: String(peak) }, ...(topics[0] ? { thing: { href: `/explore/thing?id=${topics[0].id}`, label: topics[0].label } } : {}) }} />
       <div className="mt-5 grid gap-6 md:grid-cols-[220px_minmax(0,1fr)]">
         <Pictured image={p.image} alt={`Portrait of ${p.label}`} />
         <div>
@@ -76,7 +84,7 @@ export function LifeView() {
         {points.length > 0 && (
           <section aria-labelledby="life-places">
             <h2 id="life-places" className="font-serif text-2xl">Where</h2>
-            <MiniMap className="mt-3" points={points} label={`Places in the life of ${p.label}`} />
+            <div className="mt-3"><ExploreMap items={points} layers={[{ id: "life", label: "Birth and death", color: "#7a1f2b" }, { id: "works", label: "Works", color: "#8a5a1c" }]} label={`Places in the life of ${p.label}`} focusId={focus} /></div>
           </section>
         )}
         <section aria-labelledby="life-works">
@@ -87,7 +95,7 @@ export function LifeView() {
                 <li key={w.id} className="flex items-center gap-3 rounded-lg border border-line bg-paper-2 p-2">
                   {w.image ? /* eslint-disable-next-line @next/next/no-img-element */ <img src={w.image.url} alt="" className="h-12 w-12 shrink-0 rounded object-cover" title={[artistOf(w.image.artist), w.image.license].filter(Boolean).join(" · ")} /> : <span className="grid h-12 w-12 shrink-0 place-items-center rounded bg-paper-3 text-bronze"><Icon name="city" size={20} /></span>}
                   <span className="min-w-0 flex-1 text-sm">
-                    <a href={wd(w.id)} target="_blank" rel="noopener noreferrer" className="font-medium hover:text-bronze">{w.label}</a>
+                    <a href={wd(w.id)} target="_blank" rel="noopener noreferrer" className="font-medium hover:text-bronze">{w.label}</a>{w.point && <button type="button" onClick={() => setFocus(w.id)} className="ml-2 text-xs text-bronze hover:underline">on the map</button>}
                     <span className="block text-xs text-ink-2">{w.people.find((x) => x.id === p.id)?.role}{w.year != null && <> · <Link className="link" href={`/explore/year?y=${w.year}`}>{w.year}</Link></>}{w.place ? ` · ${w.place}` : ""}<Src href={w.people.find((x) => x.id === p.id)!.source} /></span>
                     {w.image && <span className="block truncate text-[10px] text-ink-2">Image: {[artistOf(w.image.artist), w.image.license].filter(Boolean).join(", ")}{w.image.page && <> · <a className="hover:underline" href={w.image.page} target="_blank" rel="noopener noreferrer">Commons</a></>}</span>}
                   </span>
@@ -124,7 +132,7 @@ function LifeIndex() {
   const list = [...PEOPLE].sort((a, b) => (a.born?.year ?? 0) - (b.born?.year ?? 0));
   return (
     <div className="mx-auto max-w-6xl px-4 pb-16 pt-6 sm:px-6" data-testid="life-index">
-      <ModeBar on="life" />
+      <ModeBar on="life" here={{ href: "/explore/life", label: "All lives", mode: "life" }} />
       <h1 className="mt-5 font-serif text-4xl">Follow a life</h1>
       <p className="mt-1 max-w-2xl text-ink-2">People of Vienna around 1900, each with their years, works, places and the people around them, all from Wikidata.</p>
       <ul className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">

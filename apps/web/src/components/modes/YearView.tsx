@@ -7,7 +7,7 @@ import { formatImportedDate, formatYear, yearOf, type Precision } from "@/lib/da
 import { aliveIn, personById, TOPICS, WORKS, wd } from "@/lib/explore";
 import { atlasHref, CONTINENT_LABELS, loadIndex, type IndexEvent } from "@/lib/world-index";
 import { Icon } from "../icons";
-import { MiniMap } from "../lessons/activities";
+import { ExploreMap, type MapItem } from "./ExploreMap";
 import { ModeBar, NextSteps, SaveInterest } from "./shared";
 
 /** Explore a year: the same year in different places, from documented records, with the collection's people and things. */
@@ -20,7 +20,8 @@ export function YearView() {
   const [draft, setDraft] = useState(String(y));
   useEffect(() => setDraft(String(y)), [y]);
   useEffect(() => { loadIndex().then(setEvents, () => setFailed(true)); }, []);
-  const go = (n: number) => router.replace(`/explore/year?y=${n}`, { scroll: false });
+  // A new history entry for each year, so the browser's Back returns to the last one.
+  const go = (n: number) => router.push(`/explore/year?y=${n}`, { scroll: false });
 
   // Events that began this year, or ran through it and lasted no more than ten years.
   const byContinent = useMemo(() => {
@@ -40,11 +41,17 @@ export function YearView() {
   const alive = aliveIn(y);
   const works = WORKS.filter((w) => w.year === y);
   const things = TOPICS.map((t) => ({ t, items: t.items.filter((x) => x.year === y) })).filter((x) => x.items.length);
-  const points = [...works.filter((w) => w.point).map((w) => ({ label: "", lng: w.point![0], lat: w.point![1], answer: true })), ...things.flatMap(({ items }) => items.filter((x) => x.point).map((x) => ({ label: "", lng: x.point![0], lat: x.point![1] })))];
+  const points: MapItem[] = [
+    ...works.filter((w) => w.point).map((w) => ({ id: w.id, label: w.label, lng: w.point![0], lat: w.point![1], layer: "works", year: w.year, image: w.image,
+      sub: [w.people.map((x) => personById(x.id)?.label).filter(Boolean).join(", "), w.place].filter(Boolean).join(" · "),
+      links: [...w.people.map((x) => ({ href: `/explore/life?id=${x.id}`, label: personById(x.id)?.label ?? "A life" })), { href: wd(w.id), label: "Wikidata", external: true }] })),
+    ...things.flatMap(({ t, items }) => items.filter((x) => x.point).map((x) => ({ id: x.id, label: x.label, lng: x.point![0], lat: x.point![1], layer: t.id, year: x.year, sub: [t.label, x.place].filter(Boolean).join(" · "),
+      links: [{ href: `/explore/thing?id=${t.id}`, label: `Follow ${t.label.toLowerCase()}` }, { href: x.source, label: "Source", external: true }] }))),
+  ];
 
   return (
     <div className="mx-auto max-w-6xl px-4 pb-16 pt-6 sm:px-6" data-testid="year">
-      <ModeBar on="year" />
+      <ModeBar on="year" here={{ href: `/explore/year?y=${y}`, label: formatYear(y), mode: "year" }} context={{ ...(things[0] ? { thing: { href: `/explore/thing?id=${things[0].t.id}`, label: things[0].t.label } } : {}), ...(alive[0] ? { life: { href: `/explore/life?id=${alive[0].person.id}`, label: alive[0].person.label } } : {}) }} />
       <div className="mt-5 flex flex-wrap items-end justify-between gap-3">
         <div>
           <p className="eyebrow">Explore a year</p>
@@ -99,7 +106,7 @@ export function YearView() {
                 <p key={t.id} className="mt-4 text-sm"><Link href={`/explore/thing?id=${t.id}`} className="font-semibold hover:text-bronze">{t.label}</Link>: {items.length} dated {formatYear(y)}, among them {items.slice(0, 3).map((x) => x.label).join(", ")}.</p>
               ))}
             </div>
-            {points.length > 0 && <MiniMap points={points} label={`Works and records dated ${formatYear(y)}`} />}
+            {points.length > 0 && <ExploreMap items={points} layers={[{ id: "works", label: "Works of these people", color: "#7a1f2b" }, ...TOPICS.map((t, i) => ({ id: t.id, label: t.label, color: ["#8a5a1c", "#2f6f8f", "#3d7f4e"][i % 3] }))]} label={`Works and records dated ${formatYear(y)}`} />}
           </div>
         </section>
       )}
