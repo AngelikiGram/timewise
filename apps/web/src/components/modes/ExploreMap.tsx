@@ -7,6 +7,7 @@ import { artistOf, type Credit } from "@/lib/explore";
 import { applyBasemapPalette } from "../AtlasMap";
 import { MiniMap } from "../lessons/activities";
 import { useAppearance } from "../ThemeToggle";
+import { enrich, type Enrichment } from "@/lib/wikidata";
 
 export type MapItem = {
   id: string; label: string; lng: number; lat: number;
@@ -65,10 +66,10 @@ export function ExploreMap({ items, layers, label, height = 440, colorByYear = f
     if (m.getSource("items")) return;
     m.addSource("items", { type: "geojson", data: dataRef.current, cluster, clusterRadius: 38, clusterMaxZoom: 11 });
     m.addLayer({ id: "clusters", type: "circle", source: "items", filter: ["has", "point_count"], paint: {
-      "circle-color": "#6b4416", "circle-opacity": 0.92, "circle-stroke-width": 2, "circle-stroke-color": "#f4ecdc",
-      "circle-radius": ["step", ["get", "point_count"], 13, 10, 17, 50, 22, 200, 28],
+      "circle-color": ["step", ["get", "point_count"], "#a8642a", 10, "#8a4f1c", 50, "#7a1f2b"], "circle-opacity": 0.95, "circle-stroke-width": 3, "circle-stroke-color": "#ffffff",
+      "circle-radius": ["step", ["get", "point_count"], 16, 10, 20, 50, 25, 200, 31],
     } });
-    m.addLayer({ id: "cluster-count", type: "symbol", source: "items", filter: ["has", "point_count"], layout: { "text-field": ["get", "point_count_abbreviated"], "text-font": ["Noto Sans Regular"], "text-size": 13, "text-allow-overlap": true }, paint: { "text-color": "#ffffff", "text-halo-color": "#3a2410", "text-halo-width": 1 } });
+    m.addLayer({ id: "cluster-count", type: "symbol", source: "items", filter: ["has", "point_count"], layout: { "text-field": ["get", "point_count_abbreviated"], "text-font": ["Noto Sans Bold"], "text-size": ["step", ["get", "point_count"], 14, 50, 16, 200, 18], "text-allow-overlap": true, "text-ignore-placement": true }, paint: { "text-color": "#ffffff", "text-halo-color": "rgba(40,20,5,0.85)", "text-halo-width": 1.6 } });
     const span = Math.max(1, y1 - y0);
     m.addLayer({ id: "pts", type: "circle", source: "items", filter: ["!", ["has", "point_count"]], paint: {
       "circle-color": colorByYear && years.length ? ["interpolate", ["linear"], ["get", "year"], y0, RAMP[0], y0 + span / 3, RAMP[1], y0 + (2 * span) / 3, RAMP[2], y1, RAMP[3]] : ["get", "color"],
@@ -111,7 +112,14 @@ export function ExploreMap({ items, layers, label, height = 440, colorByYear = f
         const f = m!.queryRenderedFeatures(e.point, { layers: ["pts", "clusters"].filter((l) => m!.getLayer(l)) })[0];
         m!.getCanvas().style.cursor = f ? "pointer" : "";
         if (!f) { setHover(null); return; }
-        if (f.properties?.cluster) setHover({ x: e.point.x, y: e.point.y, text: `${f.properties.point_count} places`, sub: "Click to zoom in" });
+        if (f.properties?.cluster) {
+          const at = { x: e.point.x, y: e.point.y };
+          setHover({ ...at, text: `${f.properties.point_count} places here`, sub: "Click to zoom in" });
+          (m!.getSource("items") as GeoJSONSource).getClusterLeaves(f.properties.cluster_id, 4, 0).then((leaves) => {
+            const names = leaves.map((l) => byIdRef.current.get(l.properties?.id)?.label).filter(Boolean);
+            setHover((h) => (h && h.x === at.x && h.y === at.y ? { ...h, sub: `${names.join(" · ")}${f.properties!.point_count > names.length ? " …" : ""} · click to zoom in` } : h));
+          }, () => {});
+        }
         else { const it = byIdRef.current.get(f.properties?.id); if (it) setHover({ x: e.point.x, y: e.point.y, text: it.label, sub: it.sub }); }
       });
       m.on("mouseout", () => setHover(null));
@@ -212,7 +220,7 @@ export function ExploreMap({ items, layers, label, height = 440, colorByYear = f
 
       {/* Click: a card with what's known and where to go next */}
       {selected && (
-        <div className="absolute bottom-8 left-2 right-2 z-10 max-w-sm rounded-lg border border-bronze/60 bg-paper p-3 shadow-md sm:right-auto" data-testid="map-card">
+        <div className="absolute bottom-8 left-2 right-2 z-10 max-h-[75%] max-w-md overflow-y-auto rounded-lg border border-bronze/60 bg-paper p-3 shadow-md sm:right-auto" data-testid="map-card">
           <button type="button" onClick={() => setSelected(null)} className="absolute right-1.5 top-1 px-1 text-ink-2 hover:text-ink" aria-label="Close">✕</button>
           <div className="flex gap-3">
             {selected.image && (
@@ -222,17 +230,55 @@ export function ExploreMap({ items, layers, label, height = 440, colorByYear = f
             <div className="min-w-0 pr-4">
               <p className="font-serif text-lg leading-tight">{selected.label}</p>
               {selected.sub && <p className="text-xs text-ink-2">{selected.sub}</p>}
-              {selected.image && <p className="truncate text-[10px] text-ink-2">Image: {[artistOf(selected.image.artist), selected.image.license].filter(Boolean).join(", ")}</p>}
+              {selected.image && <p className="truncate text-[10px] text-ink-2">Image: {[artistOf(selected.image.artist), selected.image.license].filter(Boolean).join(", ") || "Wikimedia Commons"}</p>}
             </div>
           </div>
-          {selected.links && selected.links.length > 0 && (
+          <Details id={selected.id} hasImage={!!selected.image} />
+          {(() => { const links = [...(selected.links ?? []), ...(/^Q\d+$/.test(selected.id) && !(selected.links ?? []).some((l) => l.href.includes("/stories/live")) ? [{ href: `/stories/live?q=${selected.id}`, label: "Its story" }, { href: `/explore/why?q=${selected.id}`, label: "Why?" }] : [])]; return links.length > 0 && (
             <div className="mt-2 flex flex-wrap gap-1.5">
-              {selected.links.map((l) => l.external
+              {links.map((l) => l.external
                 ? <a key={l.href} href={l.href} target="_blank" rel="noopener noreferrer" className="btn btn-ghost btn-sm !min-h-7 !px-2 !text-xs">{l.label} ↗</a>
                 : <Link key={l.href} href={l.href} className="btn btn-secondary btn-sm !min-h-7 !px-2 !text-xs">{l.label}</Link>)}
             </div>
-          )}
+          ); })()}
         </div>
+      )}
+    </div>
+  );
+}
+
+/**
+ * What is known about a record, fetched when its card opens: Wikidata's key facts, Wikipedia's summary
+ * (quoted under CC BY-SA, with its link) and a picture. Shared cache, so a second click is instant.
+ */
+function Details({ id, hasImage }: { id: string; hasImage: boolean }) {
+  const [d, setD] = useState<Enrichment | null | "none">(null);
+  const [more, setMore] = useState(false);
+  useEffect(() => {
+    setD(null); setMore(false);
+    if (!/^Q\d+$/.test(id)) { setD("none"); return; }
+    let live = true;
+    enrich(id).then((x) => { if (live) setD(x); }, () => { if (live) setD("none"); });
+    return () => { live = false; };
+  }, [id]);
+  if (d === "none") return null;
+  if (!d) return <p className="mt-2 text-xs text-ink-2" role="status"><span className="inline-block h-2 w-2 animate-pulse rounded-full bg-bronze align-middle" /> Reading about it…</p>;
+  const text = d.summary?.text ?? "";
+  const short = text.length > 280 && !more ? `${text.slice(0, 270).replace(/\s\S*$/, "")}…` : text;
+  return (
+    <div className="mt-2 border-t border-line pt-2 text-sm" data-testid="map-card-details">
+      {!hasImage && d.image && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={d.image.url} alt={d.image.caption ?? ""} className="mb-2 max-h-36 w-full rounded object-cover" />
+      )}
+      {text ? (
+        <p className="leading-snug">{short}{text.length > 280 && <button type="button" className="link ml-1 text-xs" onClick={() => setMore(!more)}>{more ? "less" : "more"}</button>}
+          <span className="mt-0.5 block text-[10px] text-ink-2">Wikipedia, <a className="hover:underline" href={d.summary!.url} target="_blank" rel="noopener noreferrer">{d.summary!.title}</a>, CC BY-SA 4.0{!hasImage && d.image ? <> · image <a className="hover:underline" href={d.image.page} target="_blank" rel="noopener noreferrer">Commons</a>{d.image.license ? `, ${d.image.license}` : ""}</> : null}</span></p>
+      ) : <p className="text-xs text-ink-2">Wikipedia has no English article on this yet.</p>}
+      {d.facts.length > 0 && (
+        <dl className="mt-2 grid gap-0.5 text-xs">
+          {d.facts.slice(0, 4).map((f) => <div key={f.label} className="flex gap-2"><dt className="w-24 shrink-0 text-ink-2">{f.label}</dt><dd className="min-w-0">{f.text ?? f.values.map((x) => x.label).join(", ")}</dd></div>)}
+        </dl>
       )}
     </div>
   );

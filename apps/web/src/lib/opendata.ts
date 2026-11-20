@@ -39,11 +39,21 @@ export async function europeana(query: string, signal?: AbortSignal, rows = 12):
 
 // ---------------------------------------------------------------------------------------------- Open Library
 
-export type Book = { key: string; title: string; authors: string[]; year?: number; link: string };
+export type Book = { key: string; title: string; authors: string[]; year?: number; link: string; source: "Open Library" | "Internet Archive" };
+/** Give up waiting after `ms`, so one slow service never holds a section up. */
+const within = <T,>(p: Promise<T>, ms: number) => Promise.race([p, new Promise<T>((_, no) => setTimeout(() => no(new Error("timeout")), ms))]);
+/** Books on a subject: Open Library first, and the Internet Archive's texts (free to read online) if it is slow or down. */
 export async function openLibrary(query: string, signal?: AbortSignal, limit = 8): Promise<Book[]> {
-  type R = { docs?: { key: string; title: string; author_name?: string[]; first_publish_year?: number }[] };
-  const d = await cachedJson<R>(`https://openlibrary.org/search.json?q=${encodeURIComponent(query)}&limit=${limit}&fields=key,title,author_name,first_publish_year`, signal);
-  return (d.docs ?? []).map((b) => ({ key: b.key, title: b.title, authors: (b.author_name ?? []).slice(0, 2), year: b.first_publish_year, link: `https://openlibrary.org${b.key}` }));
+  type OL = { docs?: { key: string; title: string; author_name?: string[]; first_publish_year?: number }[] };
+  type IA = { response?: { docs?: { identifier: string; title?: string; creator?: string | string[]; year?: string }[] } };
+  try {
+    const d = await within(cachedJson<OL>(`https://openlibrary.org/search.json?q=${encodeURIComponent(query)}&limit=${limit}`, signal), 9000);
+    const books = (d.docs ?? []).map((b): Book => ({ key: b.key, title: b.title, authors: (b.author_name ?? []).slice(0, 2), year: b.first_publish_year, link: `https://openlibrary.org${b.key}`, source: "Open Library" }));
+    if (books.length) return books;
+  } catch (e) { if ((e as Error).name === "AbortError") throw e; }
+  const q = `(${query}) AND mediatype:texts`;
+  const d = await within(cachedJson<IA>(`https://archive.org/advancedsearch.php?q=${encodeURIComponent(q)}&fl[]=identifier&fl[]=title&fl[]=creator&fl[]=year&rows=${limit}&sort[]=downloads+desc&output=json`, signal), 12000);
+  return (d.response?.docs ?? []).map((b): Book => ({ key: b.identifier, title: b.title ?? b.identifier, authors: (Array.isArray(b.creator) ? b.creator : b.creator ? [b.creator] : []).slice(0, 2), year: b.year ? Number(b.year) : undefined, link: `https://archive.org/details/${b.identifier}`, source: "Internet Archive" }));
 }
 
 // ---------------------------------------------------------------------------------------------- Commons

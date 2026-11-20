@@ -5,9 +5,14 @@ import { shuffle } from "@/lib/challenges";
 import { SKILLS, type Activity, type MapPoint, type SourceRef } from "@/lib/lessons";
 import { loadCountries, type Feature } from "../network/views";
 
-/** A small map of a few points, framed around them, on today's country outlines. */
-export function MiniMap({ points, label, className = "" }: { points: MapPoint[]; label: string; className?: string }) {
+/**
+ * A small map of a few points, framed around them, on today's country outlines. Points that would sit on top of
+ * each other are fanned out around their spot, with a thin line back to it, so every number stays visible.
+ * With `onPick`, each point is a button: hover shows its title, click or Enter selects it.
+ */
+export function MiniMap({ points, label, className = "", selected, onPick, titles }: { points: MapPoint[]; label: string; className?: string; selected?: number | null; onPick?: (i: number) => void; titles?: string[] }) {
   const [shapes, setShapes] = useState<Feature[] | null>(null);
+  const [hover, setHover] = useState<number | null>(null);
   useEffect(() => { loadCountries().then(setShapes, () => setShapes([])); }, []);
   const W = 600;
   const H = 340;
@@ -30,23 +35,49 @@ export function MiniMap({ points, label, className = "" }: { points: MapPoint[];
     return shapes.map((f) => (f.geometry.type === "Polygon" ? (f.geometry.coordinates as number[][][]).map(ring) : (f.geometry.coordinates as number[][][][]).flatMap((p) => p.map(ring))).join("")).join("");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [shapes, x0, x1, y0, y1]);
+  // Fan out points closer than a marker's width: each group is arranged in a small ring around its centre.
+  const placed = useMemo(() => {
+    const at = points.map((p) => { const [x, y] = px(p.lng, p.lat); return { x, y, tx: x, ty: y }; });
+    const group: number[][] = [];
+    at.forEach((a, i) => { const g = group.find((g) => g.some((j) => Math.hypot(at[j].x - a.x, at[j].y - a.y) < 26)); if (g) g.push(i); else group.push([i]); });
+    for (const g of group) {
+      if (g.length < 2) continue;
+      const mx = g.reduce((s, i) => s + at[i].x, 0) / g.length, my = g.reduce((s, i) => s + at[i].y, 0) / g.length;
+      const r = 16 + g.length * 4;
+      g.forEach((i, k) => { const t = -Math.PI / 2 + (2 * Math.PI * k) / g.length; at[i].x = mx + r * Math.cos(t); at[i].y = my + r * Math.sin(t); });
+    }
+    return at;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [points, x0, x1, y0, y1]);
+  const short = (l: string) => l.length > 0 && l.length <= 2;
   return (
     <figure className={className}>
-      <div className="overflow-hidden rounded-lg border border-line bg-paper-3/40">
-        <svg viewBox={`0 0 ${W} ${H}`} className="block h-auto w-full" role="img" aria-label={label}>
+      <div className="relative overflow-hidden rounded-lg border border-line bg-paper-3/40">
+        <svg viewBox={`0 0 ${W} ${H}`} className="block h-auto w-full" role={onPick ? "group" : "img"} aria-label={label}>
           <path d={outline} fill="var(--paper-3)" stroke="var(--line)" strokeWidth={0.8} />
           {points.map((p, i) => {
-            const [x, y] = px(p.lng, p.lat);
+            const { x, y, tx, ty } = placed[i];
+            const on = selected === i || hover === i;
+            const r = (p.answer ? 13 : 9) + (on ? 3 : 0);
+            const name = titles?.[i] ?? p.label;
             return (
-              <g key={i}>
-                <circle cx={x} cy={y} r={p.answer ? 11 : 8} fill={p.answer ? "var(--bronze)" : "var(--navy)"} stroke="var(--paper-2)" strokeWidth={2} />
-                <text x={x + 14} y={y + 7} className={`text-[22px] ${p.answer ? "fill-ink font-semibold" : "fill-ink-2"}`} paintOrder="stroke" stroke="var(--paper)" strokeWidth={4} strokeLinejoin="round">{p.label}</text>
+              <g key={i} className={onPick ? "cursor-pointer outline-none" : ""} role={onPick ? "button" : undefined} tabIndex={onPick ? 0 : undefined} aria-label={onPick ? name : undefined} aria-pressed={onPick ? selected === i : undefined}
+                onClick={() => onPick?.(i)} onKeyDown={(e) => { if (onPick && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); onPick(i); } }}
+                onMouseEnter={() => setHover(i)} onMouseLeave={() => setHover(null)} onFocus={() => setHover(i)} onBlur={() => setHover(null)}>
+                {(x !== tx || y !== ty) && <><line x1={tx} y1={ty} x2={x} y2={y} stroke="var(--ink-2)" strokeWidth={1.2} /><circle cx={tx} cy={ty} r={3} fill="var(--ink-2)" /></>}
+                <circle cx={x} cy={y} r={r} fill={selected === i ? "var(--oxblood)" : p.answer ? "var(--bronze)" : "var(--navy)"} stroke="#fff" strokeWidth={2.5} />
+                {short(p.label) ? <text x={x} y={y + 6} textAnchor="middle" fontSize={17} fontWeight={700} fill="#fff">{p.label}</text>
+                  : <text x={x + r + 4} y={y + 7} className={`text-[22px] ${p.answer ? "fill-ink font-semibold" : "fill-ink-2"}`} paintOrder="stroke" stroke="var(--paper)" strokeWidth={4} strokeLinejoin="round">{p.label}</text>}
+                {name && <title>{name}</title>}
               </g>
             );
           })}
         </svg>
+        {hover != null && titles?.[hover] && (
+          <div className="pointer-events-none absolute z-10 max-w-[70%] -translate-x-1/2 -translate-y-full rounded-md border border-line bg-paper px-2 py-1 text-xs shadow" style={{ left: `${(placed[hover].x / W) * 100}%`, top: `calc(${(placed[hover].y / H) * 100}% - 18px)` }}>{titles[hover]}</div>
+        )}
       </div>
-      <figcaption className="mt-1 text-xs text-ink-2">Today&rsquo;s borders, for orientation only.</figcaption>
+      <figcaption className="mt-1 text-xs text-ink-2">Today&rsquo;s borders, for orientation only.{onPick ? " Click a number to see that step." : ""}</figcaption>
     </figure>
   );
 }

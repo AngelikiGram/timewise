@@ -34,31 +34,74 @@ import { CreditedImage, ReviewBadge, SaveButton } from "../ui";
 import { ActivityView, MiniMap, Sources, type Answer } from "./activities";
 import { formatYear } from "@/lib/dates";
 
-/** Where and when the lesson's records are: a small map and a timeline, before the first card. */
-function Overview({ cards }: { cards: LearnCard[] }) {
-  const placed = cards.filter((c) => c.point);
-  const dated = cards.filter((c) => c.year !== undefined).sort((a, b) => a.year! - b.year!);
-  const lo = dated[0]?.year ?? 0;
-  const hi = dated[dated.length - 1]?.year ?? 0;
+/**
+ * Where and when the lesson's records are, before the first card: a map and a timeline that point at the same
+ * numbered steps. Click a number on either, or a line of the list, to see what that step is about and go to it.
+ */
+function Overview({ cards, onJump }: { cards: LearnCard[]; onJump: (i: number) => void }) {
+  const [sel, setSel] = useState<number | null>(null);
+  const placed = cards.map((c, i) => ({ c, i })).filter((x) => x.c.point);
+  const dated = cards.map((c, i) => ({ c, i })).filter((x) => x.c.year !== undefined).sort((a, b) => a.c.year! - b.c.year!);
+  const lo = dated[0]?.c.year ?? 0;
+  const hi = dated[dated.length - 1]?.c.year ?? 0;
   const span = Math.max(1, hi - lo);
+  const pick = (i: number) => setSel(sel === i ? null : i);
+  const s = sel != null ? cards[sel] : null;
   return (
-    <div className="mt-5 grid gap-4 sm:grid-cols-2" data-testid="lesson-overview">
-      {placed.length > 0 && <MiniMap points={placed.map((c, i) => ({ label: String(i + 1), lng: c.point![0], lat: c.point![1], answer: true }))} label={`Map of the lesson's ${placed.length} records`} />}
+    <div className="mt-5 grid gap-4 md:grid-cols-2" data-testid="lesson-overview">
+      {placed.length > 0 && (
+        <div className="min-w-0">
+          <MiniMap points={placed.map(({ c, i }) => ({ label: String(i + 1), lng: c.point![0], lat: c.point![1], answer: true }))} titles={placed.map(({ c, i }) => `${i + 1}. ${c.title}${c.where ? ` · ${c.where}` : ""}`)}
+            selected={sel == null ? null : placed.findIndex((x) => x.i === sel)} onPick={(k) => pick(placed[k].i)} label={`Map of the lesson's ${placed.length} records`} />
+        </div>
+      )}
       {dated.length > 1 && (
-        <figure className="flex flex-col justify-center">
-          <div className="relative mx-3 h-16" role="img" aria-label={`Timeline from ${formatYear(lo)} to ${formatYear(hi)}`}>
-            <span aria-hidden className="absolute inset-x-0 top-1/2 h-0.5 -translate-y-1/2 rounded bg-line" />
-            {dated.map((c) => {
-              const n = cards.indexOf(c) + 1;
-              return <span key={c.id} aria-hidden className="absolute top-1/2 grid h-7 w-7 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border-2 border-paper bg-bronze text-xs font-semibold text-paper" style={{ left: `${((c.year! - lo) / span) * 100}%` }}>{n}</span>;
+        <figure className="flex min-w-0 flex-col justify-center px-4">
+          <div className="relative h-24" role="group" aria-label={`Timeline from ${formatYear(lo)} to ${formatYear(hi)}`}>
+            <span aria-hidden className="absolute inset-x-0 top-1/2 h-1 -translate-y-1/2 rounded bg-line" />
+            {dated.map(({ c, i }, k) => {
+              const at = ((c.year! - lo) / span) * 100;
+              const up = k % 2 === 1;
+              return (
+                <button key={c.id} type="button" onClick={() => pick(i)} aria-pressed={sel === i} title={`${i + 1}. ${c.title}, ${c.when}`}
+                  className="group absolute top-1/2 -translate-x-1/2 -translate-y-1/2" style={{ left: `${at}%` }}>
+                  <span className={`grid h-8 w-8 place-items-center rounded-full border-2 border-white text-sm font-bold text-white shadow transition-transform group-hover:scale-125 ${sel === i ? "scale-125 bg-oxblood" : "bg-bronze"}`}>{i + 1}</span>
+                  <span className={`absolute left-1/2 -translate-x-1/2 whitespace-nowrap text-xs tabular-nums ${sel === i ? "font-semibold text-ink" : "text-ink-2"} ${up ? "bottom-10" : "top-10"}`}>{formatYear(c.year!)}</span>
+                </button>
+              );
             })}
           </div>
-          <figcaption className="flex justify-between text-xs tabular-nums text-ink-2"><span>{formatYear(lo)}</span><span>{formatYear(hi)}</span></figcaption>
+          <figcaption className="mt-1 text-center text-xs text-ink-2">{formatYear(lo)} to {formatYear(hi)} · click a number</figcaption>
         </figure>
       )}
-      <ol className="grid gap-1 text-sm sm:col-span-2">
-        {cards.map((c, i) => <li key={c.id} className="flex gap-2"><span className="grid h-5 w-5 shrink-0 place-items-center rounded-full bg-bronze text-[11px] font-semibold text-paper">{i + 1}</span><span className="min-w-0">{c.title} <span className="text-ink-2">· {c.where ?? "no location"}</span></span></li>)}
+      <ol className="grid gap-1 text-sm md:col-span-2">
+        {cards.map((c, i) => (
+          <li key={c.id}>
+            <button type="button" onClick={() => pick(i)} aria-pressed={sel === i} className={`flex w-full gap-2 rounded-lg px-1.5 py-1 text-left ${sel === i ? "bg-bronze-soft/50" : "hover:bg-paper-2"}`}>
+              <span className={`grid h-6 w-6 shrink-0 place-items-center rounded-full text-xs font-bold text-white ${sel === i ? "bg-oxblood" : "bg-bronze"}`}>{i + 1}</span>
+              <span className="min-w-0">{c.title} <span className="text-ink-2">· {c.when}{c.where ? ` · ${c.where}` : " · no single location"}</span></span>
+            </button>
+          </li>
+        ))}
       </ol>
+      {s && sel != null && (
+        <div className="fade-in rounded-xl border-2 border-bronze/50 bg-paper p-4 md:col-span-2" data-testid="overview-detail">
+          <div className="flex gap-4">
+            {s.image && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={s.image.url} alt={s.image.title} className="h-24 w-24 shrink-0 rounded-lg object-cover" />
+            )}
+            <div className="min-w-0">
+              <p className="text-xs font-semibold uppercase tracking-wider text-bronze">Step {sel + 1} · {s.when}{s.where ? ` · ${s.where}` : ""}</p>
+              <p className="font-serif text-2xl leading-tight">{s.title}</p>
+              {s.summary && <p className="mt-1 text-sm leading-relaxed">{s.summary.length > 320 ? `${s.summary.slice(0, 310).replace(/\s\S*$/, "")}…` : s.summary}</p>}
+              {!s.summary && s.claims[0] && <p className="mt-1 text-sm leading-relaxed">{s.claims[0].text}</p>}
+              {s.image && <p className="mt-1 text-[10px] text-ink-2">{[s.image.creator, s.image.license].filter(Boolean).join(" · ")}</p>}
+            </div>
+          </div>
+          <button type="button" className="btn btn-primary btn-sm mt-3" onClick={() => onJump(sel)}>Go to step {sel + 1}</button>
+        </div>
+      )}
     </div>
   );
 }
@@ -269,7 +312,7 @@ export function LessonPlayer() {
             <h1 className="mt-2 font-serif text-4xl leading-tight" tabIndex={-1} data-step-heading>{lesson.title}</h1>
             <div className="mt-3"><ReviewBadge level={lesson.review === "source_checked" ? "source_checked" : "imported"} /></div>
             <p className="mt-4 leading-relaxed text-ink-2">{lesson.intro}</p>
-            <Overview cards={lesson.cards} />
+            <Overview cards={lesson.cards} onJump={(ci) => go(stepOfCard(ci))} />
             <ul className="mt-5 grid gap-1 text-ink-2">
               <li>About {lesson.minutes} minutes</li>
               <li>{lesson.cards.length} short steps, each followed by a question, then {Math.max(0, lesson.activities.length - order.filter((o, k) => o.kind === "act" && order[k - 1]?.kind === "card").length)} to put it together</li>
