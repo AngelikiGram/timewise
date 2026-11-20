@@ -1,9 +1,11 @@
 import type { Metadata, Viewport } from "next";
-import { Instrument_Sans, Newsreader } from "next/font/google";
+import { Alegreya, Alegreya_Sans } from "next/font/google";
 import "./globals.css";
 
-const newsreader = Newsreader({ subsets: ["latin", "latin-ext"], variable: "--font-newsreader", style: ["normal", "italic"] });
-const instrument = Instrument_Sans({ subsets: ["latin", "latin-ext"], variable: "--font-instrument" });
+// Alegreya and its sans companion: a family drawn for long reading, with the warmth of old book faces.
+// Serif for what you read (titles, summaries), sans for what you use (controls, labels).
+const newsreader = Alegreya({ subsets: ["latin", "latin-ext"], variable: "--font-newsreader", style: ["normal", "italic"] });
+const instrument = Alegreya_Sans({ subsets: ["latin", "latin-ext"], variable: "--font-instrument", weight: ["400", "500", "700", "800"], style: ["normal", "italic"] });
 
 export const metadata: Metadata = {
   title: "TIMEWISE: Explore history through evidence",

@@ -63,7 +63,7 @@ export function GeneratedStories() {
                   <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-paper-3 text-bronze"><Icon name={s.kind === "chain" ? "cause" : s.kind === "place" ? "place" : "parts"} size={22} /></span>
                   <span className="min-w-0">
                     <span className="block font-serif text-lg leading-tight">{s.title}</span>
-                    <span className="mt-0.5 block text-xs text-ink-2">{s.from < 0 ? `${-s.from} BC` : s.from}–{s.to < 0 ? `${-s.to} BC` : s.to} · {s.count} steps{s.places.length ? ` · ${s.places.slice(0, 2).join(", ")}` : ""}</span>
+                    <span className="mt-0.5 block text-xs text-ink-2">{s.from < 0 ? `${-s.from} BC` : s.from}–{s.to < 0 ? `${-s.to} BC` : s.to}, {s.count} steps{s.places.length ? `, ${s.places.slice(0, 2).join(", ")}` : ""}</span>
                   </span>
                 </span>
                 {saved && (

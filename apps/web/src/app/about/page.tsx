@@ -6,7 +6,7 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { collection, COVERAGE_LABELS } from "@/lib/collection";
 
-export const metadata: Metadata = { title: "Sources · TIMEWISE", description: "Where TIMEWISE's records, texts and images come from, at a glance." };
+export const metadata: Metadata = { title: "Sources | TIMEWISE", description: "Where TIMEWISE's records, texts and images come from, at a glance." };
 
 const SOURCES: { icon: IconName; name: string; what: string; href: string; licence: string }[] = [
   { icon: "source", name: "Wikidata", what: "About 60,000 events: names, dates, places, and the links between them.", href: "https://www.wikidata.org", licence: "CC0" },

@@ -50,9 +50,9 @@ export function YearView() {
   const things = TOPICS.map((t) => ({ t, items: t.items.filter((x) => x.year === y) })).filter((x) => x.items.length);
   const points: MapItem[] = [
     ...works.filter((w) => w.point).map((w) => ({ id: w.id, label: w.label, lng: w.point![0], lat: w.point![1], layer: "works", year: w.year, image: w.image,
-      sub: [w.people.map((x) => personById(x.id)?.label).filter(Boolean).join(", "), w.place].filter(Boolean).join(" · "),
+      sub: [w.people.map((x) => personById(x.id)?.label).filter(Boolean).join(", "), w.place].filter(Boolean).join(", "),
       links: [...w.people.map((x) => ({ href: `/explore/life?id=${x.id}`, label: personById(x.id)?.label ?? "A life" })), { href: wd(w.id), label: "Wikidata", external: true }] })),
-    ...things.flatMap(({ t, items }) => items.filter((x) => x.point).map((x) => ({ id: x.id, label: x.label, lng: x.point![0], lat: x.point![1], layer: t.id, year: x.year, sub: [t.label, x.place].filter(Boolean).join(" · "),
+    ...things.flatMap(({ t, items }) => items.filter((x) => x.point).map((x) => ({ id: x.id, label: x.label, lng: x.point![0], lat: x.point![1], layer: t.id, year: x.year, sub: [t.label, x.place].filter(Boolean).join(", "),
       links: [{ href: `/explore/thing?id=${t.id}`, label: `Follow ${t.label.toLowerCase()}` }, { href: x.source, label: "Source", external: true }] }))),
   ];
 
@@ -108,7 +108,7 @@ export function YearView() {
               {works.length > 0 && (
                 <>
                   <h3 className="mt-4 text-sm font-semibold">Works dated {formatYear(y)}</h3>
-                  <ul className="mt-2 grid gap-1 text-sm">{works.map((w) => <li key={w.id}><a href={wd(w.id)} target="_blank" rel="noopener noreferrer" className="hover:text-bronze">{w.label}</a>{w.place ? <span className="text-ink-2"> · {w.place}</span> : null} <span className="text-ink-2">by</span> {w.people.map((x, i) => <span key={x.id}>{i ? ", " : ""}<Link className="link" href={`/explore/life?id=${x.id}`}>{personById(x.id)?.label}</Link></span>)}</li>)}</ul>
+                  <ul className="mt-2 grid gap-1 text-sm">{works.map((w) => <li key={w.id}><a href={wd(w.id)} target="_blank" rel="noopener noreferrer" className="hover:text-bronze">{w.label}</a>{w.place ? <span className="text-ink-2">, {w.place}</span> : null} <span className="text-ink-2">by</span> {w.people.map((x, i) => <span key={x.id}>{i ? ", " : ""}<Link className="link" href={`/explore/life?id=${x.id}`}>{personById(x.id)?.label}</Link></span>)}</li>)}</ul>
                 </>
               )}
               {things.map(({ t, items }) => (

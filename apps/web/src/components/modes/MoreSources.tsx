@@ -62,7 +62,7 @@ export function MoreSources({ query, point, label }: { query: string; point?: [n
                   <a href={x.link} target="_blank" rel="noopener noreferrer" className="block hover:opacity-90">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     {x.reusable && x.preview ? <img src={x.preview} alt="" loading="lazy" className="h-32 w-full object-cover" /> : <span className="grid h-32 place-items-center bg-paper-3 p-2 text-center text-[11px] text-ink-2"><Icon name="source" size={22} className="mb-1 text-bronze" />Preview at the source</span>}
-                    <span className="block p-2 text-xs"><span className="line-clamp-2 font-medium">{x.title}</span><span className="block truncate text-ink-2">{[x.year, x.provider].filter(Boolean).join(" · ")}</span><span className="block truncate text-[10px] text-ink-2">{rightsLabel(x.rights)}</span></span>
+                    <span className="block p-2 text-xs"><span className="line-clamp-2 font-medium">{x.title}</span><span className="block truncate text-ink-2">{[x.year, x.provider].filter(Boolean).join(", ")}</span><span className="block truncate text-[10px] text-ink-2">{rightsLabel(x.rights)}</span></span>
                   </a>
                 </li>
               ))}
@@ -76,7 +76,7 @@ export function MoreSources({ query, point, label }: { query: string; point?: [n
               <li key={x.page}><a href={x.page} target="_blank" rel="noopener noreferrer" className="block overflow-hidden rounded-lg border border-line hover:opacity-90" title={x.title}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={x.thumb} alt={x.title} loading="lazy" className="h-28 w-full object-cover" />
-                <span className="block truncate px-1.5 py-1 text-[10px] text-ink-2">{[x.date?.slice(0, 4), x.artist, x.license].filter(Boolean).join(" · ")}</span>
+                <span className="block truncate px-1.5 py-1 text-[10px] text-ink-2">{[x.date?.slice(0, 4), x.artist, x.license].filter(Boolean).join(", ")}</span>
               </a></li>
             ))}
           </ul>
@@ -84,7 +84,7 @@ export function MoreSources({ query, point, label }: { query: string; point?: [n
         {tab === "books" && (books === "failed" ? <p className="text-sm text-ink-2">Neither Open Library nor the Internet Archive answered this time; both are sometimes slow.{retry}</p> : !books ? <Loading /> : !books.length ? <p className="text-sm text-ink-2">No books found.</p> : (
           <>
             <ul className="grid gap-2 sm:grid-cols-2" data-testid="books">
-              {books.map((b) => <li key={b.key} className="flex gap-3 rounded-lg border border-line bg-paper-2 p-3 text-sm"><Icon name="book" size={20} className="mt-0.5 shrink-0 text-bronze" /><span><a href={b.link} target="_blank" rel="noopener noreferrer" className="font-medium hover:text-bronze">{b.title}</a><span className="block text-xs text-ink-2">{[b.authors.join(", "), b.year].filter(Boolean).join(" · ")}</span></span></li>)}
+              {books.map((b) => <li key={b.key} className="flex gap-3 rounded-lg border border-line bg-paper-2 p-3 text-sm"><Icon name="book" size={20} className="mt-0.5 shrink-0 text-bronze" /><span><a href={b.link} target="_blank" rel="noopener noreferrer" className="font-medium hover:text-bronze">{b.title}</a><span className="block text-xs text-ink-2">{[b.authors.join(", "), b.year].filter(Boolean).join(", ")}</span></span></li>)}
             </ul>
             <p className="mt-2 text-xs text-ink-2">From {books[0]?.source === "Internet Archive" ? <a className="link" href="https://archive.org/details/texts" target="_blank" rel="noopener noreferrer">the Internet Archive</a> : <a className="link" href="https://openlibrary.org" target="_blank" rel="noopener noreferrer">Open Library</a>}. Many can be read or borrowed there for free.</p>
           </>

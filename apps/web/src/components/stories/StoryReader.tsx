@@ -98,7 +98,7 @@ function Strip({ records, current, onPick }: { records: StoryRecord[]; current: 
           onClick={() => onPick(i)}
           aria-current={i === current ? "step" : undefined}
           aria-label={`Step ${i + 1}: ${r.title.en}, ${when(r)}`}
-          title={`${r.title.en} · ${when(r)}`}
+          title={`${r.title.en}, ${when(r)}`}
           className="group absolute top-0 flex -translate-x-1/2 flex-col items-center gap-1 outline-none"
           style={{ left: `${x(i)}%` }}
         >
@@ -208,14 +208,14 @@ export function StoryReader() {
         <div className="p-5 sm:p-7" key={step}>
           {step < 0 && (
             <section className="fade-in" data-testid="story-intro">
-              <p className="eyebrow">{KIND_LABEL[story.kind]} · {story.count} records</p>
+              <p className="eyebrow">{KIND_LABEL[story.kind]}, {story.count} records</p>
               <h1 className="mt-2 font-serif text-4xl leading-tight">{story.question}</h1>
               <p className="mt-3 flex gap-2 rounded-xl bg-bronze-soft/40 p-3 leading-relaxed"><Icon name={story.kind === "chain" ? "cause" : story.kind === "place" ? "place" : "parts"} size={20} className="mt-0.5 shrink-0 text-bronze" /><span>{story.claim}</span></p>
               <ol className="mt-6 grid gap-3">
                 {story.chapters.map((c, i) => (
                   <li key={c.label} className="flex gap-3">
                     <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-bronze-soft font-serif">{i + 1}</span>
-                    <span className="min-w-0"><span className="block text-sm font-semibold">{c.label}</span><span className="block truncate text-sm text-ink-2">{c.records.map((x) => x.title.en).join(" · ")}</span></span>
+                    <span className="min-w-0"><span className="block text-sm font-semibold">{c.label}</span><span className="block truncate text-sm text-ink-2">{c.records.map((x) => x.title.en).join(", ")}</span></span>
                   </li>
                 ))}
               </ol>
@@ -226,7 +226,7 @@ export function StoryReader() {
 
           {r && (
             <section className="fade-in" data-testid="story-step">
-              <p className="eyebrow">Chapter {ch + 1} of {story.chapters.length} · {story.chapters[ch].label}</p>
+              <p className="eyebrow">Chapter {ch + 1} of {story.chapters.length}, {story.chapters[ch].label}</p>
               {r.via && (
                 <p className="mt-2 flex flex-wrap items-center gap-1.5 text-sm" data-testid="story-link">
                   <Icon name={r.via.kind === "part" ? "parts" : r.via.kind === "cause" ? "cause" : "sequence"} size={16} className="text-bronze" />
@@ -243,7 +243,7 @@ export function StoryReader() {
                 <figure className="mt-4">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={detail.image.url} alt={r.title.en} className="max-h-72 w-full rounded-xl object-cover" />
-                  <figcaption className="mt-1 truncate text-[11px] text-ink-2">Image: {detail.image.artist ?? "Wikimedia Commons"}{detail.image.license ? ` · ${detail.image.license}` : ""} · <a className="link" href={detail.image.page} target="_blank" rel="noopener noreferrer">source</a></figcaption>
+                  <figcaption className="mt-1 truncate text-[11px] text-ink-2">Image: {detail.image.artist ?? "Wikimedia Commons"}{detail.image.license ? `, ${detail.image.license}` : ""}, <a className="link" href={detail.image.page} target="_blank" rel="noopener noreferrer">source</a></figcaption>
                 </figure>
               )}
               {r.description && <p className="mt-4 text-lg leading-relaxed">{r.description[0].toUpperCase() + r.description.slice(1)}.</p>}
@@ -276,7 +276,7 @@ export function StoryReader() {
                 <h1 className="mt-2 font-serif text-3xl leading-tight">{story.title}</h1>
               </div>
               <ol className="space-y-1.5 border-l-2 border-bronze/50 pl-4 text-sm">
-                {records.map((x, i) => <li key={x.id}><button type="button" className="text-left hover:text-bronze" onClick={() => go(i)}><span className="tabular-nums text-ink-2">{when(x)}</span> · {x.title.en}</button></li>)}
+                {records.map((x, i) => <li key={x.id}><button type="button" className="text-left hover:text-bronze" onClick={() => go(i)}><span className="tabular-nums text-ink-2">{when(x)}</span>, {x.title.en}</button></li>)}
               </ol>
               {quiz && <ActivityView activity={quiz} seed={story.id.length + 3} onAnswer={() => {}} onNext={() => panel.current?.scrollTo({ top: panel.current.scrollHeight, behavior: "smooth" })} nextLabel="See what's next" />}
               {next.length > 0 && (

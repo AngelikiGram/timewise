@@ -108,7 +108,7 @@ function Place({ qid }: { qid: string }) {
   const centuries = useMemo(() => { const m = new Map<number, Row[]>(); for (const r of rows) m.set(century(r.year), [...(m.get(century(r.year)) ?? []), r]); return [...m.entries()].sort((x, y) => x[0] - y[0]); }, [rows]);
   // The bar chart keeps empty centuries, so its spacing is time, not just the centuries with records.
   const span = useMemo(() => { if (!centuries.length) return [] as [number, Row[]][]; const out: [number, Row[]][] = []; for (let c = centuries[0][0]; c <= centuries[centuries.length - 1][0]; c++) { if (c === 0) continue; out.push([c, centuries.find((x) => x[0] === c)?.[1] ?? []]); } return out; }, [centuries]);
-  const points: MapItem[] = L.filter((l) => l.point).map((l) => ({ id: l.id, label: l.label, lng: l.point![0], lat: l.point![1], layer: "landmarks", year: l.year, image: l.image, sub: [l.kind, l.year != null ? formatYear(l.year) : null].filter(Boolean).join(" · "), links: [{ href: wd(l.id), label: "Wikidata", external: true }, ...(l.year != null ? [{ href: `/explore/year?y=${l.year}`, label: `Explore ${formatYear(l.year)}` }] : [])] }));
+  const points: MapItem[] = L.filter((l) => l.point).map((l) => ({ id: l.id, label: l.label, lng: l.point![0], lat: l.point![1], layer: "landmarks", year: l.year, image: l.image, sub: [l.kind, l.year != null ? formatYear(l.year) : null].filter(Boolean).join(", "), links: [{ href: wd(l.id), label: "Wikidata", external: true }, ...(l.year != null ? [{ href: `/explore/year?y=${l.year}`, label: `Explore ${formatYear(l.year)}` }] : [])] }));
   const loading = [basics, marks, people, events].some((x) => x === null);
 
   const visit = (
@@ -121,14 +121,14 @@ function Place({ qid }: { qid: string }) {
             <li key={l.id} className="flex gap-3 rounded-xl border border-line bg-paper-2 p-2">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               {l.image ? <img src={l.image.url} alt="" loading="lazy" className="h-16 w-16 shrink-0 rounded-lg object-cover" /> : <span className="grid h-16 w-16 shrink-0 place-items-center rounded-lg bg-paper-3 font-serif text-xl text-bronze">{n + 1}</span>}
-              <span className="min-w-0 text-sm"><a href={wd(l.id)} target="_blank" rel="noopener noreferrer" className="font-semibold hover:text-bronze">{l.label}</a><span className="block text-xs text-ink-2">{[l.kind, l.year != null ? `from ${formatYear(l.year)}` : null].filter(Boolean).join(" · ")}</span>{l.image?.page && <a href={l.image.page} target="_blank" rel="noopener noreferrer" className="text-[10px] text-ink-2 hover:underline">Image: Commons</a>}</span>
+              <span className="min-w-0 text-sm"><a href={wd(l.id)} target="_blank" rel="noopener noreferrer" className="font-semibold hover:text-bronze">{l.label}</a><span className="block text-xs text-ink-2">{[l.kind, l.year != null ? `from ${formatYear(l.year)}` : null].filter(Boolean).join(", ")}</span>{l.image?.page && <a href={l.image.page} target="_blank" rel="noopener noreferrer" className="text-[10px] text-ink-2 hover:underline">Image: Commons</a>}</span>
             </li>
           ))}
           {!L.length && <li className="text-sm text-ink-2">{marks === null ? "Finding landmarks…" : "Wikidata lists no landmarks located here."}</li>}
         </ol>
         <div className="grid content-start gap-4">
           <div><h3 className="text-xs font-semibold text-ink-2">Stories to read before you go</h3>
-            <ul className="mt-2 grid gap-1">{E.slice(0, 5).map((e) => <li key={e.id}><Link href={`/stories/live?q=${e.id}`} className="text-sm hover:text-bronze"><span className="tabular-nums text-ink-2">{formatYear(e.year)}</span> · {e.label}</Link></li>)}{!E.length && <li className="text-sm text-ink-2">{events === null ? "Loading…" : "None recorded here."}</li>}</ul></div>
+            <ul className="mt-2 grid gap-1">{E.slice(0, 5).map((e) => <li key={e.id}><Link href={`/stories/live?q=${e.id}`} className="text-sm hover:text-bronze"><span className="tabular-nums text-ink-2">{formatYear(e.year)}</span>, {e.label}</Link></li>)}{!E.length && <li className="text-sm text-ink-2">{events === null ? "Loading…" : "None recorded here."}</li>}</ul></div>
           <div><h3 className="text-xs font-semibold text-ink-2">People from {name}</h3>
             <ul className="mt-2 flex flex-wrap gap-1.5">{P.slice(0, 8).map((p) => <li key={p.id}><Link href={lifeHref(p.id)} className="chip !min-h-7 !text-xs">{p.label}</Link></li>)}</ul></div>
         </div>
@@ -187,7 +187,7 @@ function Place({ qid }: { qid: string }) {
         <ol className="mt-4 grid gap-3">
           {centuries.filter(([c]) => open == null || c === open).map(([c, rs]) => (
             <li key={c} className="rounded-xl border border-line bg-paper-2 p-4">
-              <h3 className="font-serif text-xl">{centuryLabel(c)} <span className="text-sm text-ink-2">· {rs.length} record{rs.length === 1 ? "" : "s"}</span></h3>
+              <h3 className="font-serif text-xl">{centuryLabel(c)} <span className="text-sm text-ink-2">{rs.length} record{rs.length === 1 ? "" : "s"}</span></h3>
               <ul className="mt-2 grid gap-1.5 sm:grid-cols-2">
                 {(open == null ? rs.slice(0, 8) : rs).map((r) => (
                   <li key={`${r.kind}${r.href}`} className="flex gap-2 text-sm">

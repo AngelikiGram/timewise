@@ -114,10 +114,10 @@ function Life({ data, matched }: { data: LifeData; matched?: string | null }) {
   const [focus, setFocus] = useState<string | null>(null);
 
   const allPoints: MapItem[] = useMemo(() => [
-    ...moments.filter((m) => m.point && m.kind !== "work").map((m) => ({ id: m.id, label: m.label, lng: m.point![0], lat: m.point![1], layer: m.kind === "life" ? "life" : "more", year: m.year, sub: `${formatYear(m.year)}${m.place ? ` · ${m.place}` : ""}`, links: [{ href: `/explore/year?y=${m.year}`, label: `Explore ${formatYear(m.year)}` }, { href: m.source, label: "Source", external: true }] })),
+    ...moments.filter((m) => m.point && m.kind !== "work").map((m) => ({ id: m.id, label: m.label, lng: m.point![0], lat: m.point![1], layer: m.kind === "life" ? "life" : "more", year: m.year, sub: `${formatYear(m.year)}${m.place ? `, ${m.place}` : ""}`, links: [{ href: `/explore/year?y=${m.year}`, label: `Explore ${formatYear(m.year)}` }, { href: m.source, label: "Source", external: true }] })),
     ...works.filter((w) => w.point).map((w) => {
       const me = w.people.find((x) => x.id === p.id);
-      return { id: w.id, label: w.label, lng: w.point![0], lat: w.point![1], layer: "works", year: w.year, image: w.image, sub: [me?.role, w.year, w.place].filter(Boolean).join(" · "),
+      return { id: w.id, label: w.label, lng: w.point![0], lat: w.point![1], layer: "works", year: w.year, image: w.image, sub: [me?.role, w.year, w.place].filter(Boolean).join(", "),
         links: [...(w.year != null ? [{ href: `/explore/year?y=${w.year}`, label: `Explore ${formatYear(w.year)}` }] : []), ...w.people.filter((x) => x.id !== p.id).map((x) => ({ href: lifeHref(x.id), label: personById(x.id)?.label ?? "Another life" })), ...(me ? [{ href: me.source, label: "Source", external: true }] : [])] };
     }),
   ], [moments, works, p.id]);
@@ -166,7 +166,7 @@ function Life({ data, matched }: { data: LifeData; matched?: string | null }) {
       <div className="mt-6 grid gap-6 lg:grid-cols-2">
         {allPoints.length > 0 && (
           <section aria-labelledby="life-places">
-            <h2 id="life-places" className="font-serif text-2xl">Where{!win[2] && Number.isFinite(win[1]) ? <span className="text-base text-ink-2"> · up to {formatYear(win[1])}</span> : null}</h2>
+            <h2 id="life-places" className="font-serif text-2xl">Where{!win[2] && Number.isFinite(win[1]) ? <span className="text-base text-ink-2">, up to {formatYear(win[1])}</span> : null}</h2>
             <div className="mt-3"><ExploreMap items={points} layers={[{ id: "life", label: "Birth and death", color: KIND.life.color }, { id: "works", label: "Works", color: KIND.work.color }, { id: "more", label: "Homes, studies, offices", color: KIND.home.color }]} label={`Places in the life of ${p.label}`} focusId={focus} /></div>
           </section>
         )}
@@ -197,11 +197,11 @@ function WorkList({ works, p, onMap }: { works: Work[]; p: Person; onMap: (id: s
         const me = w.people.find((x) => x.id === p.id);
         return (
           <li key={w.id} className="flex items-center gap-3 rounded-lg border border-line bg-paper-2 p-2">
-            {w.image ? /* eslint-disable-next-line @next/next/no-img-element */ <img src={w.image.url} alt="" loading="lazy" className="h-12 w-12 shrink-0 rounded object-cover" title={[artistOf(w.image.artist), w.image.license].filter(Boolean).join(" · ")} /> : <span className="grid h-12 w-12 shrink-0 place-items-center rounded bg-paper-3 text-bronze"><Icon name="city" size={20} /></span>}
+            {w.image ? /* eslint-disable-next-line @next/next/no-img-element */ <img src={w.image.url} alt="" loading="lazy" className="h-12 w-12 shrink-0 rounded object-cover" title={[artistOf(w.image.artist), w.image.license].filter(Boolean).join(", ")} /> : <span className="grid h-12 w-12 shrink-0 place-items-center rounded bg-paper-3 text-bronze"><Icon name="city" size={20} /></span>}
             <span className="min-w-0 flex-1 text-sm">
               <a href={wd(w.id)} target="_blank" rel="noopener noreferrer" className="font-medium hover:text-bronze">{w.label}</a>{w.point && <button type="button" onClick={() => onMap(w.id)} className="ml-2 text-xs text-bronze hover:underline">on the map</button>}
-              <span className="block text-xs text-ink-2">{me?.role}{w.year != null && <> · <Link className="link" href={`/explore/year?y=${w.year}`}>{formatYear(w.year)}</Link></>}{w.place ? ` · ${w.place}` : ""}{me && <Src href={me.source} />}</span>
-              {w.image && <span className="block truncate text-[10px] text-ink-2">Image: {[artistOf(w.image.artist), w.image.license].filter(Boolean).join(", ") || "Wikimedia Commons"}{w.image.page && <> · <a className="hover:underline" href={w.image.page} target="_blank" rel="noopener noreferrer">Commons</a></>}</span>}
+              <span className="block text-xs text-ink-2">{me?.role}{w.year != null && <>, <Link className="link" href={`/explore/year?y=${w.year}`}>{formatYear(w.year)}</Link></>}{w.place ? `, ${w.place}` : ""}{me && <Src href={me.source} />}</span>
+              {w.image && <span className="block truncate text-[10px] text-ink-2">Image: {[artistOf(w.image.artist), w.image.license].filter(Boolean).join(", ") || "Wikimedia Commons"}{w.image.page && <>, <a className="hover:underline" href={w.image.page} target="_blank" rel="noopener noreferrer">Commons</a></>}</span>}
             </span>
           </li>
         );
@@ -218,8 +218,8 @@ function LifeIndex() {
   const [err, setErr] = useState<string | null>(null);
   const list = [...PEOPLE].sort((a, b) => (a.born?.year ?? 0) - (b.born?.year ?? 0));
   const local = useMemo(() => [
-    ...PEOPLE.map((p) => ({ id: p.id, label: p.label, sub: [p.born?.year, p.died?.year].filter((x) => x != null).join("–") + (p.description ? ` · ${p.description}` : ""), href: `/explore/life?id=${p.id}` })),
-    ...FEATURED_PEOPLE.map((f) => ({ id: `f-${f.name}`, label: f.name, sub: `${ERA_LABEL[f.era]} · looked up on Wikidata`, href: findHref(f) })),
+    ...PEOPLE.map((p) => ({ id: p.id, label: p.label, sub: [p.born?.year, p.died?.year].filter((x) => x != null).join("–") + (p.description ? `, ${p.description}` : ""), href: `/explore/life?id=${p.id}` })),
+    ...FEATURED_PEOPLE.map((f) => ({ id: `f-${f.name}`, label: f.name, sub: `${ERA_LABEL[f.era]}, looked up on Wikidata`, href: findHref(f) })),
   ], []);
   const surprise = () => { recordSurprise(); router.push(findHref(pick(FEATURED_PEOPLE))); };
   const wildcard = async () => {
@@ -255,7 +255,7 @@ function LifeIndex() {
               <Link href={`/explore/life?id=${p.id}`} className="card card-link flex h-full flex-col overflow-hidden" data-testid="life-card">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 {p.image ? <img src={p.image.url} alt="" loading="lazy" className="h-40 w-full object-cover object-top" /> : <span className="grid h-40 place-items-center bg-paper-3 text-bronze"><Icon name="person" size={44} /></span>}
-                <span className="p-3"><span className="block font-serif text-lg leading-tight">{p.label}</span><span className="block text-xs text-ink-2">{[p.born?.year, p.died?.year].filter((x) => x != null).join("–")}{p.description ? ` · ${p.description}` : ""}</span></span>
+                <span className="p-3"><span className="block font-serif text-lg leading-tight">{p.label}</span><span className="block text-xs text-ink-2">{[p.born?.year, p.died?.year].filter((x) => x != null).join("–")}{p.description ? `, ${p.description}` : ""}</span></span>
               </Link>
             </li>
           ))}

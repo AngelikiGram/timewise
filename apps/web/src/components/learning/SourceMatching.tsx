@@ -143,7 +143,7 @@ export function SourceMatching({ activity, currentAnswer, onSubmit, completed, l
                 }}
               >
                 <p className="font-medium text-sm">{source.title}</p>
-                <p className="text-xs text-ink-2">{source.provider} · {source.language}</p>
+                <p className="text-xs text-ink-2">{source.provider}, {source.language}</p>
                 <p className="text-xs text-ink-2 mt-1">Rights: {source.rights}</p>
                 {completed && matchedClaimId && (
                   <span className={`inline-block mt-1 text-xs ${isCorrectlyMatched ? "text-emerald-600" : "text-oxblood-600"}`}>

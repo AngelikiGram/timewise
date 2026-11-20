@@ -51,7 +51,7 @@ function Overview({ cards, onJump }: { cards: LearnCard[]; onJump: (i: number) =
     <div className="mt-5 grid gap-4 md:grid-cols-2" data-testid="lesson-overview">
       {placed.length > 0 && (
         <div className="min-w-0">
-          <MiniMap points={placed.map(({ c, i }) => ({ label: String(i + 1), lng: c.point![0], lat: c.point![1], answer: true }))} titles={placed.map(({ c, i }) => `${i + 1}. ${c.title}${c.where ? ` · ${c.where}` : ""}`)}
+          <MiniMap points={placed.map(({ c, i }) => ({ label: String(i + 1), lng: c.point![0], lat: c.point![1], answer: true }))} titles={placed.map(({ c, i }) => `${i + 1}. ${c.title}${c.where ? `, ${c.where}` : ""}`)}
             selected={sel == null ? null : placed.findIndex((x) => x.i === sel)} onPick={(k) => pick(placed[k].i)} label={`Map of the lesson's ${placed.length} records`} />
         </div>
       )}
@@ -71,7 +71,7 @@ function Overview({ cards, onJump }: { cards: LearnCard[]; onJump: (i: number) =
               );
             })}
           </div>
-          <figcaption className="mt-1 text-center text-xs text-ink-2">{formatYear(lo)} to {formatYear(hi)} · click a number</figcaption>
+          <figcaption className="mt-1 text-center text-xs text-ink-2">{formatYear(lo)} to {formatYear(hi)}, click a number</figcaption>
         </figure>
       )}
       <ol className="grid gap-1 text-sm md:col-span-2">
@@ -79,7 +79,7 @@ function Overview({ cards, onJump }: { cards: LearnCard[]; onJump: (i: number) =
           <li key={c.id}>
             <button type="button" onClick={() => pick(i)} aria-pressed={sel === i} className={`flex w-full gap-2 rounded-lg px-1.5 py-1 text-left ${sel === i ? "bg-bronze-soft/50" : "hover:bg-paper-2"}`}>
               <span className={`grid h-6 w-6 shrink-0 place-items-center rounded-full text-xs font-bold text-white ${sel === i ? "bg-oxblood" : "bg-bronze"}`}>{i + 1}</span>
-              <span className="min-w-0">{c.title} <span className="text-ink-2">· {c.when}{c.where ? ` · ${c.where}` : " · no single location"}</span></span>
+              <span className="min-w-0">{c.title} <span className="text-ink-2">{c.when}{c.where ? `, ${c.where}` : ", no single location"}</span></span>
             </button>
           </li>
         ))}
@@ -92,11 +92,11 @@ function Overview({ cards, onJump }: { cards: LearnCard[]; onJump: (i: number) =
               <img src={s.image.url} alt={s.image.title} className="h-24 w-24 shrink-0 rounded-lg object-cover" />
             )}
             <div className="min-w-0">
-              <p className="text-xs font-semibold text-bronze">Step {sel + 1} · {s.when}{s.where ? ` · ${s.where}` : ""}</p>
+              <p className="text-xs font-semibold text-bronze">Step {sel + 1}, {s.when}{s.where ? `, ${s.where}` : ""}</p>
               <p className="font-serif text-2xl leading-tight">{s.title}</p>
               {s.summary && <p className="mt-1 text-sm leading-relaxed">{s.summary.length > 320 ? `${s.summary.slice(0, 310).replace(/\s\S*$/, "")}…` : s.summary}</p>}
               {!s.summary && s.claims[0] && <p className="mt-1 text-sm leading-relaxed">{s.claims[0].text}</p>}
-              {s.image && <p className="mt-1 text-[10px] text-ink-2">{[s.image.creator, s.image.license].filter(Boolean).join(" · ")}</p>}
+              {s.image && <p className="mt-1 text-[10px] text-ink-2">{[s.image.creator, s.image.license].filter(Boolean).join(", ")}</p>}
             </div>
           </div>
           <button type="button" className="btn btn-primary btn-sm mt-3" onClick={() => onJump(sel)}>Go to step {sel + 1}</button>
@@ -117,7 +117,7 @@ function EntityButton({ entity, onOpen, met, children, className = "" }: { entit
 function Card({ card, review, onOpen, metBefore, context }: { card: LearnCard; review: Lesson["review"]; onOpen: (e: Entity) => void; metBefore: (id: string) => boolean; context?: React.ReactNode }) {
   return (
     <article data-testid="learn-card">
-      <p className="text-xs font-semibold text-bronze">{card.when}{card.where ? <> · {card.place ? <EntityButton entity={card.place} onOpen={onOpen} met={metBefore(card.place.id)} className="">{card.where}</EntityButton> : card.where}</> : ""}</p>
+      <p className="text-xs font-semibold text-bronze">{card.when}{card.where ? <>, {card.place ? <EntityButton entity={card.place} onOpen={onOpen} met={metBefore(card.place.id)} className="">{card.where}</EntityButton> : card.where}</> : ""}</p>
       <h2 className="mt-1 font-serif text-3xl leading-tight" tabIndex={-1} data-step-heading><EntityButton entity={card.entity} onOpen={onOpen} met={metBefore(card.entity.id)} className="text-left">{card.title}</EntityButton></h2>
       {(card.people?.length ?? 0) > 0 && (
         <p className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm" data-testid="card-people">
@@ -292,7 +292,7 @@ export function LessonPlayer() {
         <nav aria-label="Where you are" className="min-w-0 flex-1 truncate text-sm text-ink-2">
           <Link href={`/learn?path=${lesson.pathId}`} className="hover:text-ink">{path?.title ?? "Lesson"}</Link>
           <span aria-hidden> › </span><span className="text-ink">{lesson.title}</span>
-          {path && <span> · lesson {path.lessons.findIndex((l) => l.id === lesson.id) + 1} of {path.lessons.length}</span>}
+          {path && <span>, lesson {path.lessons.findIndex((l) => l.id === lesson.id) + 1} of {path.lessons.length}</span>}
         </nav>
         <div className="flex items-center gap-2" role="progressbar" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100} aria-label="Lesson progress">
           <span className="text-sm tabular-nums text-ink-2">{step + 1}/{steps}</span>
@@ -374,7 +374,7 @@ export function LessonPlayer() {
               {[...lesson.cards].sort((a, b) => (a.year ?? 0) - (b.year ?? 0)).map((c) => (
                 <li key={c.id} className="relative">
                   <span aria-hidden className="absolute -left-[1.65rem] top-1 h-3 w-3 rounded-full border-2 border-paper bg-bronze" style={c.year !== undefined ? { background: ERA_COLOR[eraOf(c.year)!.id] } : undefined} />
-                  <span className="block text-xs font-semibold tabular-nums text-bronze">{c.when}{c.where ? ` · ${c.where}` : ""}{c.year !== undefined ? <span className="font-normal text-ink-2"> · {eraOf(c.year)!.label}</span> : null}</span>
+                  <span className="block text-xs font-semibold tabular-nums text-bronze">{c.when}{c.where ? `, ${c.where}` : ""}{c.year !== undefined ? <span className="font-normal text-ink-2">, {eraOf(c.year)!.label}</span> : null}</span>
                   <span className="font-medium">{c.title}</span>
                   {c.claims.length > 0 && <span className="block text-xs text-ink-2">{c.claims.length} sourced statement{c.claims.length > 1 ? "s" : ""}</span>}
                 </li>

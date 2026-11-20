@@ -128,7 +128,7 @@ export function Meanwhile({ anchor, compact = false }: { anchor: Anchor; compact
                 <span aria-hidden className="mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: categoryVar(e.c) }} />
                 <span className="min-w-0 flex-1">
                   <span className="block text-xs text-ink-2">
-                    <span className="font-semibold text-ink">{CONTINENT_LABELS[e.ct!]}</span> · {formatImportedDate(e.s, e.e, e.p as Precision)} · {CATEGORY_LABELS[e.c] ?? e.c}
+                    <span className="font-semibold text-ink">{CONTINENT_LABELS[e.ct!]}</span>, {formatImportedDate(e.s, e.e, e.p as Precision)}, {CATEGORY_LABELS[e.c] ?? e.c}
                   </span>
                   <span className="block font-serif text-[1.05rem] leading-snug group-hover:text-bronze">{e.t}</span>
                 </span>

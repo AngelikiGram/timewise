@@ -36,7 +36,7 @@ export function ContinueLearning() {
         {items.map((r) => (
           <li key={r.id} className="w-64 shrink-0">
             <Link href={r.href} className="card block h-full p-4">
-              <span className="text-xs text-ink-2">{formatImportedDate(r.start, undefined, "year")} · {r.context}</span>
+              <span className="text-xs text-ink-2">{formatImportedDate(r.start, undefined, "year")}, {r.context}</span>
               <span className="mt-1 block font-serif text-lg leading-snug">{r.title}</span>
             </Link>
           </li>

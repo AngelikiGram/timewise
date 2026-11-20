@@ -41,7 +41,7 @@ export function ArchivalMaterial({ eventId }: { eventId: string }) {
             <p className="mt-1 text-ink-2">{item.note}</p>
             <p className="mt-2 text-xs text-ink-2">
               {/* Some providers give an authority-file URL or "unknown" (Swedish: okänd) as the creator. */}
-              {[item.creator && !/^https?:|^okänd$/i.test(item.creator) ? item.creator : null, item.date_text, item.institution].filter(Boolean).join(" · ")}
+              {[item.creator && !/^https?:|^okänd$/i.test(item.creator) ? item.creator : null, item.date_text, item.institution].filter(Boolean).join(", ")}
             </p>
             {item.url && <a href={item.url} target="_blank" rel="noopener noreferrer" className="mt-1 inline-block text-xs font-medium text-bronze underline-offset-2 hover:underline">View at Europeana ↗</a>}
             {!item.preview_url && <p className="mt-1 text-xs italic text-ink-2">The image isn&rsquo;t shown here because of its rights. Follow the link to see it.</p>}

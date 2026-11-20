@@ -28,7 +28,7 @@ export function MemoryReview() {
 
       {!queue && (
         <div className="card mt-4 flex flex-wrap items-center gap-4 p-5">
-          <p className="min-w-0 flex-1"><span className="block font-serif text-4xl tabular-nums" data-testid="memory-due">{due.length}</span><span className="text-sm text-ink-2">due now, of {all.length} kept{soon && !due.length ? ` · next one ${new Date(soon.due).toLocaleDateString("en-GB", { day: "numeric", month: "short" })}` : ""}</span></p>
+          <p className="min-w-0 flex-1"><span className="block font-serif text-4xl tabular-nums" data-testid="memory-due">{due.length}</span><span className="text-sm text-ink-2">due now, of {all.length} kept{soon && !due.length ? `, next one ${new Date(soon.due).toLocaleDateString("en-GB", { day: "numeric", month: "short" })}` : ""}</span></p>
           {due.length > 0 && <button type="button" className="btn btn-primary" onClick={() => start(due)} data-testid="memory-start">Review {Math.min(12, due.length)} now</button>}
           {!due.length && all.length > 0 && <button type="button" className="btn btn-secondary" onClick={() => start(all)}>Practise early</button>}
           {!all.length && <p className="w-full text-sm text-ink-2">Nothing yet. Finish a <Link className="link" href="/stories">story</Link>, scrub a <Link className="link" href="/explore/life">life</Link> to its end, or play the <Link className="link" href="/challenges/timeline">timeline game</Link>.</p>}

@@ -58,7 +58,7 @@ export function EvidenceInspector() {
         <div className="flex-1 min-w-0">
           <h2 className="font-serif text-lg leading-snug">Evidence Inspector</h2>
           <p className="text-xs text-ink-2 mt-0.5">
-            {event.title.en} · {event.when.start.slice(0, 4)}
+            {event.title.en}, {event.when.start.slice(0, 4)}
           </p>
         </div>
       </div>
@@ -72,7 +72,7 @@ export function EvidenceInspector() {
           </span>
         ))}
         {allClaims.length > claims.length && (
-          <span className="text-xs text-ink-2">· {allClaims.length - claims.length} hidden by the evidence filter</span>
+          <span className="text-xs text-ink-2">{allClaims.length - claims.length} hidden by the evidence filter</span>
         )}
       </div>
 
@@ -138,7 +138,7 @@ export function EvidenceInspector() {
       )}
 
       <p className="mt-3 text-xs text-ink-2" role="status">
-        {allClaims.length} claim{allClaims.length !== 1 ? "s" : ""} for this event · {evidenceMode} mode showing {claims.length}
+        {allClaims.length} claim{allClaims.length !== 1 ? "s" : ""} for this event, {evidenceMode} mode showing {claims.length}
       </p>
     </div>
   );
@@ -212,4 +212,4 @@ function shouldShowClaim(claim: Claim, mode: string): boolean {
   if (mode === "documented") return !["inferred", "missing"].includes(claim.support);
   if (mode === "inferred") return claim.support !== "missing";
   return true; // reconstructed shows all
-}
+}

@@ -88,7 +88,7 @@ export function Sources({ sources }: { sources: SourceRef[] }) {
   return (
     <ul className="mt-2 grid gap-1 text-sm">
       {unique.map((s) => (
-        <li key={s.url}><a href={s.url} target="_blank" rel="noopener noreferrer" className="link">{s.label} ↗</a>{s.note && <span className="text-ink-2"> · {s.note}</span>}</li>
+        <li key={s.url}><a href={s.url} target="_blank" rel="noopener noreferrer" className="link">{s.label} ↗</a>{s.note && <span className="text-ink-2">, {s.note}</span>}</li>
       ))}
     </ul>
   );

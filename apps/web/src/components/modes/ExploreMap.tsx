@@ -14,7 +14,7 @@ export type MapItem = {
   /** Which switchable layer it belongs to. */
   layer: string;
   year?: number | null;
-  /** One line under the name: "architect · 1907 · Hütteldorf". */
+  /** One line under the name: "architect, 1907, Hütteldorf". */
   sub?: string;
   links?: { href: string; label: string; external?: boolean }[];
   image?: Credit;
@@ -117,7 +117,7 @@ export function ExploreMap({ items, layers, label, height = 440, colorByYear = f
           setHover({ ...at, text: `${f.properties.point_count} places here`, sub: "Click to zoom in" });
           (m!.getSource("items") as GeoJSONSource).getClusterLeaves(f.properties.cluster_id, 4, 0).then((leaves) => {
             const names = leaves.map((l) => byIdRef.current.get(l.properties?.id)?.label).filter(Boolean);
-            setHover((h) => (h && h.x === at.x && h.y === at.y ? { ...h, sub: `${names.join(" · ")}${f.properties!.point_count > names.length ? " …" : ""} · click to zoom in` } : h));
+            setHover((h) => (h && h.x === at.x && h.y === at.y ? { ...h, sub: `${names.join(", ")}${f.properties!.point_count > names.length ? " …" : ""}, click to zoom in` } : h));
           }, () => {});
         }
         else { const it = byIdRef.current.get(f.properties?.id); if (it) setHover({ x: e.point.x, y: e.point.y, text: it.label, sub: it.sub }); }
@@ -273,7 +273,7 @@ function Details({ id, hasImage }: { id: string; hasImage: boolean }) {
       )}
       {text ? (
         <p className="leading-snug">{short}{text.length > 280 && <button type="button" className="link ml-1 text-xs" onClick={() => setMore(!more)}>{more ? "less" : "more"}</button>}
-          <span className="mt-0.5 block text-[10px] text-ink-2">Wikipedia, <a className="hover:underline" href={d.summary!.url} target="_blank" rel="noopener noreferrer">{d.summary!.title}</a>, CC BY-SA 4.0{!hasImage && d.image ? <> · image <a className="hover:underline" href={d.image.page} target="_blank" rel="noopener noreferrer">Commons</a>{d.image.license ? `, ${d.image.license}` : ""}</> : null}</span></p>
+          <span className="mt-0.5 block text-[10px] text-ink-2">Wikipedia, <a className="hover:underline" href={d.summary!.url} target="_blank" rel="noopener noreferrer">{d.summary!.title}</a>, CC BY-SA 4.0{!hasImage && d.image ? <>, image <a className="hover:underline" href={d.image.page} target="_blank" rel="noopener noreferrer">Commons</a>{d.image.license ? `, ${d.image.license}` : ""}</> : null}</span></p>
       ) : <p className="text-xs text-ink-2">Wikipedia has no English article on this yet.</p>}
       {d.facts.length > 0 && (
         <dl className="mt-2 grid gap-0.5 text-xs">

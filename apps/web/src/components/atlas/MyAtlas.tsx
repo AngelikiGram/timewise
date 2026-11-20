@@ -287,18 +287,22 @@ export function MyAtlas() {
   }
 
   return (
-    <div className="flex min-h-[calc(100dvh-3.5rem)] flex-col" data-testid="my-atlas">
-      <div className="grid flex-1 gap-0 lg:grid-cols-[280px_minmax(0,1fr)_360px]">
-        {/* Left: search, filters, paths, suggestions, and the whole atlas as a list */}
-        <aside className="border-b border-line p-4 lg:border-b-0 lg:border-r" aria-label="Filters">
-          <h1 className="font-serif text-2xl">My history atlas</h1>
-          <ul className="mt-2 grid grid-cols-4 gap-1 text-center" aria-label="Your atlas so far">
-            {(Object.keys(STATE_LABEL) as (keyof typeof STATE_LABEL)[]).map((k) => <li key={k} className="rounded-lg px-1 py-1.5" style={{ background: `color-mix(in srgb, ${STATE_COLOR[k]} 13%, transparent)` }}><span className="block font-serif text-lg leading-none tabular-nums" style={{ color: STATE_COLOR[k] }}>{counts[k]}</span><span className="text-[10px] text-ink-2">{STATE_LABEL[k].toLowerCase()}</span></li>)}
+    <div className="mx-auto max-w-[1500px] px-4 pb-14 pt-6 sm:px-6" data-testid="my-atlas">
+      <header className="flex flex-wrap items-end justify-between gap-4">
+        <div className="max-w-2xl">
+          <h1 className="font-serif text-4xl leading-tight sm:text-5xl">My history atlas</h1>
+          <p className="mt-1 text-ink-2">The people, places and events you have met, joined only where a source says so. Click any of them to put it in the middle.</p>
+        </div>
+        <ul className="flex flex-wrap gap-2" aria-label="Your atlas so far">
+            {(Object.keys(STATE_LABEL) as (keyof typeof STATE_LABEL)[]).map((k) => <li key={k} className="min-w-[5.5rem] rounded-lg px-3 py-2" style={{ background: `color-mix(in srgb, ${STATE_COLOR[k]} 13%, transparent)` }}><span className="block font-serif text-2xl leading-none tabular-nums" style={{ color: STATE_COLOR[k] }}>{counts[k]}</span><span className="text-xs text-ink-2">{STATE_LABEL[k].toLowerCase()}</span></li>)}
           </ul>
-          <p className="mt-1 text-[11px] text-ink-2">Its size isn&rsquo;t a score.</p>
-          <label className="mt-3 block"><span className="sr-only">Search my atlas</span><input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search my atlas" className="field !py-1.5 text-sm" /></label>
-          <fieldset className="mt-3"><legend className="text-xs font-semibold text-ink-2">Types</legend>
-            <div className="mt-1.5 flex flex-wrap gap-1.5">
+      </header>
+
+      {/* One toolbar: find, filter, step back */}
+      <div className="mt-5 flex flex-wrap items-center gap-x-3 gap-y-2 rounded-xl border border-line bg-paper-2 p-2.5">
+        <label className="w-full sm:w-56"><span className="sr-only">Search my atlas</span><input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search my atlas" className="field !py-1.5 text-sm" /></label>
+        <fieldset className="contents"><legend className="sr-only">Kinds of entity</legend>
+            <div className="flex flex-wrap gap-1.5">
               {TYPES.filter((t) => all.some((n) => n.type === t)).map((t) => (
                 <button key={t} type="button" aria-pressed={types.has(t)} onClick={() => setTypes((s) => { const n = new Set(s); if (n.has(t)) n.delete(t); else n.add(t); return n; })} className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs ${types.has(t) ? "bg-paper-2" : "border-line text-ink-2 line-through opacity-60"}`} style={types.has(t) ? { borderColor: TYPE_COLOR[t] } : undefined}>
                   <svg viewBox="-12 -12 24 24" className="h-3.5 w-3.5" aria-hidden style={{ color: types.has(t) ? TYPE_COLOR[t] : undefined }}><Shape type={t} r={8} className={types.has(t) ? "fill-current stroke-current" : "fill-none stroke-current"} /></svg>{TYPE_LABEL[t]}<span className="text-ink-2">{all.filter((n) => n.type === t).length}</span>
@@ -306,36 +310,33 @@ export function MyAtlas() {
               ))}
             </div>
           </fieldset>
-          {pathsInAtlas.length > 0 && (
-            <label className="mt-3 block text-xs font-semibold text-ink-2">Learning path
-              <select value={path} onChange={(e) => setPath(e.target.value)} className="field mt-1 !py-1.5 text-sm normal-case tracking-normal">
+        {pathsInAtlas.length > 0 && (
+            <label className="text-xs text-ink-2"><span className="sr-only">Learning path</span>
+              <select value={path} onChange={(e) => setPath(e.target.value)} className="field !min-h-9 !w-auto !py-1 text-sm">
                 <option value="">All paths</option>
                 {pathsInAtlas.map((id) => <option key={id} value={id}>{pathById(id)?.title ?? id}</option>)}
               </select>
             </label>
           )}
-          {suggestions.length > 0 && (
-            <section className="mt-4" aria-labelledby="next-title">
-              <h2 id="next-title" className="text-xs font-semibold text-ink-2">Explore next</h2>
-              <ul className="mt-1.5 grid gap-1.5">{suggestions.map((s) => <li key={s.id}><button type="button" onClick={() => go(s.id)} className="w-full rounded-md border border-dashed border-bronze/60 p-2 text-left text-sm hover:bg-paper-3"><span className="font-medium">{nodes[s.id].label}</span><span className="block text-xs text-ink-2">{s.why}</span></button></li>)}</ul>
-            </section>
-          )}
-          <details className="mt-4" open={list.length < 30}>
-            <summary className="cursor-pointer text-xs font-semibold text-ink-2">All {list.length} in the atlas, as a list</summary>
-            <ul className="mt-1.5 max-h-72 overflow-y-auto" data-testid="atlas-list-alt">
-              {list.map((n) => <li key={n.id}><button type="button" onClick={() => go(n.id)} aria-current={n.id === current ? "true" : undefined} className={`flex w-full items-center gap-2 rounded px-2 py-1 text-left text-sm hover:bg-paper-3 ${n.id === current ? "bg-paper-3 font-semibold" : ""}`}><Icon name={TYPE_ICON[n.type]} size={14} className="shrink-0" style={{ color: TYPE_COLOR[n.type] }} /><span className="truncate">{n.label}</span>{n.saved && <span className="ml-auto text-bronze" aria-label="saved">★</span>}</button></li>)}
-            </ul>
-          </details>
-        </aside>
-
-        {/* Centre: the focused graph */}
-        <section className="relative min-w-0 border-b border-line lg:border-b-0" aria-label="Connections of the selected entity">
-          <div className="flex flex-wrap items-center gap-2 border-b border-line px-4 py-2">
-            <button type="button" className="btn btn-ghost btn-sm" disabled={!history.length} onClick={() => { const prev = history[history.length - 1]; setHistory((h) => h.slice(0, -1)); setFocus(prev); }}><Icon name="back" size={15} />Back</button>
+        <div className="flex flex-wrap items-center gap-2 text-sm" data-testid="atlas-time">
+        <Icon name="timeline" size={16} className="text-bronze" />
+        <span className="text-ink-2">Years</span>
+        <label className="sr-only" htmlFor="at-from">From</label><input id="at-from" inputMode="numeric" value={from} onChange={(e) => setFrom(e.target.value.replace(/[^\d-]/g, ""))} placeholder="From" className="field !w-20 !py-1 text-sm" />
+        <span aria-hidden>–</span>
+        <label className="sr-only" htmlFor="at-to">To</label><input id="at-to" inputMode="numeric" value={to} onChange={(e) => setTo(e.target.value.replace(/[^\d-]/g, ""))} placeholder="To" className="field !w-20 !py-1 text-sm" />
+        {[["1800s", 1800, 1899], ["1900s", 1900, 1999]].map(([l, a, b]) => <button key={l as string} type="button" className="chip !min-h-7 !text-xs" onClick={() => { setFrom(String(a)); setTo(String(b)); }}>{l}</button>)}
+        {(from || to) && <button type="button" className="link text-xs" onClick={() => { setFrom(""); setTo(""); }}>Clear</button>}
+      </div>
+        <span className="flex flex-wrap gap-1.5 lg:ml-auto">
+          <button type="button" className="btn btn-ghost btn-sm" disabled={!history.length} onClick={() => { const prev = history[history.length - 1]; setHistory((h) => h.slice(0, -1)); setFocus(prev); }}><Icon name="back" size={15} />Back</button>
             <button type="button" className="btn btn-ghost btn-sm" onClick={() => { setHistory([]); setFocus(latest ?? null); setTypes(new Set(TYPES)); setPath(""); setFrom(""); setTo(""); }}><Icon name="reset" size={15} />Reset view</button>
             {edges.length > 0 && <button type="button" className="btn btn-secondary btn-sm" onClick={startRestore} disabled={!!restore && !restore.answered} data-testid="restore-start"><Icon name="idea" size={15} />Restore a hidden link</button>}
-            {back && <Link href={back} className="btn btn-secondary btn-sm ml-auto" data-testid="back-to-lesson">← Back to the lesson</Link>}
-          </div>
+            {back && <Link href={back} className="btn btn-secondary btn-sm" data-testid="back-to-lesson">← Back to the lesson</Link>}
+        </span>
+      </div>
+
+      <div className="mt-4 grid gap-4 lg:grid-cols-[minmax(0,1fr)_360px]">
+        <section className="relative min-w-0 overflow-hidden rounded-xl border border-line bg-paper-2" aria-label="Connections of the selected entity">
           <div ref={box} className="relative hidden overflow-hidden sm:block" style={{ height: H }} role="group" aria-label={node ? `${node.label} and ${shown.length} connections` : "Atlas"} data-testid="atlas-graph">
             <svg className="absolute inset-0 h-full w-full" viewBox={`0 0 ${W} ${H}`} aria-hidden>
               <defs>
@@ -375,7 +376,7 @@ export function MyAtlas() {
               const nb = kept.current[id];
               const live = shown.some((x) => x.id === id);
               const unexplored = !!nb.preview && !nb.node;
-              const sub = unexplored ? "Wikidata · not explored yet" : [TYPE_LABEL[nb.type], nb.node?.dates ?? (nb.node?.year !== undefined ? String(nb.node.year) : "")].filter(Boolean).join(" · ");
+              const sub = unexplored ? "Wikidata, not explored yet" : [TYPE_LABEL[nb.type], nb.node?.dates ?? (nb.node?.year !== undefined ? String(nb.node.year) : "")].filter(Boolean).join(", ");
               return (
                 <button key={id} type="button" tabIndex={live ? 0 : -1} disabled={!live} onClick={() => open(nb)} onMouseEnter={() => warm(id)} onFocus={() => warm(id)} data-atlas-node={live ? id : undefined} data-preview={live ? unexplored : undefined}
                   aria-label={hiddenNode(nb) ? "Hidden entity" : `${nb.label}, ${TYPE_LABEL[nb.type]}${unexplored ? ", not explored yet" : ""}`} title={hiddenNode(nb) ? "Hidden until you restore the link" : nb.label}
@@ -391,7 +392,7 @@ export function MyAtlas() {
               return (
                 <div key={`focus-${node.id}`} data-atlas-focus={node.id} className="atlas-move absolute left-0 top-0 flex items-center gap-3 rounded-2xl border-2 px-3 shadow-lg" style={{ width: FW, height: FH, transform: `translate(${f.x - FW / 2}px, ${f.y - FH / 2}px)`, borderColor: TYPE_COLOR[node.type], background: `color-mix(in srgb, ${TYPE_COLOR[node.type]} 16%, var(--paper-2))` }}>
                   <TypeBadge type={node.type} size={40} solid />
-                  <span className="min-w-0 flex-1"><span className="line-clamp-2 font-serif text-[15px] font-semibold leading-tight" title={node.label}>{node.label}</span><span className="mt-0.5 block truncate text-[11px] text-ink-2">{[TYPE_LABEL[node.type], node.dates ?? detail?.when.text].filter(Boolean).join(" · ")}</span></span>
+                  <span className="min-w-0 flex-1"><span className="line-clamp-2 font-serif text-[15px] font-semibold leading-tight" title={node.label}>{node.label}</span><span className="mt-0.5 block truncate text-[11px] text-ink-2">{[TYPE_LABEL[node.type], node.dates ?? detail?.when.text].filter(Boolean).join(", ")}</span></span>
                 </div>
               );
             })()}
@@ -411,7 +412,7 @@ export function MyAtlas() {
           )}
           {/* Phones: the entity, then its connections as cards */}
           <ul className="grid gap-2 p-4 sm:hidden">
-            {shown.map((nb) => <li key={nb.id}><button type="button" onClick={() => open(nb)} className={`card flex w-full items-center gap-3 p-3 text-left ${nb.preview && !nb.node ? "border-dashed" : ""}`}><TypeBadge type={nb.type} dim={!!nb.preview && !nb.node} /><span className="min-w-0 flex-1"><span className="block truncate font-medium">{nb.label}</span><span className="text-xs text-ink-2">{nb.edge ? nb.edge.label : `${nb.preview?.relation} · documented on Wikidata${nb.node ? "" : ", not explored yet"}`}</span></span></button></li>)}
+            {shown.map((nb) => <li key={nb.id}><button type="button" onClick={() => open(nb)} className={`card flex w-full items-center gap-3 p-3 text-left ${nb.preview && !nb.node ? "border-dashed" : ""}`}><TypeBadge type={nb.type} dim={!!nb.preview && !nb.node} /><span className="min-w-0 flex-1"><span className="block truncate font-medium">{nb.label}</span><span className="text-xs text-ink-2">{nb.edge ? nb.edge.label : `${nb.preview?.relation}, documented on Wikidata${nb.node ? "" : ", not explored yet"}`}</span></span></button></li>)}
           </ul>
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1 px-4 pb-3 text-xs text-ink-2" data-testid="atlas-legend">
             <span className="inline-flex items-center gap-1"><svg width="26" height="8" aria-hidden><line x1="1" y1="4" x2="20" y2="4" stroke="var(--bronze)" strokeWidth="2" /><path d="M19,0 L25,4 L19,8 z" fill="var(--bronze)" /></svg>sourced, in your atlas</span>
@@ -424,18 +425,16 @@ export function MyAtlas() {
             </span>
           </div>
         </section>
-
-        {/* Right: details and sources */}
-        <aside className="p-4 lg:border-l lg:border-line" aria-label="Details" data-testid="atlas-details">
+        <aside className="rounded-xl border border-line bg-paper-2 p-5 lg:sticky lg:top-20 lg:max-h-[calc(100dvh-6rem)] lg:overflow-y-auto" aria-label="Details" data-testid="atlas-details">
           {node ? (
             <>
-              <p className="text-xs font-semibold text-bronze">{TYPE_LABEL[node.type]}{node.dates ? ` · ${node.dates}` : detail?.when.text ? ` · ${detail.when.text}` : ""}</p>
+              <p className="text-xs font-semibold text-bronze">{TYPE_LABEL[node.type]}{node.dates ? `, ${node.dates}` : detail?.when.text ? `, ${detail.when.text}` : ""}</p>
               <h2 className="font-serif text-2xl leading-tight">{node.label}</h2>
-              {detail?.image && <figure className="mt-3">{/* eslint-disable-next-line @next/next/no-img-element */}<img src={detail.image.url} alt="" className="max-h-44 w-full rounded-lg object-cover" /><figcaption className="mt-1 truncate text-[11px] text-ink-2">{[detail.image.artist, detail.image.license].filter(Boolean).join(" · ")} · <a className="link" href={detail.image.page} target="_blank" rel="noopener noreferrer">source</a></figcaption></figure>}
+              {detail?.image && <figure className="mt-3">{/* eslint-disable-next-line @next/next/no-img-element */}<img src={detail.image.url} alt="" className="max-h-44 w-full rounded-lg object-cover" /><figcaption className="mt-1 truncate text-[11px] text-ink-2">{[detail.image.artist, detail.image.license].filter(Boolean).join(", ")}, <a className="link" href={detail.image.page} target="_blank" rel="noopener noreferrer">source</a></figcaption></figure>}
               <p className="mt-3 text-sm leading-relaxed">{node.description ?? detail?.description ?? "No description is recorded."}</p>
               <p className="mt-1 text-xs text-ink-2">Source: {node.source?.url ? <a className="link" href={node.source.url} target="_blank" rel="noopener noreferrer">{node.source.label} ↗</a> : "TIMEWISE checked collection"}</p>
               <ul className="mt-3 grid grid-cols-2 gap-1 text-xs" data-testid="atlas-states">
-                {(Object.keys(STATE_LABEL) as (keyof typeof STATE_LABEL)[]).map((k) => <li key={k} className={`rounded-md border px-2 py-1 ${node[k] ? "" : "border-dashed border-line text-ink-2"}`} style={node[k] ? { borderColor: STATE_COLOR[k], background: `color-mix(in srgb, ${STATE_COLOR[k]} 14%, transparent)` } : undefined}>{STATE_LABEL[k]}{node[k] ? ` · ${ago(node[k])}` : ": not yet"}</li>)}
+                {(Object.keys(STATE_LABEL) as (keyof typeof STATE_LABEL)[]).map((k) => <li key={k} className={`rounded-md border px-2 py-1 ${node[k] ? "" : "border-dashed border-line text-ink-2"}`} style={node[k] ? { borderColor: STATE_COLOR[k], background: `color-mix(in srgb, ${STATE_COLOR[k]} 14%, transparent)` } : undefined}>{STATE_LABEL[k]}{node[k] ? `, ${ago(node[k])}` : ": not yet"}</li>)}
               </ul>
               <div className="mt-3 flex flex-wrap gap-2">
                 <button type="button" className="btn btn-primary btn-sm" aria-pressed={!!node.saved} onClick={() => toggleSaveEntity(node)}>{node.saved ? "Saved ✓" : "Save"}</button>
@@ -445,7 +444,7 @@ export function MyAtlas() {
               <ul className="mt-1.5 grid gap-1.5">
                 {edges.filter((e) => e.from === node.id || e.to === node.id).map((e) => (
                   <li key={`${e.from}${e.label}${e.to}`} className="rounded-md border border-line bg-paper-2 p-2 text-sm">
-                    <span className="font-medium">{nodes[e.from]?.label ?? e.from}</span> <span className="text-bronze">{e.label}</span> <span className="font-medium">{nodes[e.to]?.label ?? e.to}</span>{e.date && <span className="text-ink-2"> · {e.date}</span>}
+                    <span className="font-medium">{nodes[e.from]?.label ?? e.from}</span> <span className="text-bronze">{e.label}</span> <span className="font-medium">{nodes[e.to]?.label ?? e.to}</span>{e.date && <span className="text-ink-2">, {e.date}</span>}
                     <span className="block text-xs text-ink-2">{e.source.url ? <a className="link" href={e.source.url} target="_blank" rel="noopener noreferrer">{e.source.label} ↗</a> : e.source.label}</span>
                   </li>
                 ))}
@@ -469,16 +468,20 @@ export function MyAtlas() {
         </aside>
       </div>
 
-      {/* Bottom: a compact time filter */}
-      <div className="flex flex-wrap items-center gap-2 border-t border-line bg-paper-2 px-4 py-2 text-sm" data-testid="atlas-time">
-        <Icon name="timeline" size={16} className="text-bronze" />
-        <span className="text-ink-2">Years</span>
-        <label className="sr-only" htmlFor="at-from">From</label><input id="at-from" inputMode="numeric" value={from} onChange={(e) => setFrom(e.target.value.replace(/[^\d-]/g, ""))} placeholder="From" className="field !w-20 !py-1 text-sm" />
-        <span aria-hidden>–</span>
-        <label className="sr-only" htmlFor="at-to">To</label><input id="at-to" inputMode="numeric" value={to} onChange={(e) => setTo(e.target.value.replace(/[^\d-]/g, ""))} placeholder="To" className="field !w-20 !py-1 text-sm" />
-        {[["1800s", 1800, 1899], ["1900s", 1900, 1999]].map(([l, a, b]) => <button key={l as string} type="button" className="chip !min-h-7 !text-xs" onClick={() => { setFrom(String(a)); setTo(String(b)); }}>{l}</button>)}
-        {(from || to) && <button type="button" className="link text-xs" onClick={() => { setFrom(""); setTo(""); }}>Clear</button>}
-        <span className="ml-auto text-xs text-ink-2">Undated entities always show. Today&rsquo;s borders only sort places.</span>
+      <div className="mt-10 grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.5fr)]">
+        {suggestions.length > 0 && (
+            <section aria-labelledby="next-title">
+              <h2 id="next-title" className="font-serif text-2xl">Explore next</h2>
+              <p className="text-sm text-ink-2">One sourced link away from something you explored.</p>
+              <ul className="mt-3 grid gap-2 sm:grid-cols-2">{suggestions.map((s) => <li key={s.id}><button type="button" onClick={() => go(s.id)} className="card card-link h-full w-full p-3 text-left text-sm"><span className="font-medium">{nodes[s.id].label}</span><span className="block text-xs text-ink-2">{s.why}</span></button></li>)}</ul>
+            </section>
+          )}
+        <section aria-labelledby="all-title">
+            <h2 id="all-title" className="font-serif text-2xl">Everything in your atlas <span className="text-base text-ink-2">({list.length})</span></h2>
+            <ul className="mt-3 grid max-h-80 gap-x-3 overflow-y-auto sm:grid-cols-2 xl:grid-cols-3" data-testid="atlas-list-alt">
+              {list.map((n) => <li key={n.id}><button type="button" onClick={() => go(n.id)} aria-current={n.id === current ? "true" : undefined} className={`flex w-full items-center gap-2 rounded px-2 py-1 text-left text-sm hover:bg-paper-3 ${n.id === current ? "bg-paper-3 font-semibold" : ""}`}><Icon name={TYPE_ICON[n.type]} size={14} className="shrink-0" style={{ color: TYPE_COLOR[n.type] }} /><span className="truncate">{n.label}</span>{n.saved && <span className="ml-auto text-bronze" aria-label="saved">★</span>}</button></li>)}
+            </ul>
+          </section>
       </div>
     </div>
   );

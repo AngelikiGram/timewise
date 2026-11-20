@@ -28,18 +28,18 @@ export function Working({ title, steps, preview }: { title: string; steps: Step[
               <span className={`grid h-6 w-6 shrink-0 place-items-center rounded-full text-xs ${s.state === "done" ? "bg-bronze text-paper" : s.state === "doing" ? "border-2 border-bronze" : "border border-line"}`}>
                 {s.state === "done" ? "✓" : s.state === "doing" ? <span className="tw-pulse block h-2 w-2 rounded-full bg-bronze" /> : ""}
               </span>
-              <span>{s.label}{s.detail && <span className="text-ink-2"> · {s.detail}</span>}</span>
+              <span>{s.label}{s.detail && <span className="text-ink-2">, {s.detail}</span>}</span>
             </li>
           ))}
         </ol>
-        <p className="mt-4 text-xs text-ink-2">{t}s{t > 12 ? " · big subjects take Wikidata a while; it is kept for next time, so it opens at once then" : ""}</p>
+        <p className="mt-4 text-xs text-ink-2">{t}s{t > 12 ? ", big subjects take Wikidata a while; it is kept for next time, so it opens at once then" : ""}</p>
       </div>
       <div>
         {preview?.image && (
           <figure>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={preview.image.url} alt={preview.image.caption ?? ""} className="max-h-64 w-full rounded-xl object-cover" />
-            <figcaption className="mt-1 text-[11px] text-ink-2">{[preview.image.artist, preview.image.license].filter(Boolean).join(" · ")} · <a className="link" href={preview.image.page} target="_blank" rel="noopener noreferrer">Wikimedia Commons</a></figcaption>
+            <figcaption className="mt-1 text-[11px] text-ink-2">{[preview.image.artist, preview.image.license].filter(Boolean).join(", ")}, <a className="link" href={preview.image.page} target="_blank" rel="noopener noreferrer">Wikimedia Commons</a></figcaption>
           </figure>
         )}
         {preview?.summary ? (

@@ -43,7 +43,7 @@ export function LevelBar({ compact = false }: { compact?: boolean }) {
         <p className="text-xs font-semibold text-bronze">Level {l.n}</p>
         <p className="font-serif text-2xl leading-tight">{l.title}</p>
         <div className="mt-2 h-3 overflow-hidden rounded-full bg-line" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={pct} aria-label="Progress to the next level"><div className="h-full rounded-full bg-gradient-to-r from-bronze to-oxblood transition-[width] duration-700" style={{ width: `${pct}%` }} /></div>
-        <p className="mt-1 text-xs text-ink-2">{l.xp} XP{l.to ? ` · ${l.to - l.xp} more to ${l.nextTitle}` : " · the top level"}</p>
+        <p className="mt-1 text-xs text-ink-2">{l.xp} XP{l.to ? `, ${l.to - l.xp} more to ${l.nextTitle}` : ", the top level"}</p>
       </div>
     </div>
   );
@@ -76,7 +76,7 @@ export function BadgeToast() {
     <div className="pointer-events-none fixed inset-x-0 bottom-6 z-50 flex justify-center px-4" role="status" aria-live="polite" data-testid="badge-toast">
       <div className="pointer-events-auto flex animate-[tw-pop_.5s_ease-out] items-center gap-3 rounded-2xl border-2 bg-paper p-3 pr-5 shadow-xl" style={{ borderColor: TIER_STYLE[shown[0].tier].ring }}>
         <Medal b={shown[0]} size={52} />
-        <span><span className="block text-xs font-semibold text-bronze">Badge earned!</span><span className="block font-serif text-xl leading-tight">{shown[0].label}</span><span className="block text-xs text-ink-2">{shown[0].help}{shown.length > 1 ? ` · and ${shown.length - 1} more` : ""}</span></span>
+        <span><span className="block text-xs font-semibold text-bronze">Badge earned!</span><span className="block font-serif text-xl leading-tight">{shown[0].label}</span><span className="block text-xs text-ink-2">{shown[0].help}{shown.length > 1 ? `, and ${shown.length - 1} more` : ""}</span></span>
         <Link href="/explore/interests?tab=profile" className="btn btn-secondary btn-sm ml-2">See all</Link>
       </div>
       <style>{"@keyframes tw-pop{0%{transform:translateY(30px) scale(.8);opacity:0}70%{transform:translateY(-4px) scale(1.04);opacity:1}100%{transform:none}}"}</style>
@@ -94,7 +94,7 @@ export function ExplorerPanel() {
     [Object.keys(e.lives).length, "lives followed", "/explore/life"], [Object.keys(e.things).length, "things tracked", "/explore/thing"],
     [Object.keys(e.years).length, "years visited", "/explore/year"], [Object.keys(e.stories).length, "stories opened", "/stories"],
     [Object.keys(e.places).length, "places explained", "/explore/place"], [Object.keys(e.why).length, "causes opened", "/explore/why"],
-    [e.timeline.perfect, `perfect timelines · best streak ${e.timeline.best}`, "/challenges/timeline"], [e.facts.right, `claims judged right of ${e.facts.answered}`, "/challenges/fact-or-myth"],
+    [e.timeline.perfect, `perfect timelines, best streak ${e.timeline.best}`, "/challenges/timeline"], [e.facts.right, `claims judged right of ${e.facts.answered}`, "/challenges/fact-or-myth"],
   ];
   const lives = recentOf(e.lives), things = recentOf(e.things), stories = recentOf(e.stories, 4), places = recentOf(e.places, 4);
   const hrefLife = (id: string) => (/^Q\d+$/.test(id) ? `/explore/life?q=${id}` : `/explore/life?id=${id}`);

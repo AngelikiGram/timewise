@@ -3,7 +3,7 @@ import Link from "next/link";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 
-export const metadata: Metadata = { title: "Membership plans (proposed) · TIMEWISE", description: "A proposed membership model. Nothing is for sale yet." };
+export const metadata: Metadata = { title: "Membership plans (proposed) | TIMEWISE", description: "A proposed membership model. Nothing is for sale yet." };
 
 // Prices are a proposal to test, kept in one place so they're easy to change.
 const PRICES = { monthly: "€4.99", yearly: "€39", pack: "€5–9" };
@@ -32,7 +32,7 @@ export default function PlansPage() {
     <>
       <SiteHeader />
       <main className="mx-auto max-w-5xl px-4 pb-16 pt-8 sm:px-6">
-        <p className="eyebrow">Membership · a proposal</p>
+        <p className="eyebrow">Membership, a proposal</p>
         <h1 className="mt-2 font-serif text-4xl leading-tight sm:text-5xl">How TIMEWISE might pay for itself</h1>
         <div role="note" className="mt-5 rounded-lg border-2 border-bronze/60 bg-paper-2 p-4 leading-relaxed">
           <strong>Nothing is for sale.</strong> These plans are a proposal we&rsquo;re testing. No payments are taken, no paid features exist yet, and there is no publishing schedule for new stories. Historical accuracy and access to sources will always be free.

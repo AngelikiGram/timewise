@@ -73,7 +73,7 @@ function Teller({ qid }: { qid: string }) {
   const groups = useMemo(() => (["before", "parts", "after"] as const).map((g) => ({ g, steps: steps.map((s, n) => ({ s, n })).filter((x) => x.s.group === g) })).filter((x) => x.steps.length), [steps]);
   const items: MapItem[] = useMemo(() => [
     ...(story?.point ? [{ id: qid, label: story.label, lng: story.point[0], lat: story.point[1], layer: "event", year: story.year, sub: story.year != null ? formatYear(story.year) : undefined }] : []),
-    ...steps.filter((s) => s.point).map((s) => ({ id: s.id, label: s.label, lng: s.point![0], lat: s.point![1], layer: s.group, year: s.year, sub: [s.year != null ? formatYear(s.year) : null, `${s.relation} ${story?.label ?? "it"}`].filter(Boolean).join(" · "), links: [{ href: `/stories/live?q=${s.id}`, label: "Tell this as a story" }, { href: s.source, label: "Source", external: true }] })),
+    ...steps.filter((s) => s.point).map((s) => ({ id: s.id, label: s.label, lng: s.point![0], lat: s.point![1], layer: s.group, year: s.year, sub: [s.year != null ? formatYear(s.year) : null, `${s.relation} ${story?.label ?? "it"}`].filter(Boolean).join(", "), links: [{ href: `/stories/live?q=${s.id}`, label: "Tell this as a story" }, { href: s.source, label: "Source", external: true }] })),
   ], [steps, story, qid]);
 
   if (err) return <Frame><p role="alert" className="rounded-xl border border-line bg-paper-2 p-4 text-ink-2">{err}</p></Frame>;
@@ -90,7 +90,7 @@ function Teller({ qid }: { qid: string }) {
       <article data-testid="live-story">
         <p className="eyebrow">A story made just now from Wikidata</p>
         <h1 className="mt-1 font-serif text-4xl leading-tight">{story.label}</h1>
-        <p className="mt-1 text-ink-2">{[story.description, story.year != null ? formatYear(story.year) : null].filter(Boolean).join(" · ")}</p>
+        <p className="mt-1 text-ink-2">{[story.description, story.year != null ? formatYear(story.year) : null].filter(Boolean).join(", ")}</p>
         <Link href={`/explore/why?q=${qid}`} className="btn btn-secondary btn-sm mt-3"><Icon name="cause" size={15} />Why did this happen? See the network</Link>
 
         <div className="mt-5 grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
@@ -99,7 +99,7 @@ function Teller({ qid }: { qid: string }) {
               <figure className="mb-4">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={more.image.url} alt={more.image.caption ?? ""} className="max-h-64 w-full rounded-xl object-cover" />
-                <figcaption className="mt-1 text-[11px] text-ink-2">{[more.image.artist, more.image.license].filter(Boolean).join(" · ")} · <a className="link" href={more.image.page} target="_blank" rel="noopener noreferrer">Wikimedia Commons</a></figcaption>
+                <figcaption className="mt-1 text-[11px] text-ink-2">{[more.image.artist, more.image.license].filter(Boolean).join(", ")}, <a className="link" href={more.image.page} target="_blank" rel="noopener noreferrer">Wikimedia Commons</a></figcaption>
               </figure>
             )}
             {more?.summary && (
@@ -121,7 +121,7 @@ function Teller({ qid }: { qid: string }) {
                   <div className="mt-3 rounded-xl border-2 border-bronze/50 bg-paper p-4" aria-live="polite" data-testid="live-story-step">
                     <p className="flex items-center gap-1.5 text-xs font-semibold text-bronze"><Icon name={GROUP[cur.group].icon} size={14} />{GROUP[cur.group].title}</p>
                     <p className="mt-1 font-serif text-2xl leading-tight">{cur.label}</p>
-                    <p className="text-sm text-ink-2">{[cur.year != null ? formatYear(cur.year) : "Undated", cur.description].filter(Boolean).join(" · ")}</p>
+                    <p className="text-sm text-ink-2">{[cur.year != null ? formatYear(cur.year) : "Undated", cur.description].filter(Boolean).join(", ")}</p>
                     <p className="mt-2 text-sm">{cur.label} {cur.relation} {story.label}. <a className="link text-xs" href={cur.source} target="_blank" rel="noopener noreferrer">statement ↗</a></p>
                     <div className="mt-3 flex flex-wrap gap-2">
                       <Link href={`/stories/live?q=${cur.id}`} className="btn btn-secondary btn-sm"><Icon name="book" size={15} />Tell this as a story</Link>

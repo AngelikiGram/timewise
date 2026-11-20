@@ -65,7 +65,7 @@ export function CenturyChart({ rows, from = -1000 }: { rows: Row[]; from?: numbe
         <div className="mt-4 rounded-sm bg-paper-3 px-4 py-3" aria-live="polite">
           <p className="font-serif text-xl">{centuryLabel(active.century)}: {total(active).toLocaleString("en")} events</p>
           <p className="mt-1 text-sm text-ink-2">
-            {cats.filter((c) => active.counts[c]).map((c) => `${CATEGORY_LABELS[c] ?? c} ${active.counts[c].toLocaleString("en")}`).join(" · ")}
+            {cats.filter((c) => active.counts[c]).map((c) => `${CATEGORY_LABELS[c] ?? c} ${active.counts[c].toLocaleString("en")}`).join(", ")}
           </p>
         </div>
       )}

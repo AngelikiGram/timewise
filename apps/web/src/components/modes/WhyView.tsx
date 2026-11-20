@@ -124,7 +124,7 @@ function Network({ root }: { root: string }) {
   return (
     <div>
       <p className="eyebrow">Why did this happen?</p>
-      <h1 className="mt-1 font-serif text-4xl leading-tight">{rootNode.label}{rootNode.year != null && <span className="text-2xl text-ink-2"> · {formatYear(rootNode.year)}</span>}</h1>
+      <h1 className="mt-1 font-serif text-4xl leading-tight">{rootNode.label}{rootNode.year != null && <span className="text-2xl text-ink-2">, {formatYear(rootNode.year)}</span>}</h1>
       {rootNode.description && <p className="mt-1 text-ink-2">{rootNode.description}</p>}
       <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-ink-2">
         <li className="inline-flex items-center gap-1.5"><svg width="28" height="8"><line x1="0" y1="4" x2="28" y2="4" stroke="var(--oxblood)" strokeWidth="2" /></svg>cause → effect</li>
@@ -160,7 +160,7 @@ function Network({ root }: { root: string }) {
                   onClick={() => { setSel(n.id); if (n.state === "closed" || n.state === "failed") open(n.id); }} onKeyDown={(k) => { if (k.key === "Enter" || k.key === " ") { k.preventDefault(); setSel(n.id); if (n.state === "closed" || n.state === "failed") open(n.id); } }}>
                   <rect width={W} height={H} rx={12} fill={fill} stroke={picked ? "var(--bronze)" : "var(--line)"} strokeWidth={picked ? 3 : 1} />
                   <text x={12} y={23} fontSize={13} fontWeight={600} fill={ink}>{n.label.length > 30 ? `${n.label.slice(0, 29)}…` : n.label}<title>{n.label}</title></text>
-                  <text x={12} y={42} fontSize={11} fill={isRoot ? "#f3e2c8" : "#6b604c"}>{n.year != null ? formatYear(n.year) : "undated"}{n.state === "loading" ? " · opening…" : n.state === "closed" ? " · click to open" : ""}</text>
+                  <text x={12} y={42} fontSize={11} fill={isRoot ? "#f3e2c8" : "#6b604c"}>{n.year != null ? formatYear(n.year) : "undated"}{n.state === "loading" ? ", opening…" : n.state === "closed" ? ", click to open" : ""}</text>
                   {n.state === "closed" && <circle cx={W - 16} cy={H / 2} r={9} fill="var(--bronze)" />}
                   {n.state === "closed" && <text x={W - 16} y={H / 2 + 4} fontSize={13} fontWeight={700} textAnchor="middle" fill="#fff">+</text>}
                 </g>
@@ -173,7 +173,7 @@ function Network({ root }: { root: string }) {
             <>
               <p className="text-xs font-semibold text-bronze">{s.id === root ? "The event" : s.depth < 0 ? "A cause, or what came before" : "A consequence, or what came after"}</p>
               <h2 className="mt-1 font-serif text-2xl leading-tight">{s.label}</h2>
-              <p className="text-sm text-ink-2">{[s.year != null ? formatYear(s.year) : null, s.description].filter(Boolean).join(" · ")}</p>
+              <p className="text-sm text-ink-2">{[s.year != null ? formatYear(s.year) : null, s.description].filter(Boolean).join(", ")}</p>
               <ul className="mt-3 grid gap-1.5 text-sm">
                 {touching.map((e) => { const a = nodes.get(e.from)!, b = nodes.get(e.to)!; return <li key={`${e.from}>${e.to}`}><b>{a.label}</b> {e.kind === "cause" ? "led to" : "was followed by"} <b>{b.label}</b>. <a className="link text-xs" href={e.source} target="_blank" rel="noopener noreferrer">statement ↗</a></li>; })}
               </ul>

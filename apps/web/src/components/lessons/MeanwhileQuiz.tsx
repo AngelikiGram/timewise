@@ -66,7 +66,7 @@ export function MeanwhileQuiz({ cards, continent }: { cards: LearnCard[]; contin
           const answered = g !== undefined;
           return (
             <li key={e.i} className="rounded-lg border border-line bg-paper p-3" data-testid="meanwhile-item">
-              <p className="text-xs text-ink-2"><span className="font-semibold text-ink">{CONTINENT_LABELS[e.ct!] ?? "Elsewhere"}</span> · {formatImportedDate(e.s, e.e, e.p as Precision)}</p>
+              <p className="text-xs text-ink-2"><span className="font-semibold text-ink">{CONTINENT_LABELS[e.ct!] ?? "Elsewhere"}</span>, {formatImportedDate(e.s, e.e, e.p as Precision)}</p>
               <p className="font-serif text-lg leading-snug">{e.t}</p>
               {!answered ? (
                 <div className="mt-2 flex flex-wrap gap-2" role="group" aria-label={`Is ${e.t} connected to ${anchor.title}?`}>

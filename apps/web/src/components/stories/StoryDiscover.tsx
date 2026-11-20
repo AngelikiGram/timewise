@@ -20,7 +20,7 @@ export function StoryDiscover({ compact = false }: { compact?: boolean }) {
   const router = useRouter();
   const [index, setIndex] = useState<StoryEntry[]>([]);
   useEffect(() => { loadStoryIndex().then((d) => setIndex(d.stories), () => {}); }, []);
-  const local = useMemo(() => index.map((s) => ({ id: s.id, label: s.title, sub: `${yr(s.from)}–${yr(s.to)} · ${s.count} steps${s.places.length ? ` · ${s.places.slice(0, 2).join(", ")}` : ""}`, href: `/stories/read?id=${s.id}` })), [index]);
+  const local = useMemo(() => index.map((s) => ({ id: s.id, label: s.title, sub: `${yr(s.from)}–${yr(s.to)}, ${s.count} steps${s.places.length ? `, ${s.places.slice(0, 2).join(", ")}` : ""}`, href: `/stories/read?id=${s.id}` })), [index]);
   const surprise = () => { if (!index.length) return; recordSurprise(); router.push(`/stories/read?id=${pick(index).id}`); };
   const fresh = () => { recordSurprise(); router.push(`/stories/live?find=${encodeURIComponent(pick(FEATURED_EVENTS))}`); };
 

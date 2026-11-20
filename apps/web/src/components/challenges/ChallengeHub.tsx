@@ -63,7 +63,7 @@ export function ChallengeHub() {
         <h2 id="case" className="font-serif text-2xl">Detective case</h2>
         <Link href={caseStory.href} className="card mt-3 grid gap-4 p-5 sm:grid-cols-[1fr_auto] sm:items-center">
           <span>
-            <span className="eyebrow">{caseStory.place} · {caseStory.period} · {caseStory.minutes} min · {caseStory.difficulty}</span>
+            <span className="eyebrow">{caseStory.place}, {caseStory.period}, {caseStory.minutes} min, {caseStory.difficulty}</span>
             <span className="mt-1 block font-serif text-2xl leading-tight">{caseStory.title}</span>
             <span className="mt-1 block text-ink-2">{caseStory.question}</span>
           </span>
@@ -104,7 +104,7 @@ export function ChallengeHub() {
                 <li key={c.id}>
                   <Link href={`/challenges/${c.id}`} className="card flex h-full flex-col p-4">
                     <span className="flex items-center justify-between text-xs text-ink-2">
-                      <span>{c.theme} · {c.minutes} min · {c.xp} XP</span>
+                      <span>{c.theme}, {c.minutes} min, {c.xp} XP</span>
                       {b >= 0 && <span className={`badge ${b === 1 ? "text-navy" : "text-bronze"}`}>{b === 1 ? "✓ Perfect" : `Best ${Math.round(b * 100)}%`}</span>}
                     </span>
                     <span className="mt-2 font-serif text-xl leading-snug">{c.title}</span>

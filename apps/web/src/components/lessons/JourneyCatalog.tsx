@@ -55,7 +55,7 @@ export function JourneyCatalog({ current, onPick }: { current?: string; onPick?:
                 </span>
                 <span className="min-w-0 flex-1">
                   <span className="block font-serif text-lg leading-tight [overflow-wrap:anywhere]">{x.title}</span>
-                  <span className="mt-0.5 block text-xs text-ink-2">{x.lessons.length} lessons · about {minutes} min · {x.difficulty}</span>
+                  <span className="mt-0.5 block text-xs text-ink-2">{x.lessons.length} lessons, about {minutes} min, {x.difficulty}</span>
                 </span>
               </span>
               <span className="mt-3 flex items-center gap-2">

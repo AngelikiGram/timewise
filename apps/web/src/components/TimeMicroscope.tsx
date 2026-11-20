@@ -335,8 +335,8 @@ export function TimeMicroscope() {
 
       {/* Context indicator */}
       <div className="mt-2 text-xs text-ink-2" role="status" aria-live="polite">
-        {events.length} events in collection · {evidenceMode} mode
-        {comparisonMode !== "single" && <span> · {comparisonMode} view</span>}
+        {events.length} events in collection, {evidenceMode} mode
+        {comparisonMode !== "single" && <span>, {comparisonMode} view</span>}
       </div>
     </div>
   );
@@ -381,4 +381,4 @@ function IconThenNow() {
       <path d="M5.5 6.5L6.5 5.5" strokeWidth="1" />
     </svg>
   );
-}
+}

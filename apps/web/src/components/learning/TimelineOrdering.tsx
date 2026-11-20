@@ -110,7 +110,7 @@ export function TimelineOrdering({ activity, currentAnswer, onSubmit, completed,
                 <span className="block font-serif text-base leading-snug">{t(event.title, lang)}</span>
                 <span className="block text-xs text-ink-2 mt-0.5">
                   {/* The date would give the answer away, so it appears only after checking. */}
-                  {completed ? `${formatWhen(event.when)} · ` : ""}{placeLabel(event)}
+                  {completed ? `${formatWhen(event.when)}, ` : ""}{placeLabel(event)}
                 </span>
               </button>
               {!completed && (

@@ -52,7 +52,7 @@ function Today({ p }: { p: Progress }) {
           </label>
         </div>
       </div>
-      <p className="mt-3 text-sm" data-testid="streak"><strong className="tabular-nums">{current}</strong> day{current === 1 ? "" : "s"} in a row{best > current ? <span className="text-ink-2"> · best {best}</span> : null}</p>
+      <p className="mt-3 text-sm" data-testid="streak"><strong className="tabular-nums">{current}</strong> day{current === 1 ? "" : "s"} in a row{best > current ? <span className="text-ink-2">, best {best}</span> : null}</p>
       <p className="text-xs text-ink-2">{current ? "Nice rhythm. A break never costs you what you've learned." : "Any day is a good day to start. Breaks never cost you progress."}</p>
       <ul className="mt-3 flex flex-wrap gap-1.5" aria-label="Badges" data-testid="badges">
         {list.map((b) => (
@@ -138,7 +138,7 @@ function PathMap({ path, p }: { path: PathDef; p: Progress }) {
     <section aria-labelledby="path-title" data-testid="path-map">
       <div className="flex flex-wrap items-end justify-between gap-2">
         <div>
-          <p className="eyebrow">{{ question: "A question", region: "A region", period: "A period", topic: "A topic", place: "A place" }[path.kind]} · {path.difficulty}</p>
+          <p className="eyebrow">{{ question: "A question", region: "A region", period: "A period", topic: "A topic", place: "A place" }[path.kind]}, {path.difficulty}</p>
           <h2 id="path-title" className="mt-1 font-serif text-3xl leading-tight">{path.title}</h2>
           <p className="mt-1 max-w-xl text-ink-2">{path.blurb}</p>
           <details className="mt-1 max-w-xl text-sm text-ink-2">
@@ -178,7 +178,7 @@ function PathMap({ path, p }: { path: PathDef; p: Progress }) {
                   {state === "done" ? "✓" : i + 1}
                 </span>
                 <span className="max-w-48 rounded-md bg-paper/90 px-2 text-sm font-medium leading-tight">{l.title}</span>
-                <span className="text-xs text-ink-2">{l.minutes} min{state === "next" ? " · up next" : state === "started" ? " · in progress" : ""}</span>
+                <span className="text-xs text-ink-2">{l.minutes} min{state === "next" ? ", up next" : state === "started" ? ", in progress" : ""}</span>
               </Link>
             </li>
           );
@@ -251,7 +251,7 @@ export function LearnHome() {
                   <span className="text-xs font-semibold text-bronze">{why}</span>
                   <span className="mt-1 font-serif text-xl leading-tight">{x.title}</span>
                   <span className="mt-1 line-clamp-2 text-sm text-ink-2">{x.blurb}</span>
-                  <span className="mt-auto pt-3 text-xs tabular-nums text-ink-2">{x.lessons.length} lessons{done ? ` · ${done} done` : ""}</span>
+                  <span className="mt-auto pt-3 text-xs tabular-nums text-ink-2">{x.lessons.length} lessons{done ? `, ${done} done` : ""}</span>
                 </button>
               </li>
             );

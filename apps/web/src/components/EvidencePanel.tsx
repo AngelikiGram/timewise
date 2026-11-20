@@ -104,7 +104,7 @@ export function EvidencePanel({ event }: { event: HistoricalEvent | null }) {
         <p className="mt-1 text-sm text-ink-2">
           {place ? place.label.en : "No single location"}
           {otherNames.length > 0 && ` (${otherNames.map((n) => n.name).join(", ")})`}
-          {event.kind === "process" && " · Process"}
+          {event.kind === "process" && ", Process"}
         </p>
         {event.people.length > 0 && <p className="mt-1 text-sm text-ink-2">People: {event.people.join(", ")}</p>}
       </header>

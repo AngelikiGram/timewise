@@ -109,8 +109,8 @@ export function LifeTime({ personId, name, born, died, moments, related, onWindo
           <span key={m.id} aria-hidden title={`${m.year}: ${m.label}`} className={`absolute top-[2.15rem] -translate-x-1/2 rounded-full border border-paper ${m.kind === "life" ? "h-4 w-4 -mt-1" : "h-2.5 w-2.5"}`} style={{ left: `${at(m.year)}%`, background: KIND[m.kind].color, opacity: m.year >= a && m.year <= b ? 1 : 0.45 }} />
         ))}
         {ticks.map((t) => <span key={t} aria-hidden className="absolute top-14 -translate-x-1/2 text-[10px] tabular-nums text-ink-2" style={{ left: `${at(t)}%` }}>{t}</span>)}
-        <span aria-hidden className="absolute top-0 -translate-x-1/2 text-[11px] font-semibold text-oxblood" style={{ left: "0%" }}>{born != null ? "Born" : formatYear(lo)}</span>
-        {died != null && <span aria-hidden className="absolute right-0 top-0 translate-x-1/2 text-[11px] font-semibold text-oxblood">Died</span>}
+        <span aria-hidden className="absolute left-0 top-0 text-[11px] font-semibold text-oxblood">{born != null ? "Born" : formatYear(lo)}</span>
+        {died != null && <span aria-hidden className="absolute right-0 top-0 text-[11px] font-semibold text-oxblood">Died</span>}
         <input type="range" min={lo} max={hi} step={1} value={all ? lo : year} disabled={all} onChange={(e) => { setPlaying(false); setYear(Number(e.target.value)); }}
           aria-label={`Year in the life of ${name}`} aria-valuetext={`${formatYear(year)}${age(year) != null ? `, age ${age(year)}` : ""}`}
           className="absolute inset-x-0 top-5 h-10 w-full cursor-ew-resize opacity-0 disabled:cursor-default" data-testid="life-scrub" />
@@ -131,7 +131,7 @@ export function LifeTime({ personId, name, born, died, moments, related, onWindo
                         <span className="mr-1.5 inline-block h-2 w-2 rounded-full align-middle" style={{ background: KIND[m.kind].color }} />
                         {m.href ? (m.external ? <a href={m.href} target="_blank" rel="noopener noreferrer" className="hover:text-bronze">{m.label}</a> : <Link href={m.href} className="hover:text-bronze">{m.label}</Link>) : m.label}
                         {m.end != null && m.end !== y && <span className="text-ink-2"> (until {formatYear(m.end)})</span>}
-                        {age(y) != null && age(y)! >= 0 && <span className="text-xs text-ink-2"> · age {age(y)}</span>}
+                        {age(y) != null && age(y)! >= 0 && <span className="text-xs text-ink-2">, age {age(y)}</span>}
                         <a href={m.source} target="_blank" rel="noopener noreferrer" className="ml-1 text-[11px] text-bronze hover:underline">source</a>
                       </li>
                     ))}
@@ -155,7 +155,7 @@ export function LifeTime({ personId, name, born, died, moments, related, onWindo
             {pop && populationAt(pop, a) != null && <p className="mt-1 text-sm">About {people(populationAt(pop, a)!)} people alive on Earth{all ? ` at the start, ${people(populationAt(pop, b) ?? 0)} at the end` : ""}. <a className="text-[11px] text-bronze hover:underline" href={OWID_SOURCE} target="_blank" rel="noopener noreferrer">Our World in Data</a></p>}
             {!world ? <p className="mt-2 text-sm text-ink-2">Loading…</p> : meanwhile.length ? (
               <ul className="mt-2 grid gap-1.5" data-testid="life-meanwhile">
-                {meanwhile.map((e) => <li key={e.i} className="text-sm"><span className="tabular-nums text-ink-2">{formatYear(yearOf(e.s))}</span> · <Link href={atlasHref(e)} className="hover:text-bronze">{e.t}</Link></li>)}
+                {meanwhile.map((e) => <li key={e.i} className="text-sm"><span className="tabular-nums text-ink-2">{formatYear(yearOf(e.s))}</span>, <Link href={atlasHref(e)} className="hover:text-bronze">{e.t}</Link></li>)}
               </ul>
             ) : <p className="mt-2 text-sm text-ink-2">No well-documented events start in these years.</p>}
             {!all && <Link href={`/explore/year?y=${a}`} className="link mt-2 inline-block text-sm">Explore {formatYear(a)}</Link>}

@@ -105,7 +105,7 @@ export function PerspectiveTaking({ activity, currentAnswer, onSubmit, completed
                 </span>
                 <div>
                   <p className="font-serif text-base leading-snug">{t(event.title, lang)}</p>
-                  <p className="text-xs text-ink-2 mt-0.5">{formatWhen(event.when)} · {placeLabel(event)}</p>
+                  <p className="text-xs text-ink-2 mt-0.5">{formatWhen(event.when)}, {placeLabel(event)}</p>
                 </div>
               </div>
 
@@ -202,4 +202,4 @@ export function PerspectiveTaking({ activity, currentAnswer, onSubmit, completed
       )}
     </div>
   );
-}
+}

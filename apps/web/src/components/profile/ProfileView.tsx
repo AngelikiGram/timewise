@@ -60,7 +60,7 @@ function LearningMap({ state, onPick }: { state: Record<string, "done" | "starte
         <span className="inline-flex items-center gap-1.5"><span className="h-3 w-3 rounded-sm bg-bronze" />In progress</span>
         <span className="inline-flex items-center gap-1.5"><span className="h-3 w-3 rounded-sm border border-line bg-paper-3" />Path available</span>
         <span className="inline-flex items-center gap-1.5"><svg width="12" height="12"><rect width="12" height="12" fill="url(#none)" stroke="var(--line)" /></svg>Not enough records yet</span>
-        <span>· Today&rsquo;s borders, used only to sort records</span>
+        <span>Today&rsquo;s borders, used only to sort records</span>
       </figcaption>
     </figure>
   );
@@ -137,7 +137,7 @@ export function ProfileView() {
         <li className="card p-4"><p className="font-serif text-3xl tabular-nums">{lessonsDone}</p><p className="text-sm text-ink-2">lessons finished</p></li>
         <li className="card p-4"><p className="font-serif text-3xl tabular-nums">{pathsDone.length}</p><p className="text-sm text-ink-2">paths complete</p></li>
         <li className="card p-4"><p className="font-serif text-3xl tabular-nums">{acc.total ? `${Math.round((acc.ok / acc.total) * 100)}%` : "–"}</p><p className="text-sm text-ink-2">answers right{acc.total ? ` (${acc.ok}/${acc.total})` : ""}</p></li>
-        <li className="card p-4"><p className="font-serif text-3xl tabular-nums">{current}</p><p className="text-sm text-ink-2">days in a row · best {best}</p></li>
+        <li className="card p-4"><p className="font-serif text-3xl tabular-nums">{current}</p><p className="text-sm text-ink-2">days in a row, best {best}</p></li>
         <li className="card p-4"><Link href="/collection" className="block"><p className="font-serif text-3xl tabular-nums">{Object.keys(p.bookmarks).length}</p><p className="text-sm text-ink-2">saved events</p></Link></li>
       </ul>
 
@@ -168,7 +168,7 @@ export function ProfileView() {
         </section>
         <section className="card p-4" aria-labelledby="review-title">
           <h2 id="review-title" className="font-serif text-xl">Review queue</h2>
-          <p className="mt-1 text-sm text-ink-2">{dueReviews(p).length} due now · {p.mistakes.filter((m) => m.activity).length} scheduled in all{p.reviewLog?.total ? ` · ${Math.round((p.reviewLog.ok / p.reviewLog.total) * 100)}% right in review` : ""}</p>
+          <p className="mt-1 text-sm text-ink-2">{dueReviews(p).length} due now, {p.mistakes.filter((m) => m.activity).length} scheduled in all{p.reviewLog?.total ? `, ${Math.round((p.reviewLog.ok / p.reviewLog.total) * 100)}% right in review` : ""}</p>
           {dueReviews(p).length > 0 && <Link href="/learn/review" className="btn btn-primary btn-sm mt-3">Review now</Link>}
         </section>
       </div>
@@ -192,7 +192,7 @@ export function ProfileView() {
       <section className="mt-8" aria-labelledby="lessons-title">
         <h2 id="lessons-title" className="font-serif text-2xl">Completed lessons</h2>
         <ul className="mt-2 flex flex-wrap gap-1.5">
-          {Object.entries(p.lessons).filter(([, l]) => l.finished).map(([id, l]) => <li key={id}><Link href={lessonHref(id, l.pathId)} className="chip !text-xs">✓ {l.title}{l.max ? ` · ${l.score}/${l.max}` : ""}</Link></li>)}
+          {Object.entries(p.lessons).filter(([, l]) => l.finished).map(([id, l]) => <li key={id}><Link href={lessonHref(id, l.pathId)} className="chip !text-xs">✓ {l.title}{l.max ? `, ${l.score}/${l.max}` : ""}</Link></li>)}
           {!Object.values(p.lessons).some((l) => l.finished) && <li className="text-sm text-ink-2">None yet.</li>}
         </ul>
       </section>
@@ -211,7 +211,7 @@ export function ProfileView() {
               const log = p.skills.filter((x) => x.skill === s);
               const ok = log.filter((x) => x.ok).length;
               const pct = log.length ? Math.round((ok / log.length) * 100) : 0;
-              return <li key={s}><div className="flex justify-between text-sm"><span>{SKILLS[s].label}</span><span className="tabular-nums text-ink-2">{log.length ? `${pct}% · ${ok}/${log.length}` : "not started"}</span></div><div className="mt-1 h-2 overflow-hidden rounded-full bg-line"><div className="h-full rounded-full bg-bronze" style={{ width: `${pct}%` }} /></div></li>;
+              return <li key={s}><div className="flex justify-between text-sm"><span>{SKILLS[s].label}</span><span className="tabular-nums text-ink-2">{log.length ? `${pct}%, ${ok}/${log.length}` : "not started"}</span></div><div className="mt-1 h-2 overflow-hidden rounded-full bg-line"><div className="h-full rounded-full bg-bronze" style={{ width: `${pct}%` }} /></div></li>;
             })}
           </ul>
         </section>

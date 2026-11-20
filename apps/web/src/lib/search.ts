@@ -36,7 +36,7 @@ export function search(c: Collection, query: string, limit = 7): SearchHit[] {
     add({ kind: "investigation", id: i.id, label: i.question.en, detail: "Investigation", href: `/explore?investigation=${i.id}` }, i.question.en, i.intro.en, 1);
   for (const e of c.events)
     add(
-      { kind: "event", id: e.id, label: e.title.en, detail: `${e.when.start.slice(0, 4)} · ${c.places.find((p) => p.id === e.placeId)?.label.en ?? "No single location"}`, href: `/explore?event=${e.id}` },
+      { kind: "event", id: e.id, label: e.title.en, detail: `${e.when.start.slice(0, 4)}, ${c.places.find((p) => p.id === e.placeId)?.label.en ?? "No single location"}`, href: `/explore?event=${e.id}` },
       e.title.en,
       `${e.summary.en} ${e.placeId ? placeName.get(e.placeId) : ""} ${e.people.join(" ")} ${e.when.start.slice(0, 4)}`,
     );

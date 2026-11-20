@@ -87,8 +87,8 @@ export function PlaceDNA() {
         <div className="flex-1 min-w-0">
           <h2 className="font-serif text-lg leading-snug">{place.label.en}</h2>
           <p className="text-xs text-ink-2 mt-0.5">
-            {place.modernCountry} · {place.lat.toFixed(4)}, {place.lng.toFixed(4)}
-            {place.region && <span> · {place.region}</span>}
+            {place.modernCountry}, {place.lat.toFixed(4)}, {place.lng.toFixed(4)}
+            {place.region && <span>, {place.region}</span>}
           </p>
         </div>
         <button
@@ -272,7 +272,7 @@ export function PlaceDNA() {
       )}
 
       <p className="text-xs text-ink-2" role="status">
-        {events.length} changes up to {year}{comparisonMode !== "single" && comparisonDate ? ` · {${compYear}} geometry shown` : ""}
+        {events.length} changes up to {year}{comparisonMode !== "single" && comparisonDate ? `, {${compYear}} geometry shown` : ""}
       </p>
     </div>
   );
@@ -295,4 +295,4 @@ function getDerivationColor(derivation: string): string {
     modern_reference: "bg-emerald-soft text-emerald border-emerald/30",
   };
   return colors[derivation] ?? "bg-line text-ink-2";
-}
+}

@@ -95,7 +95,7 @@ export function TimelineGame() {
           <p className="mt-1 max-w-2xl text-ink-2">Drag the cards into order, earliest at the top. Then see where they really fall, on the timeline and the map.</p>
         </div>
         <div className="flex items-center gap-4">
-          <p className="text-center"><span className="block font-serif text-3xl tabular-nums">{e.timeline.streak}</span><span className="text-xs text-ink-2">perfect in a row · best {e.timeline.best}</span></p>
+          <p className="text-center"><span className="block font-serif text-3xl tabular-nums">{e.timeline.streak}</span><span className="text-xs text-ink-2">perfect in a row, best {e.timeline.best}</span></p>
           <LevelBar compact />
         </div>
       </div>
@@ -123,7 +123,7 @@ export function TimelineGame() {
                     className={`flex items-center gap-3 rounded-xl border-2 bg-paper p-3 transition-colors ${done ? (ok ? "border-green-700/60 bg-green-50 [[data-theme=dark]_&]:bg-green-950/30" : "border-oxblood/60 bg-oxblood/5") : drag === i ? "border-bronze opacity-60" : "cursor-grab border-line hover:border-bronze"}`}>
                     <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-paper-3 font-serif tabular-nums">{i + 1}</span>
                     <Icon name={categoryIcon(c.c)} size={20} className="shrink-0 text-bronze" />
-                    <span className="min-w-0 flex-1"><span className="block font-medium leading-snug">{c.t}</span>{!done && <span className="block text-xs text-ink-2">{[CATEGORY_LABELS[c.c], c.k ? c.k.replaceAll("_", " ").replace(/^./, (x) => x.toUpperCase()) : c.ct ? CONTINENT_LABELS[c.ct] : null].filter(Boolean).join(", ")}</span>}{done && <span className="block text-sm text-ink-2">{formatImportedDate(c.s, c.e, c.p as Precision)}{!ok && <> · belongs at {truth.indexOf(id) + 1}</>}</span>}</span>
+                    <span className="min-w-0 flex-1"><span className="block font-medium leading-snug">{c.t}</span>{!done && <span className="block text-xs text-ink-2">{[CATEGORY_LABELS[c.c], c.k ? c.k.replaceAll("_", " ").replace(/^./, (x) => x.toUpperCase()) : c.ct ? CONTINENT_LABELS[c.ct] : null].filter(Boolean).join(", ")}</span>}{done && <span className="block text-sm text-ink-2">{formatImportedDate(c.s, c.e, c.p as Precision)}{!ok && <>, belongs at {truth.indexOf(id) + 1}</>}</span>}</span>
                     {!done ? (
                       <span className="flex shrink-0 flex-col">
                         <button type="button" className="btn btn-ghost btn-sm !min-h-0 !px-1.5 !py-0.5" aria-label={`Move ${c.t} earlier`} onClick={() => move(i, i - 1)} disabled={i === 0}>▲</button>
@@ -177,8 +177,8 @@ function Reveal({ events }: { events: IndexEvent[] }) {
   return (
     <div className="grid gap-4" data-testid="timeline-reveal">
       <div className="rounded-xl border border-line bg-paper-2 p-4">
-        <p className="text-xs font-semibold text-ink-2">The real timeline · {formatYear(lo)}–{formatYear(hi)}</p>
-        <div className="relative mt-3" style={{ height: events.length * 30 + 20 }}>
+        <p className="text-xs font-semibold text-ink-2">The real timeline, {formatYear(lo)}–{formatYear(hi)}</p>
+        <div className="relative mx-2 mt-3 overflow-hidden" style={{ height: events.length * 30 + 20 }}>
           <span className="absolute left-0 right-0 top-2 h-1 rounded bg-bronze/40" />
           {events.map((x, i) => {
             const at = ((yearOf(x.s) - lo) / span) * 100;
@@ -186,7 +186,7 @@ function Reveal({ events }: { events: IndexEvent[] }) {
               <div key={x.i} className="absolute" style={{ left: `${at}%`, top: 0 }}>
                 <span className="absolute -left-1.5 top-0.5 h-3.5 w-3.5 rounded-full border-2 border-paper bg-oxblood" />
                 <span className="absolute w-px bg-line" style={{ left: 0, top: 16, height: i * 30 + 8 }} />
-                <Link href={atlasHref(x)} className={`absolute whitespace-nowrap text-xs hover:text-bronze ${at > 60 ? "right-1" : "left-1"}`} style={{ top: i * 30 + 22 }}><b className="tabular-nums">{formatYear(yearOf(x.s))}</b> {x.t.length > 34 ? `${x.t.slice(0, 33)}…` : x.t}</Link>
+                <Link href={atlasHref(x)} className={`absolute max-w-[14rem] truncate whitespace-nowrap text-xs hover:text-bronze hover:underline ${at > 60 ? "right-1" : "left-1"}`} style={{ top: i * 30 + 22 }}><b className="tabular-nums">{formatYear(yearOf(x.s))}</b> {x.t.length > 34 ? `${x.t.slice(0, 33)}…` : x.t}</Link>
               </div>
             );
           })}

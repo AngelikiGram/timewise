@@ -25,7 +25,7 @@ export function DailyTeaser() {
         <span className="eyebrow">Today&rsquo;s challenge</span>
         {done && <span className="badge text-navy">✓ Done</span>}
       </span>
-      <span className="mt-3 text-sm text-ink-2">{FORMATS[c.kind].label} · {c.minutes} min</span>
+      <span className="mt-3 text-sm text-ink-2">{FORMATS[c.kind].label}, {c.minutes} min</span>
       <span className="mt-1 font-serif text-2xl leading-snug">{c.title}</span>
       <span className="mt-2 text-ink-2">{c.prompt}</span>
       <span className="btn btn-primary mt-auto self-start">{done ? "Play again" : "Play now"}</span>
@@ -61,7 +61,7 @@ export function MeanwhileYears() {
                   {CONTINENT_LABELS[e.ct!]}
                 </span>
                 <span className="mt-2 font-serif text-lg leading-snug">{e.t}</span>
-                <span className="mt-auto pt-2 text-xs text-ink-2">{formatImportedDate(e.s, e.e, e.p as Precision)} · {CATEGORY_LABELS[e.c] ?? e.c}</span>
+                <span className="mt-auto pt-2 text-xs text-ink-2">{formatImportedDate(e.s, e.e, e.p as Precision)}, {CATEGORY_LABELS[e.c] ?? e.c}</span>
               </Link>
             </li>
           ))}

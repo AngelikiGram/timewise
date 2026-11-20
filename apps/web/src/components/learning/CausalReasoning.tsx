@@ -80,7 +80,7 @@ export function CausalReasoning({ activity, currentAnswer, onSubmit, completed, 
           {events.map(event => (
             <div key={event.id} className="text-sm">
               <span className="font-medium">{t(event.title, lang)}</span>
-              <span className="ml-2 text-ink-2">({formatWhen(event.when)} · {placeLabel(event)})</span>
+              <span className="ml-2 text-ink-2">({formatWhen(event.when)}, {placeLabel(event)})</span>
             </div>
           ))}
         </div>
@@ -238,4 +238,4 @@ export function CausalReasoning({ activity, currentAnswer, onSubmit, completed, 
       )}
     </div>
   );
-}
+}

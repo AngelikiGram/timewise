@@ -218,7 +218,7 @@ export function JourneyPlayer({ id }: { id: string }) {
                     {STORIES.filter((s) => story.next.includes(s.id)).map((s) => (
                       <li key={s.id}>
                         <Link href={s.href} className="card block p-4">
-                          <span className="text-xs text-ink-2">{s.kind === "case" ? "Detective case" : "Story"} · {s.minutes} min</span>
+                          <span className="text-xs text-ink-2">{s.kind === "case" ? "Detective case" : "Story"}, {s.minutes} min</span>
                           <span className="block font-serif text-lg leading-snug">{s.title}</span>
                           <span className="text-sm text-ink-2">{s.question}</span>
                         </Link>
@@ -242,7 +242,7 @@ export function JourneyPlayer({ id }: { id: string }) {
               )}
               {atStart && story && (
                 <details className="mb-4 rounded-md border border-line bg-paper-2">
-                  <summary className="cursor-pointer px-3 py-2 text-sm font-semibold">About this story · {story.minutes} min · {journey.chapters.length} chapters</summary>
+                  <summary className="cursor-pointer px-3 py-2 text-sm font-semibold">About this story, {story.minutes} min, {journey.chapters.length} chapters</summary>
                   <div className="px-3 pb-3 text-sm">
                     <p className="text-ink-2">{story.intro}</p>
                     <p className="mt-2"><strong>The question:</strong> {story.question}</p>
@@ -254,7 +254,7 @@ export function JourneyPlayer({ id }: { id: string }) {
               {/* Chapter header with view mode toggle */}
               <div className="mb-4 flex flex-col gap-3">
                 <div className="min-w-0">
-                  <p className="eyebrow">{journey.title.en} · Chapter {position.chapter + 1} of {journey.chapters.length}</p>
+                  <p className="eyebrow">{journey.title.en}, Chapter {position.chapter + 1} of {journey.chapters.length}</p>
                   <h1 className="mt-2 font-serif text-3xl leading-[1.1] sm:text-4xl" data-testid="journey-question">{chapter.question.en}</h1>
                   {chapter.connection && <p className="mt-2 text-sm italic text-ink-2">{chapter.connection.en}</p>}
                 </div>
@@ -301,7 +301,7 @@ export function JourneyPlayer({ id }: { id: string }) {
                         <span className="text-bronze font-medium text-sm">{position.beat + 1}</span>
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="eyebrow">{formatWhen(event.when)} · {placeLabel(event)}</p>
+                        <p className="eyebrow">{formatWhen(event.when)}, {placeLabel(event)}</p>
                         <h2 className="mt-1 font-serif text-xl leading-snug">{event.title.en}</h2>
                         {event.summary && <p className="mt-2 text-sm leading-relaxed">{event.summary.en}</p>}
                       </div>
@@ -352,7 +352,7 @@ export function JourneyPlayer({ id }: { id: string }) {
                   ))}
 
                   <section key={event.id} className="fade-in mt-5 border-t border-line pt-4" data-testid="journey-event">
-                    <p className="eyebrow">{formatWhen(event.when)} · {placeLabel(event)}</p>
+                    <p className="eyebrow">{formatWhen(event.when)}, {placeLabel(event)}</p>
                     <h2 className="mt-1 font-serif text-xl leading-snug">{event.title.en}</h2>
                     {event.media && (
                       <figure className="mt-3">

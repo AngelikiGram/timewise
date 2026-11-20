@@ -153,14 +153,14 @@ export function Overview({ data, countries, tabs, mapHref, atlasFor }: {
               <li key={era.label} className="grid gap-6 lg:grid-cols-[16rem_1fr]">
                 <div>
                   <h3 className="font-serif text-2xl">{era.label}</h3>
-                  <p className="mt-1 text-ink-2">{era.from === null ? `Before ${era.to}` : era.to === null ? `${era.from} to today` : `${formatYear(era.from)}–${era.to}`} · {era.count.toLocaleString("en")} events</p>
+                  <p className="mt-1 text-ink-2">{era.from === null ? `Before ${era.to}` : era.to === null ? `${era.from} to today` : `${formatYear(era.from)}–${era.to}`}, {era.count.toLocaleString("en")} events</p>
                   <div className="mt-3"><CategoryBar counts={era.categories} /></div>
                 </div>
                 <ul className="grid gap-x-8 gap-y-5 sm:grid-cols-2">
                   {era.top.map((e) => (
                     <li key={e.id} className="border-l-[3px] pl-4" style={{ borderColor: categoryVar(e.category) }}>
                       <Link href={atlasFor(e)} className="group block">
-                        <span className="text-sm text-ink-2">{formatImportedDate(e.start, e.end, e.precision)}{e.country ? ` · ${countryName.get(e.country) ?? ""}` : e.nc && e.nc > 1 ? ` · Multiple regions (${e.nc} countries)` : ""}</span>
+                        <span className="text-sm text-ink-2">{formatImportedDate(e.start, e.end, e.precision)}{e.country ? `, ${countryName.get(e.country) ?? ""}` : e.nc && e.nc > 1 ? `, Multiple regions (${e.nc} countries)` : ""}</span>
                         <span className="mt-0.5 block font-serif text-xl leading-snug group-hover:text-bronze">{titleOf(e)}</span>
                         {e.description && <span className="mt-1 block text-[0.95rem] leading-snug text-ink-2 first-letter:uppercase">{e.description}</span>}
                       </Link>

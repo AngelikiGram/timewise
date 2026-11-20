@@ -415,7 +415,7 @@ export function Timeline({ range }: { range: { start: string; end: string } }) {
 
         {hover && (
           <div role="presentation" className="pointer-events-none absolute z-30 w-64 border border-line bg-paper-2 p-3 shadow-xl" style={{ left: Math.min(hover.x + 12, size.width - 270), bottom: size.height - hover.y + 10 }}>
-            <p className="text-xs text-ink-2">{formatWhen(hover.event.when)} · {placeLabel(hover.event)}</p>
+            <p className="text-xs text-ink-2">{formatWhen(hover.event.when)}, {placeLabel(hover.event)}</p>
             <p className="font-serif text-base leading-snug">{hover.event.title.en}</p>
             <p className="mt-1 line-clamp-3 text-xs text-ink-2">{hover.event.summary.en}</p>
           </div>

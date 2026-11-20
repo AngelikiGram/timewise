@@ -111,7 +111,7 @@ function Start({ onPick }: { onPick: (id: string) => void }) {
           <h2 className="font-serif text-xl">The best-documented event per continent</h2>
           <p className="mt-1 text-sm text-ink-2">By Wikipedia language editions in the TIMEWISE index, not by importance.</p>
           <ul className="mt-3 flex flex-wrap gap-2">
-            {top.map((e) => <li key={e.i}><button type="button" className="chip" onClick={() => onPick(e.i)}>{e.t} <span className="text-ink-2">· {CONTINENT_LABELS[e.ct!]}</span></button></li>)}
+            {top.map((e) => <li key={e.i}><button type="button" className="chip" onClick={() => onPick(e.i)}>{e.t} <span className="text-ink-2">{CONTINENT_LABELS[e.ct!]}</span></button></li>)}
             {!top.length && <li className="text-sm text-ink-2">Loading the index…</li>}
           </ul>
         </section>
@@ -121,7 +121,7 @@ function Start({ onPick }: { onPick: (id: string) => void }) {
         <p className="mt-1 text-sm text-ink-2">Written routes through checked records, with a source for every claim.</p>
         <ul className="mt-3 grid gap-2 sm:grid-cols-2">
           {STORIES.map((s) => (
-            <li key={s.id}><Link href={s.href} className="card card-link block p-4"><span className="font-serif text-lg">{s.title}</span><span className="mt-1 block text-sm text-ink-2">{s.place} · {s.period} · {s.minutes} min</span></Link></li>
+            <li key={s.id}><Link href={s.href} className="card card-link block p-4"><span className="font-serif text-lg">{s.title}</span><span className="mt-1 block text-sm text-ink-2">{s.place}, {s.period}, {s.minutes} min</span></Link></li>
           ))}
         </ul>
       </section>
@@ -347,8 +347,8 @@ export function NetworkExplorer() {
             <>
               <div className="flex flex-wrap items-baseline justify-between gap-2 px-1">
                 <p className="text-sm text-ink-2" data-testid="network-count">
-                  Showing {visible.length} of {filtered.length} connections{filtered.length < all.length ? ` (${all.length} before filters)` : ""} · best known first
-                  {(from || to) && " · records without a date are hidden while a period is set"}
+                  Showing {visible.length} of {filtered.length} connections{filtered.length < all.length ? ` (${all.length} before filters)` : ""}, best known first
+                  {(from || to) && ", records without a date are hidden while a period is set"}
                 </p>
                 <p className="flex flex-wrap items-center gap-3 text-xs text-ink-2">
                   <span className="inline-flex items-center gap-1"><span aria-hidden className="inline-block w-5 border-t-2 border-navy" />documented</span>

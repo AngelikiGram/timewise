@@ -3,7 +3,7 @@ import { BeginCards, MoreWays } from "@/components/modes/BeginCards";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 
-export const metadata: Metadata = { title: "Where to begin · TIMEWISE", description: "Four ways into history: follow a thing, explore a year, follow a life, or follow your interests." };
+export const metadata: Metadata = { title: "Where to begin | TIMEWISE", description: "Four ways into history: follow a thing, explore a year, follow a life, or follow your interests." };
 
 export default function Page() {
   return (

@@ -40,7 +40,7 @@ function searchIndex(events: IndexEvent[], regions: RegionRow[], query: string):
   for (const e of events) {
     if (!terms.every((term) => fold(e.t).includes(term))) continue;
     const where = e.k && (e.n ?? 1) < 5 ? label.get(e.k) ?? "" : e.n ? `${e.n} countries` : "";
-    out.push({ key: `w-${e.i}`, kind: "Record", label: e.t, detail: [formatYear(yearOf(e.s)), where].filter(Boolean).join(" · "), href: atlasHref(e) });
+    out.push({ key: `w-${e.i}`, kind: "Record", label: e.t, detail: [formatYear(yearOf(e.s)), where].filter(Boolean).join(", "), href: atlasHref(e) });
     if (++n >= 8) break;
   }
   return out;
@@ -114,7 +114,7 @@ export function SearchBox({ size = "large", placeholder }: { size?: "large" | "c
         return events
           .filter((e) => terms.every((t) => fold(`${e.title.en ?? ""} ${e.title.de ?? ""}`).includes(t)))
           .slice(0, 10)
-          .map((e) => { const k = new URLSearchParams(keep); k.set("event", e.id); return { key: `m-${e.id}`, kind: "On this map", label: e.title.en ?? e.title.de ?? e.id, detail: formatYear(yearOf(e.start)) + (e.inside === false ? " · located elsewhere" : ""), href: `${regionId === "world" ? "/atlas" : `/atlas/${regionId}`}?${k}` }; });
+          .map((e) => { const k = new URLSearchParams(keep); k.set("event", e.id); return { key: `m-${e.id}`, kind: "On this map", label: e.title.en ?? e.title.de ?? e.id, detail: formatYear(yearOf(e.start)) + (e.inside === false ? ", located elsewhere" : ""), href: `${regionId === "world" ? "/atlas" : `/atlas/${regionId}`}?${k}` }; });
       }
       const [events, regions] = await Promise.all([loadIndex(), loadRegions()]);
       return [...checked(3), ...searchIndex(events, regions, q)].slice(0, 10);

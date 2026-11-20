@@ -55,7 +55,7 @@ export function LessonContext({ cards, current, onPick, showMap = true }: { card
             const era = eraOf(c.year);
             const x = ((c.year! - lo) / span) * 100;
             return (
-              <button key={c.id} type="button" disabled={!onPick} onClick={() => onPick?.(c)} aria-current={on ? "step" : undefined} aria-label={`${c.title}, ${c.when}`} title={`${c.title} · ${c.when}`} className="absolute top-0 flex -translate-x-1/2 flex-col items-center disabled:cursor-default" style={{ left: `${x}%` }}>
+              <button key={c.id} type="button" disabled={!onPick} onClick={() => onPick?.(c)} aria-current={on ? "step" : undefined} aria-label={`${c.title}, ${c.when}`} title={`${c.title}, ${c.when}`} className="absolute top-0 flex -translate-x-1/2 flex-col items-center disabled:cursor-default" style={{ left: `${x}%` }}>
                 <span className={`grid place-items-center rounded-full border-2 ${on ? "h-8 w-8 border-oxblood bg-oxblood/15" : "mt-1.5 h-5 w-5 bg-paper-2"}`} style={on ? undefined : { borderColor: ERA_COLOR[era?.id ?? ""] }}>{on && <span className="h-3 w-3 rounded-full bg-oxblood" />}</span>
                 <span className={`mt-1 whitespace-nowrap rounded-full px-2 text-xs tabular-nums ${on ? "bg-oxblood font-semibold text-white" : "text-ink-2"}`}>{formatYear(c.year!)}</span>
               </button>
@@ -152,7 +152,7 @@ export function LessonSide({ lesson, focus, hidden, path, progress, growth, onOp
       <section className="card flex items-center gap-3 p-4" data-testid="side-atlas">
         <span className={`grid h-9 w-9 shrink-0 place-items-center rounded-full ${growth ? "bg-navy text-on-accent [[data-theme=dark]_&]:bg-bronze" : "bg-paper-3 text-bronze"}`}><Icon name={growth ? "checked" : "idea"} size={18} /></span>
         <p className="min-w-0 flex-1 text-sm">
-          {growth ? <>Added to My Atlas: {Object.entries(growth.newByType).map(([t, n]) => `+${n} ${t === "person" ? (n === 1 ? "person" : "people") : `${t}${n === 1 ? "" : "s"}`}`).join(" · ") || "nothing new"}{growth.newEdges ? ` · +${growth.newEdges} links` : ""}</>
+          {growth ? <>Added to My Atlas: {Object.entries(growth.newByType).map(([t, n]) => `+${n} ${t === "person" ? (n === 1 ? "person" : "people") : `${t}${n === 1 ? "" : "s"}`}`).join(", ") || "nothing new"}{growth.newEdges ? `, +${growth.newEdges} links` : ""}</>
             : <>Seen in this lesson: {seen.length} of {Object.keys(entities).length}. They join your atlas as <em>practised</em> when you finish.</>}
         </p>
         <Link href="/my-atlas" className="btn btn-secondary btn-sm shrink-0">My Atlas</Link>

@@ -86,7 +86,7 @@ export function EvidenceObjects({ title, start, precision, austrian }: { title: 
                   )}
                   <span className="block p-2 text-xs">
                     <span className="line-clamp-2 font-medium text-ink group-hover:text-bronze">{i.title}</span>
-                    <span className="mt-0.5 block text-ink-2">{[i.year, i.type?.toLowerCase()].filter(Boolean).join(" · ")}</span>
+                    <span className="mt-0.5 block text-ink-2">{[i.year, i.type?.toLowerCase()].filter(Boolean).join(", ")}</span>
                     <span className="mt-0.5 block truncate text-ink-2">{i.provider}</span>
                     <span className="mt-0.5 block text-ink-2">{rightsLabel(i.rights)}</span>
                   </span>

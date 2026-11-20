@@ -7,7 +7,7 @@ import { GeneratedStories } from "@/components/stories/GeneratedStories";
 import { StoryDiscover } from "@/components/stories/StoryDiscover";
 import { STORIES } from "@/lib/stories";
 
-export const metadata: Metadata = { title: "Stories · TIMEWISE", description: "Over a thousand map-led stories by place and era, plus hand-checked guided stories and short journeys." };
+export const metadata: Metadata = { title: "Stories | TIMEWISE", description: "Over a thousand map-led stories by place and era, plus hand-checked guided stories and short journeys." };
 
 export default function StoriesPage() {
   return (

@@ -335,7 +335,7 @@ const placePath = (country: string, label: string, eras: string[]): PathDef => (
   title: eras.length > 1 ? `${label}: ${eraById(eras[0])!.label} to ${eraById(eras[eras.length - 1])!.label.replace("Since 1945", "today")}` : `${label}: ${eraById(eras[0])!.label}`,
   blurb: `${eras.length} stage${eras.length > 1 ? "s" : ""}, one lesson each, inside today's ${label}.`,
   why: `Each stage takes the four records located inside today's ${label} in that era, written about in the most Wikipedia languages. Today's borders are used only to sort records.`,
-  lessons: eras.map((e, i) => ({ ...stub(`p-${country}-${e}`, `${label}, ${eraById(e)!.label}`, ["chronology", "evidence", "people", "cause"] as Skill[]), milestone: `Stage ${i + 1} · ${eraById(e)!.label}` })),
+  lessons: eras.map((e, i) => ({ ...stub(`p-${country}-${e}`, `${label}, ${eraById(e)!.label}`, ["chronology", "evidence", "people", "cause"] as Skill[]), milestone: `Stage ${i + 1}, ${eraById(e)!.label}` })),
 });
 
 export const PATHS: PathDef[] = [

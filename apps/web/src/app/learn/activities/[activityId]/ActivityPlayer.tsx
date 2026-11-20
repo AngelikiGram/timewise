@@ -300,7 +300,7 @@ function ActivityPlayer({ activityId, journeyId, chapterId }: ActivityPlayerProp
               </Link>
               <div>
                 <p className="text-xs font-semibold text-ink-2">
-                  {activity.type.replace("_", " ")} · {activity.difficulty.charAt(0).toUpperCase() + activity.difficulty.slice(1)}
+                  {activity.type.replace("_", " ")}, {activity.difficulty.charAt(0).toUpperCase() + activity.difficulty.slice(1)}
                 </p>
                 <h1 className="font-serif text-xl sm:text-2xl text-ink truncate max-w-[400px]">
                   {activity.prompt.en}

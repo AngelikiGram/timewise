@@ -24,11 +24,11 @@ export function StoryCard({ story, large = false }: { story: Story; large?: bool
       </div>
       <div className="flex flex-1 flex-col p-5">
         <p className="text-xs font-medium text-ink-2">
-          <span>{story.place}</span> · <span>{story.period}</span> · <span>{story.minutes} min</span> · <span>{story.difficulty}</span>
+          <span>{story.place}</span>, <span>{story.period}</span>, <span>{story.minutes} min</span>, <span>{story.difficulty}</span>
         </p>
         <h3 className={`mt-2 font-serif leading-tight group-hover:text-bronze ${large ? "text-3xl" : "text-2xl"}`}>{story.title}</h3>
         <p className="mt-2 leading-relaxed text-ink-2"><span className="font-semibold text-ink">The question: </span>{story.question}</p>
-        {large && <p className="mt-2 text-sm text-ink-2">{story.chapters.length} chapters: {story.chapters.slice(0, 3).map((c) => c.title).join(" · ")}{story.chapters.length > 3 ? " …" : ""}</p>}
+        {large && <p className="mt-2 text-sm text-ink-2">{story.chapters.length} chapters: {story.chapters.slice(0, 3).map((c) => c.title).join(", ")}{story.chapters.length > 3 ? " …" : ""}</p>}
         <div className="mt-auto pt-4">
           {saved ? (
             <div>

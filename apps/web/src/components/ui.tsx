@@ -54,7 +54,7 @@ export function CreditedImage({ src, alt, credit, className = "", imgClassName =
       )}
       <details className="mt-1 text-xs text-ink-2">
         <summary className="cursor-pointer list-none hover:text-ink [&::-webkit-details-marker]:hidden">
-          Image: {credit.creator ?? credit.title}{credit.license ? ` · ${credit.license}` : ""} <span aria-hidden>ⓘ</span>
+          Image: {credit.creator ?? credit.title}{credit.license ? `, ${credit.license}` : ""} <span aria-hidden>ⓘ</span>
         </summary>
         <p className="mt-1 leading-relaxed">
           {credit.page ? <a href={credit.page} target="_blank" rel="noopener noreferrer" className="link">{credit.title} ↗</a> : credit.title}

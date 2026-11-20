@@ -19,9 +19,9 @@ type W = {
 type Bubble = { id: string; label: string; relation: string; documented: boolean; lng: number; lat: number; icon: IconName; inWorld: boolean };
 
 const PERIODS: { label: string; from: number; to: number }[] = [
-  { label: "Antiquity · to 500", from: -3500, to: 499 },
-  { label: "Middle Ages · 500–1500", from: 500, to: 1499 },
-  { label: "Early modern · 1500–1800", from: 1500, to: 1799 },
+  { label: "Antiquity, to 500", from: -3500, to: 499 },
+  { label: "Middle Ages, 500–1500", from: 500, to: 1499 },
+  { label: "Early modern, 1500–1800", from: 1500, to: 1799 },
   { label: "1800–1914", from: 1800, to: 1913 },
   { label: "1914–1945", from: 1914, to: 1945 },
   { label: "Since 1945", from: 1946, to: 2026 },
@@ -350,7 +350,7 @@ export function ExploreWorkspace() {
           <p className="absolute bottom-2 left-3 z-10 flex items-center gap-3 rounded-full bg-paper-2/90 px-3 py-1 text-[11px] text-ink-2">
             <span className="inline-flex items-center gap-1"><span aria-hidden className="inline-block w-5 border-t-2 border-bronze" />documented link</span>
             <span className="inline-flex items-center gap-1"><span aria-hidden className="inline-block w-5 border-t-2 border-dashed border-bronze" />same time</span>
-            <span className="hidden sm:inline">· today&rsquo;s map</span>
+            <span className="hidden sm:inline">today&rsquo;s map</span>
           </p>
         </div>
 
@@ -392,7 +392,7 @@ export function ExploreWorkspace() {
                       onClick={() => setFocusId(e.id)}
                       aria-pressed={on}
                       aria-label={`${titleOf(e)}, ${formatImportedDate(e.start, e.end, e.precision)}`}
-                      title={`${titleOf(e)} · ${formatImportedDate(e.start, e.end, e.precision)}`}
+                      title={`${titleOf(e)}, ${formatImportedDate(e.start, e.end, e.precision)}`}
                       className={`grid place-items-center rounded-full transition-transform hover:-translate-y-0.5 focus-visible:ring-2 focus-visible:ring-bronze motion-reduce:transition-none ${on ? "h-9 w-9 bg-oxblood text-paper shadow" : "h-8 w-8 border border-line bg-paper-2 text-ink-2 hover:border-bronze hover:text-ink"}`}
                     >
                       <Icon name={categoryIcon(e.category)} size={on ? 18 : 15} />
@@ -405,7 +405,7 @@ export function ExploreWorkspace() {
           <button type="button" className="btn btn-secondary btn-icon !rounded-full" onClick={() => movePeriod(1)} disabled={!custom && period === PERIODS.length - 1} aria-label="Later period"><Icon name="forward" size={18} /></button>
         </div>
         <form className="mt-1 flex flex-wrap items-center gap-2 pl-12 text-sm text-ink-2" onSubmit={(e) => { e.preventDefault(); applyYears(); }} data-testid="workspace-range">
-          <span>Showing <strong className="tabular-nums text-ink">{p.label.replace(/^.* · /, "")}</strong>. Drag on the timeline to narrow it, or type years:</span>
+          <span>Showing <strong className="tabular-nums text-ink">{p.label.replace(/^.*, /, "")}</strong>. Drag on the timeline to narrow it, or type years:</span>
           <label className="sr-only" htmlFor="ws-from">From year</label>
           <input id="ws-from" inputMode="numeric" value={fromText} onChange={(e) => setFromText(e.target.value)} className="field !w-20 !py-1 text-sm tabular-nums" />
           <span aria-hidden>–</span>
@@ -433,7 +433,7 @@ export function ExploreWorkspace() {
               <figure className="mt-4">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={record.image.url} alt={titleOf(focus)} className="aspect-[16/9] w-full rounded-xl object-cover" />
-                <figcaption className="mt-1 truncate text-[11px] text-ink-2">Image: {record.image.artist ?? "Wikimedia Commons"}{record.image.license ? ` · ${record.image.license}` : ""} · <a className="link" href={record.image.page} target="_blank" rel="noopener noreferrer">source</a></figcaption>
+                <figcaption className="mt-1 truncate text-[11px] text-ink-2">Image: {record.image.artist ?? "Wikimedia Commons"}{record.image.license ? `, ${record.image.license}` : ""}, <a className="link" href={record.image.page} target="_blank" rel="noopener noreferrer">source</a></figcaption>
               </figure>
             ) : (
               <div className="mt-4 grid aspect-[16/9] place-items-center rounded-xl border border-dashed border-line bg-paper-3/60 text-ink-2">
@@ -442,7 +442,7 @@ export function ExploreWorkspace() {
             )}
             <ul className="mt-4 grid gap-2.5 text-[0.95rem] leading-snug">
               {focus.description && <li className="flex gap-2.5"><Icon name="info" size={18} className="mt-0.5 shrink-0 text-bronze" /><span>{focus.description[0].toUpperCase() + focus.description.slice(1)}.</span></li>}
-              <li className="flex gap-2.5"><Icon name="place" size={18} className="mt-0.5 shrink-0 text-bronze" /><span>{country(focus.home) || "Location from Wikidata"} · {CATEGORY_LABELS[focus.category] ?? focus.category}</span></li>
+              <li className="flex gap-2.5"><Icon name="place" size={18} className="mt-0.5 shrink-0 text-bronze" /><span>{country(focus.home) || "Location from Wikidata"}, {CATEGORY_LABELS[focus.category] ?? focus.category}</span></li>
             </ul>
             <div className="mt-4 flex flex-wrap gap-2 text-sm">
               <a className="chip" href={focus.url} target="_blank" rel="noopener noreferrer"><Icon name="source" size={15} />Wikidata</a>

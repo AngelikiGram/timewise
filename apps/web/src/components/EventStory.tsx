@@ -118,13 +118,13 @@ export function EventStory({ item, when, place, href, onBack, onPick, known, con
         {item.title.de && item.title.de !== item.title.en && <p className="mt-1 italic text-ink-2">{item.title.de}</p>}
         <p className="mt-2 text-base text-ink-2">
           <span className="font-semibold text-ink">{when}</span>
-          {place && <> · {place}</>}
+          {place && <>, {place}</>}
         </p>
         <div className="mt-2 flex flex-wrap items-center gap-2">
           <ReviewBadge level={item.checked ? "source_checked" : "imported"} />
           {form && (
             <span className="badge text-ink-2" title={item.precision ? precisionNote(item.precision) : undefined} data-testid="date-form">
-              {DATE_FORM_LABEL[form]}{form === "approximate" && item.precision ? ` · ${precisionNote(item.precision).toLowerCase()}` : ""}
+              {DATE_FORM_LABEL[form]}{form === "approximate" && item.precision ? `, ${precisionNote(item.precision).toLowerCase()}` : ""}
             </span>
           )}
           {item.incept && <span className="badge text-ink-2">Date it came into being</span>}
@@ -182,7 +182,7 @@ export function EventStory({ item, when, place, href, onBack, onPick, known, con
               {data.facts.slice(0, 6).map((f) => (
                 <div key={f.label} className="contents">
                   <dt className="text-ink-2">{f.label}</dt>
-                  <dd className="flex flex-wrap gap-x-2 gap-y-1">{f.text ? <span className="font-medium">{f.text}</span> : f.values.map(linkTo).flatMap((el, i) => (i ? [<span key={`s${i}`} aria-hidden className="text-ink-2">·</span>, el] : [el]))}</dd>
+                  <dd className="flex flex-wrap gap-x-2 gap-y-1">{f.text ? <span className="font-medium">{f.text}</span> : f.values.map(linkTo).flatMap((el, i) => (i ? [<span key={`s${i}`} aria-hidden className="text-ink-2">,</span>, el] : [el]))}</dd>
                 </div>
               ))}
             </dl>

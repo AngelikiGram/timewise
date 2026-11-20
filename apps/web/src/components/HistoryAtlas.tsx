@@ -123,7 +123,7 @@ function TimelineList({ items, selected, onPick, dateOf }: { items: Item[]; sele
     <ol className="mx-auto max-w-3xl">
       {[...groups.entries()].sort((a, b) => a[0] - b[0]).map(([c, list]) => (
         <li key={c} className="mb-6">
-          <h3 className="sticky top-0 z-10 bg-paper py-1 font-serif text-xl">{centuryLabel(c)} <span className="text-sm text-ink-2">· {list.length}</span></h3>
+          <h3 className="sticky top-0 z-10 bg-paper py-1 font-serif text-xl">{centuryLabel(c)} <span className="text-sm text-ink-2">{list.length}</span></h3>
           <ol className="mt-1 border-l-2 border-bronze/40 pl-4">
             {list.slice(0, 200).map((e) => (
               <li key={e.id} className="relative">
@@ -160,7 +160,7 @@ function RegionStories({ regionId, label, isCountry }: { regionId: string; label
       {stories && !mine.length && <p className="mt-2 text-ink-2">No story involves {label} yet. Stories follow documented links, and few are recorded here.</p>}
       <ul className="mt-2 grid gap-2">
         {mine.slice(0, 30).map((st) => (
-          <li key={st.id}><Link href={`/stories/read?id=${st.id}`} className="card card-link flex items-center gap-3 p-3"><span className="flex-1 font-medium">{st.title}</span><span className="text-xs tabular-nums text-ink-2">{st.from < 0 ? `${-st.from} BC` : st.from}–{st.to < 0 ? `${-st.to} BC` : st.to} · {st.count} steps</span></Link></li>
+          <li key={st.id}><Link href={`/stories/read?id=${st.id}`} className="card card-link flex items-center gap-3 p-3"><span className="flex-1 font-medium">{st.title}</span><span className="text-xs tabular-nums text-ink-2">{st.from < 0 ? `${-st.from} BC` : st.from}–{st.to < 0 ? `${-st.to} BC` : st.to}, {st.count} steps</span></Link></li>
         ))}
       </ul>
     </div>
@@ -434,7 +434,7 @@ export function HistoryAtlas({ region, regions }: { region: Region; regions: Reg
           const node = document.createElement("div");
           const when = document.createElement("p");
           when.className = "tw-hover-date";
-          when.textContent = `${dateOf(item)} · ${CATEGORY_LABELS[item.category] ?? item.category}`;
+          when.textContent = `${dateOf(item)}, ${CATEGORY_LABELS[item.category] ?? item.category}`;
           const title = document.createElement("p");
           title.className = "tw-hover-title";
           title.textContent = item.title.en ?? item.title.de ?? "";
@@ -739,11 +739,11 @@ export function HistoryAtlas({ region, regions }: { region: Region; regions: Reg
                 <span className="flex flex-wrap items-baseline gap-x-2 text-xs text-ink-2">
                   <span>{dateOf(e)}</span>
                   {e.checked && <span className="font-semibold text-navy">✓ Checked</span>}
-                  {placeOf(e) && <span>· {placeOf(e)}</span>}
-                  {!pinned(e) && !e.multi && <span>· not on the map</span>}
-                  {pinned(e) && e.loc && <span>· {LOC_LABEL[e.loc]}</span>}
-                  {e.also?.length ? <span>· merged from {e.also.length + 1} records</span> : null}
-                  {e.titleYear !== undefined && <span className="font-semibold text-oxblood">· dates disagree</span>}
+                  {placeOf(e) && <span>{placeOf(e)}</span>}
+                  {!pinned(e) && !e.multi && <span>not on the map</span>}
+                  {pinned(e) && e.loc && <span>{LOC_LABEL[e.loc]}</span>}
+                  {e.also?.length ? <span>merged from {e.also.length + 1} records</span> : null}
+                  {e.titleYear !== undefined && <span className="font-semibold text-oxblood">dates disagree</span>}
                 </span>
                 <span className="block font-serif text-[1.05rem] leading-snug">{e.title.en ?? e.title.de}</span>
               </span>
@@ -766,7 +766,7 @@ export function HistoryAtlas({ region, regions }: { region: Region; regions: Reg
       <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
         <p className="text-xs text-ink-2">
           <span className="font-semibold text-ink">{view ? `${formatYear(view[0])} – ${view[1] >= 2026 ? "today" : formatYear(view[1])}` : "Timeline"}</span>
-          {" · "}records per {bucket === 100 ? "century" : bucket === 10 ? "decade" : "year"}, not how eventful a time was
+          {", "}records per {bucket === 100 ? "century" : bucket === 10 ? "decade" : "year"}, not how eventful a time was
         </p>
         <div className="ml-auto flex items-center gap-1">
           <button type="button" onClick={zoomOut} disabled={!range} className="btn btn-sm btn-ghost !min-h-8" aria-label="Zoom the timeline out">− Wider</button>
@@ -831,7 +831,7 @@ export function HistoryAtlas({ region, regions }: { region: Region; regions: Reg
       </div>
       {marks.length > 0 && (
         <div className="mt-1.5 border-t border-dashed border-line pt-1">
-          <span className="block text-[11px] text-ink-2" id="top-records-label"><span className="font-semibold">Top records</span> · the best documented here, one dot each. Click to open.</span>
+          <span className="block text-[11px] text-ink-2" id="top-records-label"><span className="font-semibold">Top records</span>, the best documented here, one dot each. Click to open.</span>
           {/* Full width, so each dot sits under its year in the bars above. Not a count. */}
           <div className="relative h-6" role="group" aria-labelledby="top-records-label" data-testid="timeline-records">
             {marks.map(({ e, x }) => {
@@ -842,7 +842,7 @@ export function HistoryAtlas({ region, regions }: { region: Region; regions: Reg
                   type="button"
                   onClick={() => select(e)}
                   aria-label={`${e.title.en ?? e.title.de}, ${dateOf(e)}`}
-                  title={`${e.title.en ?? e.title.de} · ${dateOf(e)}`}
+                  title={`${e.title.en ?? e.title.de}, ${dateOf(e)}`}
                   aria-pressed={on}
                   className="group absolute top-1/2 grid h-6 w-6 -translate-x-1/2 -translate-y-1/2 cursor-pointer place-items-center rounded-full outline-none focus-visible:ring-2 focus-visible:ring-bronze"
                   style={{ left: `${x}%` }}

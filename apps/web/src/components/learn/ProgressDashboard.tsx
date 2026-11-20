@@ -380,7 +380,7 @@ function ActivityFeed({ activities, progress }: { activities: LearningActivity[]
               <div>
                 <p className="font-medium text-sm text-ink">{activity?.prompt.en.split(".")[0] || "Activity"}</p>
                 <p className="text-xs text-ink-2">
-                  {new Date(p.lastAttemptAt!).toLocaleDateString()} · {Math.round((p.bestScore || 0) * 100)}% · {p.totalAttempts} attempt(s)
+                  {new Date(p.lastAttemptAt!).toLocaleDateString()}, {Math.round((p.bestScore || 0) * 100)}%, {p.totalAttempts} attempt(s)
                 </p>
               </div>
             </div>
@@ -390,4 +390,4 @@ function ActivityFeed({ activities, progress }: { activities: LearningActivity[]
       })}
     </div>
   );
-}
+}

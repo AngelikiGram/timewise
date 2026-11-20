@@ -194,7 +194,7 @@ export function TimeGraph({ record, links, facts, selected, onStep, onDetails, l
         })}
         {fx !== null && (
           <span className="absolute z-10 -translate-x-1/2 whitespace-nowrap rounded-full bg-oxblood px-2.5 py-0.5 text-xs font-semibold text-white shadow" style={{ left: Math.min(W - 70, Math.max(70, fx)), top: 4 }}>
-            {record.label.length > 28 ? `${record.label.slice(0, 27)}…` : record.label} · {formatYear(fy!)}
+            {record.label.length > 28 ? `${record.label.slice(0, 27)}…` : record.label}, {formatYear(fy!)}
           </span>
         )}
         {layout.flatMap((ln) => ln.placed.map((p) => {
@@ -210,7 +210,7 @@ export function TimeGraph({ record, links, facts, selected, onStep, onDetails, l
           );
         }))}
         {layout.map((ln) => (ln.before > 0 || ln.after > 0) && (
-          <span key={`o-${ln.g}`} className="pointer-events-none absolute right-2 text-[10px] text-ink-2" style={{ top: ln.top + 2 }}>{ln.before ? `${ln.before} earlier` : ""}{ln.before && ln.after ? " · " : ""}{ln.after ? `${ln.after} later` : ""} (outside the brushed range)</span>
+          <span key={`o-${ln.g}`} className="pointer-events-none absolute right-2 text-[10px] text-ink-2" style={{ top: ln.top + 2 }}>{ln.before ? `${ln.before} earlier` : ""}{ln.before && ln.after ? ", " : ""}{ln.after ? `${ln.after} later` : ""} (outside the brushed range)</span>
         ))}
       </div>
 

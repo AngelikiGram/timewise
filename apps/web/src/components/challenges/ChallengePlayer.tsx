@@ -52,7 +52,7 @@ export function ChallengePlayer({ challenge, daily, onDone }: { challenge: Chall
     <article className="card overflow-hidden" data-testid="challenge" data-kind={challenge.kind}>
       <header className="border-b border-line bg-paper-3/50 px-5 py-4">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <p className="eyebrow">{FORMATS[challenge.kind].label}{daily ? " · Today’s challenge" : ""}</p>
+          <p className="eyebrow">{FORMATS[challenge.kind].label}{daily ? ", Today’s challenge" : ""}</p>
           <div role="radiogroup" aria-label="Mode" className="flex rounded-full border border-line bg-paper-2 p-0.5 text-sm">
             {(["challenge", "practice"] as Mode[]).map((m) => (
               <button key={m} type="button" role="radio" aria-checked={mode === m} disabled={!!outcome} onClick={() => setMode(m)} className={`rounded-full px-3 py-1 font-medium transition-colors ${mode === m ? "bg-navy text-on-accent dark:bg-bronze" : "text-ink-2 hover:text-ink"} disabled:opacity-60`}>
@@ -400,7 +400,7 @@ function Establish({ c, mode, done, onSubmit }: Props<Extract<Challenge, { kind:
       <ul className="mt-3 space-y-2 text-sm">
         {cl.evidence.map((e) => (
           <li key={e.sourceId} className="rounded-md border border-line p-3">
-            <p><span className="font-semibold">{source(e.sourceId).title}</span> <span className="text-ink-2">· {source(e.sourceId).provider} · {source(e.sourceId).recordType.replace(/_/g, " ")}</span></p>
+            <p><span className="font-semibold">{source(e.sourceId).title}</span> <span className="text-ink-2">{source(e.sourceId).provider}, {source(e.sourceId).recordType.replace(/_/g, " ")}</span></p>
             <p className="mt-1 text-ink-2">What the source does: {e.passage}</p>
           </li>
         ))}

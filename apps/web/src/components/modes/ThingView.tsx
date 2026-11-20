@@ -74,7 +74,7 @@ const Waiting = ({ children }: { children: React.ReactNode }) => (
 function ThingFinder() {
   const router = useRouter();
   const local = useMemo(() => [
-    ...TOPICS.map((t) => ({ id: t.qid, label: t.label, sub: `Prebuilt · ${t.items.length} ${TOPIC_NOUN[t.kind][1]}`, href: `/explore/thing?id=${t.id}` })),
+    ...TOPICS.map((t) => ({ id: t.qid, label: t.label, sub: `Prebuilt, ${t.items.length} ${TOPIC_NOUN[t.kind][1]}`, href: `/explore/thing?id=${t.id}` })),
     ...FEATURED_THINGS.map((f) => ({ id: `f-${f.search}`, label: f.search[0].toUpperCase() + f.search.slice(1), sub: f.hint, href: `/explore/thing?find=${encodeURIComponent(f.search)}` })),
   ], []);
   return (
@@ -107,7 +107,7 @@ function Thing({ t, live = false }: { t: Topic; live?: boolean }) {
   const lifeLink = (id: string) => (personById(id) ? `/explore/life?id=${id}` : `/explore/life?q=${id}`);
   const mapItems: MapItem[] = shown.filter((x) => x.point).map((x) => ({
     id: x.id, label: x.label, lng: x.point![0], lat: x.point![1], layer: t.id, year: x.year,
-    sub: [x.year, x.place].filter(Boolean).join(" · "),
+    sub: [x.year, x.place].filter(Boolean).join(", "),
     links: [{ href: `/explore/year?y=${x.year}`, label: `Explore ${x.year}` }, ...(t.kind === "field" ? [{ href: lifeLink(x.id), label: "Follow this life" }] : []), ...(x.people ?? []).map((id) => ({ href: lifeLink(id), label: personById(id)?.label ?? "A life" })), { href: x.source, label: "Source", external: true }],
   }));
   const key = live ? t.qid : t.id;
@@ -158,7 +158,7 @@ function Thing({ t, live = false }: { t: Topic; live?: boolean }) {
             {shown.slice(0, 200).map((x) => (
               <li key={x.id} className="flex items-baseline gap-3 px-3 py-2 text-sm">
                 <Link href={`/explore/year?y=${x.year}`} className="w-12 shrink-0 tabular-nums text-bronze hover:underline" title={`Explore ${x.year}`}>{x.year}</Link>
-                <span className="min-w-0 flex-1"><button type="button" onClick={() => setFocus(x.id)} className="text-left hover:text-bronze" title="Show on the map">{x.label}</button>{x.place && <span className="text-ink-2"> · {x.place}</span>}{t.kind === "field" && <Link href={lifeLink(x.id)} className="ml-1 text-xs text-bronze hover:underline">life</Link>}</span>
+                <span className="min-w-0 flex-1"><button type="button" onClick={() => setFocus(x.id)} className="text-left hover:text-bronze" title="Show on the map">{x.label}</button>{x.place && <span className="text-ink-2">, {x.place}</span>}{t.kind === "field" && <Link href={lifeLink(x.id)} className="ml-1 text-xs text-bronze hover:underline">life</Link>}</span>
                 <a href={x.source} target="_blank" rel="noopener noreferrer" className="shrink-0 text-[11px] text-bronze hover:underline">source</a>
               </li>
             ))}

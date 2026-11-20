@@ -75,7 +75,7 @@ export function ActivityRenderer({
             {activity.difficulty === "core" && "🟡 Core"}
             {activity.difficulty === "advanced" && "🔴 Advanced"}
           </span>
-          <span className="text-xs text-ink-2 ml-auto">~{activity.estimatedMinutes} min · +{activity.xpReward} XP</span>
+          <span className="text-xs text-ink-2 ml-auto">~{activity.estimatedMinutes} min, +{activity.xpReward} XP</span>
         </div>
         <p className="text-sm leading-relaxed text-ink">{t(activity.prompt)}</p>
       </header>
@@ -105,7 +105,7 @@ export function ActivityRenderer({
             )}
             {attempts > 0 && !completed && (
               <span className="text-amber-600 dark:text-amber-400 font-medium">
-                Attempt {attempts} · Best: {Math.round(bestScore * 100)}%
+                Attempt {attempts}, Best: {Math.round(bestScore * 100)}%
               </span>
             )}
             {onShowExplanation && !completed && (

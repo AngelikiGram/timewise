@@ -28,7 +28,7 @@ export function MoreSlider({ what, shown, total, onChange, compact = false }: { 
 }
 
 function Card({ link, facts, selected, onStep, onDetails }: { link: Link; facts?: NodeFacts; selected: boolean; onStep: () => void; onDetails: () => void }) {
-  const sub = [facts?.year !== undefined ? formatYear(facts.year) : null, facts?.country].filter(Boolean).join(" · ");
+  const sub = [facts?.year !== undefined ? formatYear(facts.year) : null, facts?.country].filter(Boolean).join(", ");
   return (
     <li
       className={`group relative flex min-h-28 flex-col rounded-xl border-2 bg-paper-2 p-3 transition-colors focus-within:ring-2 focus-within:ring-bronze/60 hover:border-bronze ${link.documented ? "border-line" : "border-dashed border-bronze/50"} ${selected ? "!border-bronze bg-bronze-soft/30" : ""}`}
@@ -101,7 +101,7 @@ export function ConnectionCards({ record, links, facts, selected, onStep, onDeta
       <div className="flex items-start gap-4 rounded-2xl border-2 border-bronze/60 bg-paper-2 p-4 sm:p-5" data-testid="focus-card">
         <span className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-bronze text-paper"><Icon name={KIND_ICON[record.kind]} size={30} /></span>
         <div className="min-w-0">
-          <p className="text-xs font-semibold text-bronze">{KIND_LABEL[record.kind]}{record.when.text ? ` · ${record.when.text}` : ""}</p>
+          <p className="text-xs font-semibold text-bronze">{KIND_LABEL[record.kind]}{record.when.text ? `, ${record.when.text}` : ""}</p>
           <h2 className="font-serif text-2xl leading-tight sm:text-3xl [overflow-wrap:anywhere]">{record.label}</h2>
           {record.description && <p className="mt-0.5 text-ink-2 [overflow-wrap:anywhere]">{record.description}</p>}
         </div>

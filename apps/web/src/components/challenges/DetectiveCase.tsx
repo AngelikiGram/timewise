@@ -61,7 +61,7 @@ export function DetectiveCase() {
 
       {stage === 0 && (
         <section className="fade-in mt-8">
-          <p className="eyebrow">A detective case · Vienna, 1857–1865</p>
+          <p className="eyebrow">A detective case, Vienna, 1857–1865</p>
           <h1 className="mt-3 font-serif text-4xl leading-tight sm:text-5xl">{CASE.question}</h1>
           <p className="mt-4 text-lg leading-relaxed text-ink-2">{CASE.setup}</p>
           <ul className="mt-6 grid gap-3 text-sm sm:grid-cols-3">

@@ -44,7 +44,7 @@ function LinkForm({ claims, onCancel, onSave }: { claims: Claim[]; onCancel: () 
         Event
         <select aria-label="Event" value={eventId} onChange={(e) => { setEventId(e.target.value); setClaimId(""); }} className="mt-1 block w-full border border-line bg-paper p-2">
           <option value="">Choose an event…</option>
-          {events.map((c) => <option key={c.event_id} value={c.event_id}>{c.event_date.slice(0, 4)} · {c.event_title}</option>)}
+          {events.map((c) => <option key={c.event_id} value={c.event_id}>{c.event_date.slice(0, 4)}, {c.event_title}</option>)}
         </select>
       </label>
       {eventId && (
@@ -239,14 +239,14 @@ export default function AdminPage() {
                 )}
                 <div className="min-w-0 flex-1">
                   <h2 className="font-serif text-xl leading-snug">{r.title}</h2>
-                  <p className="mt-1 text-sm text-ink-2">{[r.creator, r.date_text, r.institution, r.record_type, r.language].filter(Boolean).join(" · ")}</p>
+                  <p className="mt-1 text-sm text-ink-2">{[r.creator, r.date_text, r.institution, r.record_type, r.language].filter(Boolean).join(", ")}</p>
                   {r.description && r.description.trim() !== r.title.trim() && <p className="mt-2 line-clamp-3 text-sm text-ink-2">{r.description}</p>}
                   <p className="mt-2 text-xs text-ink-2">Found by searching: {r.source_query}</p>
                   <p className="mt-1 break-words text-xs">
                     <span className={r.reproduction === "permitted_with_attribution" ? "font-medium text-navy" : "font-medium text-oxblood"}>
                       {r.reproduction === "permitted_with_attribution" ? "Image can be shown" : "Link only"}
                     </span>
-                    <span className="text-ink-2"> · {r.media_rights ?? "No rights statement"}</span>
+                    <span className="text-ink-2">, {r.media_rights ?? "No rights statement"}</span>
                   </p>
                   {r.url && <a href={r.url} target="_blank" rel="noopener noreferrer" className="mt-1 inline-block text-sm text-bronze underline-offset-2 hover:underline">Open the record ↗</a>}
                   {r.links.length > 0 && (

@@ -102,7 +102,7 @@ export function LinkDetail({ link, record, facts, onBack, onOpen }: { link: Reco
       <h2 className="mt-2 font-serif text-2xl leading-tight">{link.label}</h2>
       {link.description && <p className="mt-1 text-ink-2">{link.description}</p>}
       {facts && (facts.year !== undefined || facts.country) && (
-        <p className="mt-1 text-sm text-ink-2">{[facts.year !== undefined ? formatYear(facts.year) : null, facts.country].filter(Boolean).join(" · ")}</p>
+        <p className="mt-1 text-sm text-ink-2">{[facts.year !== undefined ? formatYear(facts.year) : null, facts.country].filter(Boolean).join(", ")}</p>
       )}
       <h3 className="eyebrow mt-4">Why they&rsquo;re connected</h3>
       <div className="mt-2"><Why link={link} record={record} /></div>
@@ -138,7 +138,7 @@ export function RecordCard({ record, links, onPick }: { record: RecordData; link
 
   return (
     <article data-testid="record-card">
-      <p className="text-xs font-semibold text-bronze">{KIND_LABEL[record.kind]}{record.types.length > 0 && <span className="font-normal normal-case tracking-normal text-ink-2"> · {record.types.join(", ")}</span>}</p>
+      <p className="text-xs font-semibold text-bronze">{KIND_LABEL[record.kind]}{record.types.length > 0 && <span className="font-normal normal-case tracking-normal text-ink-2">, {record.types.join(", ")}</span>}</p>
       <h2 className="mt-1 font-serif text-3xl leading-tight">{record.label}</h2>
       {record.description && <p className="mt-1 text-ink-2">{record.description}</p>}
       <dl className="mt-3 grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-sm">

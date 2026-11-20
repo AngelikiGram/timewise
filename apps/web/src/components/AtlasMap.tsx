@@ -210,7 +210,7 @@ export function AtlasMap({
           type: "symbol",
           source: "tw-events",
           filter: ["==", ["get", "id"], ""],
-          layout: { "text-field": ["concat", ["get", "year"], " · ", ["get", "place"]], "text-font": ["Noto Sans Regular"], "text-size": 14, "text-offset": [0, 1.6], "text-anchor": "top", "text-allow-overlap": true },
+          layout: { "text-field": ["concat", ["get", "year"], ", ", ["get", "place"]], "text-font": ["Noto Sans Regular"], "text-size": 14, "text-offset": [0, 1.6], "text-anchor": "top", "text-allow-overlap": true },
           paint: { "text-color": PALETTE.light.accent, "text-halo-color": PALETTE.light.halo, "text-halo-width": 2 },
         });
         setReady(true);
@@ -264,7 +264,7 @@ export function AtlasMap({
             title.textContent = count > 1 ? `${count} records at ${feature.properties.place}` : feature.properties.title;
             const meta = document.createElement("div");
             meta.style.cssText = "font-size:11px;color:var(--ink-2)";
-            meta.textContent = count > 1 ? "Click to step through them" : `${feature.properties.year} · ${feature.properties.place}`;
+            meta.textContent = count > 1 ? "Click to step through them" : `${feature.properties.year}, ${feature.properties.place}`;
             el.append(title, meta);
             popup?.remove();
             popup = new maplibre.Popup({ closeButton: false, offset: 12 }).setLngLat((feature.geometry as GeoJSON.Point).coordinates as [number, number]).setDOMContent(el).addTo(m);

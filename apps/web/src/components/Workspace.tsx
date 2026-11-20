@@ -42,7 +42,7 @@ function Narrative({ onPick }: { onPick: () => void }) {
   return (
     <div ref={scroller} className="relative h-full overflow-y-auto">
       <div className="p-5">
-        <p className="eyebrow">Investigation · {collection.region.label.en}</p>
+        <p className="eyebrow">Investigation, {collection.region.label.en}</p>
         <h1 className="mt-2 font-serif text-3xl leading-[1.1]">{investigation.question.en}</h1>
         <p className="mt-3 leading-relaxed text-ink-2">{investigation.intro.en}</p>
         <p className="mt-3 inline-block border border-line px-2 py-1 text-xs text-ink-2" title={collection.region.coverageNote}>
@@ -80,7 +80,7 @@ function Narrative({ onPick }: { onPick: () => void }) {
                       onClick={() => { setPlaying(false); selectEvent(e.id); onPick(); }}
                       className={`-mx-2 block w-[calc(100%+1rem)] border-l-2 px-3 py-2 text-left transition-colors ${selected ? "border-oxblood bg-paper-3" : "border-transparent hover:bg-paper-3/60"}`}
                     >
-                      <span className="block text-xs text-ink-2">{formatWhen(e.when)} · {placeLabel(e)}{e.kind === "process" ? " · Process" : ""}</span>
+                      <span className="block text-xs text-ink-2">{formatWhen(e.when)}, {placeLabel(e)}{e.kind === "process" ? ", Process" : ""}</span>
                       <span className="block font-serif text-[1.05rem] leading-snug">{e.title.en}</span>
                     </button>
                   </li>
