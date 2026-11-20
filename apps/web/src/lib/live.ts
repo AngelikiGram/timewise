@@ -2,6 +2,7 @@
 // isn't in the prebuilt collection. The rules are the build scripts' rules: every fact keeps the statement it
 // came from, nothing is written by hand, a match says how it was made, and when Wikidata has nothing the page
 // says so. Wikidata is CC0. Images are linked to their Commons page, where the licence is.
+import { cached, cachedJson, until } from "./cache";
 import type { Credit, LifeEvent, Person, Topic, TopicItem, Work } from "./explore";
 
 const API = "https://www.wikidata.org/w/api.php";
@@ -11,19 +12,18 @@ export const wdUrl = (qid: string, prop?: string) => `https://www.wikidata.org/w
 
 const params = (p: Record<string, string>) => new URLSearchParams({ format: "json", origin: "*", ...p }).toString();
 
-async function getJson<T>(url: string, signal?: AbortSignal): Promise<T> {
-  const r = await fetch(url, { signal });
-  if (!r.ok) throw new Error(r.status === 429 ? "Wikidata is busy right now. Try again in a minute." : `Wikidata answered ${r.status}.`);
-  return r.json() as Promise<T>;
-}
+/** Every Wikidata API call goes through the shared cache: asked once, kept for a week. */
+const getJson = <T,>(url: string, signal?: AbortSignal): Promise<T> => cachedJson<T>(url, signal);
 
 export type Binding = Record<string, { value: string } | undefined>;
-export async function sparql(query: string, signal?: AbortSignal): Promise<Binding[]> {
-  const r = await fetch(`${SPARQL}?format=json&query=${encodeURIComponent(query)}`, { headers: { Accept: "application/sparql-results+json" }, signal });
-  if (r.status === 429) throw new Error("Wikidata's query service is busy. Try again in a minute.");
-  if (r.status === 500 || r.status === 504) throw new Error("That question was too big for Wikidata's query service. Try something narrower.");
-  if (!r.ok) throw new Error(`Wikidata's query service answered ${r.status}.`);
-  return ((await r.json()) as { results: { bindings: Binding[] } }).results.bindings;
+export function sparql(query: string, signal?: AbortSignal): Promise<Binding[]> {
+  return until(cached(`sparql:${query}`, async () => {
+    const r = await fetch(`${SPARQL}?format=json&query=${encodeURIComponent(query)}`, { headers: { Accept: "application/sparql-results+json" } });
+    if (r.status === 429) throw new Error("Wikidata's query service is busy. Try again in a minute.");
+    if (r.status === 500 || r.status === 504) throw new Error("That question was too big for Wikidata's query service. Try something narrower.");
+    if (!r.ok) throw new Error(`Wikidata's query service answered ${r.status}.`);
+    return ((await r.json()) as { results: { bindings: Binding[] } }).results.bindings;
+  }), signal);
 }
 
 export const v = (b: Binding, k: string) => b[k]?.value;
@@ -71,8 +71,10 @@ export async function searchEntities(text: string, signal?: AbortSignal, limit =
 
 /** Items matching a full-text search with statement filters (CirrusSearch), labelled. */
 async function cirrus(expr: string, signal?: AbortSignal, limit = 10, random = false): Promise<Hit[]> {
-  const d = await getJson<{ query: { search: { title: string }[] } }>(
-    `${API}?${params({ action: "query", list: "search", srsearch: expr, srnamespace: "0", srlimit: String(limit), srprop: "", ...(random ? { srsort: "random" } : {}) })}`, signal);
+  // A random draw must not come from the cache, or it would draw the same person every time.
+  const url = `${API}?${params({ action: "query", list: "search", srsearch: expr, srnamespace: "0", srlimit: String(limit), srprop: "", ...(random ? { srsort: "random" } : {}) })}`;
+  type R = { query: { search: { title: string }[] } };
+  const d: R = random ? await fetch(url, { signal }).then((r) => r.json() as Promise<R>) : await getJson<R>(url, signal);
   const ids = d.query.search.map((x) => x.title).filter((x) => /^Q\d+$/.test(x));
   if (!ids.length) return [];
   const e = await getJson<{ entities: Record<string, { labels?: Record<string, { value: string }>; descriptions?: Record<string, { value: string }> }> }>(
@@ -269,48 +271,60 @@ export async function loadLife(qid: string, signal?: AbortSignal): Promise<LifeD
  * A "thing" from Wikidata: where and when it appears. Items in its style, of its kind, in its genre or movement,
  * with coordinates and a start date; or, for a field or an occupation, the people in it, placed at their birthplace.
  */
-export async function loadThing(qid: string, signal?: AbortSignal): Promise<Topic> {
+export async function loadThing(qid: string, signal?: AbortSignal, onPartial?: (t: Topic) => void): Promise<Topic> {
   const e = await entity(qid, signal);
   const label = labelOf(e);
-  const rows = await sparql(`SELECT ?item ?itemLabel ?prop ?d ?c ?placeLabel ?countryLabel WHERE {
+  const placed = (deep: boolean, limit: number) => `SELECT ?item ?itemLabel ?prop ?d ?c ?placeLabel ?countryLabel WHERE {
     { SELECT ?item ?prop ?c WHERE {
       { ?item wdt:P149 wd:${qid}; wdt:P625 ?c. BIND("P149" AS ?prop) }
-      UNION { ?item wdt:P31/wdt:P279* wd:${qid}; wdt:P625 ?c. BIND("P31" AS ?prop) }
+      UNION { ?item wdt:P31${deep ? "/wdt:P279*" : ""} wd:${qid}; wdt:P625 ?c. BIND("P31" AS ?prop) }
       UNION { ?item wdt:P136 wd:${qid}; wdt:P625 ?c. BIND("P136" AS ?prop) }
       UNION { ?item wdt:P135 wd:${qid}; wdt:P625 ?c. BIND("P135" AS ?prop) }
-    } LIMIT 4000 }
+    } LIMIT ${limit} }
     OPTIONAL { ?item wdt:P571 ?d1 } OPTIONAL { ?item wdt:P580 ?d2 } OPTIONAL { ?item wdt:P1619 ?d3 } OPTIONAL { ?item wdt:P577 ?d4 }
     BIND(COALESCE(?d1, ?d2, ?d3, ?d4) AS ?d) FILTER(BOUND(?d))
     OPTIONAL { ?item wdt:P131 ?place } OPTIONAL { ?item wdt:P17 ?country }
-    SERVICE wikibase:label { bd:serviceParam wikibase:language "en,de,fr,es,it,mul". } }`, signal);
-  let kind: Topic["kind"] = rows.filter((r) => v(r, "prop") === "P149").length > rows.length / 2 ? "style" : "class";
-  let found = rows;
-  if (found.length < 3) {
-    // Not a kind of place: perhaps a field of work, an occupation or a movement people belong to.
-    found = await sparql(`SELECT ?item ?itemLabel ?prop ?d ?c ?placeLabel WHERE {
-      { SELECT ?item ?prop ?d ?c ?place WHERE {
-        VALUES (?p ?prop) { (wdt:P101 "P101") (wdt:P106 "P106") (wdt:P135 "P135") }
-        ?item ?p wd:${qid}. ?item wdt:P31 wd:Q5; wdt:P569 ?d; wdt:P19 ?place; wikibase:sitelinks ?sl. ?place wdt:P625 ?c. FILTER(?sl > 4)
-      } LIMIT 2500 }
-      SERVICE wikibase:label { bd:serviceParam wikibase:language "en,de,fr,es,it,mul". } }`, signal);
-    kind = "field";
-  }
-  const items = new Map<string, TopicItem>();
-  const now = new Date().getFullYear();
-  for (const r of found) {
-    const id = qidOf(v(r, "item"));
-    const y = yearOfIso(v(r, "d"));
-    const pt = pointOf(v(r, "c"));
-    const lab = v(r, "itemLabel");
-    if (!id || y == null || y > now || !pt || !lab || /^Q\d+$/.test(lab)) continue;
-    const old = items.get(id);
-    if (old && old.year <= y) continue;
-    items.set(id, { id, label: lab, year: y, point: pt, place: v(r, "placeLabel") ?? null, country: v(r, "countryLabel") ?? null, source: wdUrl(id, v(r, "prop")) });
-  }
-  return {
-    id: qid, qid, label, description: e.descriptions?.en?.value ?? null, kind,
-    evidence: `Wikidata item ${qid}, looked up live`, items: [...items.values()].sort((a, b) => a.year - b.year), yearSource: kind === "field" ? "P569" : "P571",
+    SERVICE wikibase:label { bd:serviceParam wikibase:language "en,de,fr,es,it,mul". } }`;
+  const make = (rows: Binding[], kind: Topic["kind"], partial?: "loading" | "cut"): Topic => {
+    const items = new Map<string, TopicItem>();
+    const now = new Date().getFullYear();
+    for (const r of rows) {
+      const id = qidOf(v(r, "item"));
+      const y = yearOfIso(v(r, "d"));
+      const pt = pointOf(v(r, "c"));
+      const lab = v(r, "itemLabel");
+      if (!id || y == null || y > now || !pt || !lab || /^Q\d+$/.test(lab)) continue;
+      const old = items.get(id);
+      if (old && old.year <= y) continue;
+      items.set(id, { id, label: lab, year: y, point: pt, place: v(r, "placeLabel") ?? null, country: v(r, "countryLabel") ?? null, source: wdUrl(id, v(r, "prop")) });
+    }
+    return {
+      id: qid, qid, label, description: e.descriptions?.en?.value ?? null, kind, partial,
+      evidence: `Wikidata item ${qid}, looked up live`, items: [...items.values()].sort((a, b) => a.year - b.year), yearSource: kind === "field" ? "P569" : "P571",
+    } as Topic;
   };
+  const kindOf = (rows: Binding[]): Topic["kind"] => (rows.filter((r) => v(r, "prop") === "P149").length > rows.length / 2 ? "style" : "class");
+  // Two questions at once: a quick one (direct members only, a few hundred) that answers in seconds, and the
+  // full one (every subclass) that can take much longer. The quick answer is shown while the full one runs.
+  let fullDone = false;
+  const quick = sparql(placed(false, 400), signal).then((rows) => { if (!fullDone && rows.length >= 3) onPartial?.(make(rows, kindOf(rows), "loading")); return rows; }, () => [] as Binding[]);
+  let rows: Binding[];
+  try { rows = await sparql(placed(true, 4000), signal); }
+  catch (err) {
+    // The full question timed out: keep the quick answer if there is one, and say it is partial.
+    const q = await quick;
+    if (q.length >= 3) return make(q, kindOf(q), "cut");
+    throw err;
+  } finally { fullDone = true; }
+  if (rows.length >= 3) return make(rows, kindOf(rows));
+  // Not a kind of place: perhaps a field of work, an occupation or a movement people belong to.
+  const people = await sparql(`SELECT ?item ?itemLabel ?prop ?d ?c ?placeLabel WHERE {
+    { SELECT ?item ?prop ?d ?c ?place WHERE {
+      VALUES (?p ?prop) { (wdt:P101 "P101") (wdt:P106 "P106") (wdt:P135 "P135") }
+      ?item ?p wd:${qid}. ?item wdt:P31 wd:Q5; wdt:P569 ?d; wdt:P19 ?place; wikibase:sitelinks ?sl. ?place wdt:P625 ?c. FILTER(?sl > 4)
+    } LIMIT 2500 }
+    SERVICE wikibase:label { bd:serviceParam wikibase:language "en,de,fr,es,it,mul". } }`, signal);
+  return make(people, "field");
 }
 
 // ---------------------------------------------------------------------------------------------- Stories

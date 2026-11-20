@@ -12,6 +12,8 @@ import { Icon } from "../icons";
 import { ExploreMap, type MapItem } from "../modes/ExploreMap";
 import { BadgeToast } from "../modes/Gamify";
 import { StoryDiscover } from "./StoryDiscover";
+import { MoreSources } from "../modes/MoreSources";
+import { Working } from "../modes/Working";
 
 const GROUP: Record<StoryStep["group"], { title: string; icon: "cause" | "parts" | "sequence" }> = {
   before: { title: "What led to it", icon: "cause" },
@@ -75,7 +77,11 @@ function Teller({ qid }: { qid: string }) {
   ], [steps, story, qid]);
 
   if (err) return <Frame><p role="alert" className="rounded-xl border border-line bg-paper-2 p-4 text-ink-2">{err}</p></Frame>;
-  if (!story) return <Frame><div role="status" aria-live="polite"><p className="text-ink-2">Putting the story together from Wikidata…</p><div className="skeleton mt-4 h-12 w-2/3 rounded" /><div className="skeleton mt-4 h-72 rounded-xl" /></div></Frame>;
+  if (!story) return <Frame><Working title={more?.summary?.title ?? "A story from Wikidata"} preview={more} steps={[
+    { label: "Reading the event", state: more ? "done" : "doing" },
+    { label: "What led to it, its parts and what followed", state: more ? "doing" : "todo" },
+    { label: "Placing the steps on the map", state: "todo" },
+  ]} /></Frame>;
   const cur = i >= 0 ? steps[i] : null;
 
   return (
@@ -141,6 +147,7 @@ function Teller({ qid }: { qid: string }) {
             ))}
           </div>
         </div>
+        <MoreSources query={story.label} point={story.point} label={story.label} />
         <p className="mt-6 flex items-center gap-1.5 text-xs text-ink-2"><Icon name="source" size={14} />Every step cites the Wikidata statement that joins it to {story.label} (has cause, has effect, part of, has part, significant event, follows, followed by). Nothing is written by hand.</p>
       </article>
     </Frame>

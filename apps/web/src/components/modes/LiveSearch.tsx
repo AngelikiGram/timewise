@@ -14,8 +14,9 @@ type Local = { id: string; label: string; sub?: string; href: string };
  * Search the prebuilt collection first, then Wikidata live. Prebuilt matches open at once; a Wikidata match
  * opens a page made from Wikidata now, which says so.
  */
-export function LiveSearch({ placeholder, local, live, hrefFor, label, testId }: {
+export function LiveSearch({ placeholder, local, live, hrefFor, label, testId, prefetch }: {
   placeholder: string; local: Local[]; live: (text: string, signal: AbortSignal) => Promise<Hit[]>; hrefFor: (h: Hit) => string; label: string; testId?: string;
+  /** Start loading a result while the pointer is on it, so it opens faster. */ prefetch?: (h: Hit) => void;
 }) {
   const router = useRouter();
   const id = useId();
@@ -54,7 +55,7 @@ export function LiveSearch({ placeholder, local, live, hrefFor, label, testId }:
           {mine.map((x) => <Link key={x.id} href={x.href} className="block rounded-lg px-3 py-2 hover:bg-paper-2"><span className="font-medium">{x.label}</span>{x.sub && <span className="block text-xs text-ink-2">{x.sub}</span>}</Link>)}
           {fresh.length > 0 && <p className="px-3 pt-2 text-[11px] font-semibold uppercase tracking-wider text-ink-2">Look up on Wikidata now</p>}
           {fresh.map((h) => (
-            <button key={h.id} type="button" onClick={() => open(h)} className="flex w-full items-start gap-2 rounded-lg px-3 py-2 text-left hover:bg-paper-2">
+            <button key={h.id} type="button" onClick={() => open(h)} onMouseEnter={() => prefetch?.(h)} onFocus={() => prefetch?.(h)} className="flex w-full items-start gap-2 rounded-lg px-3 py-2 text-left hover:bg-paper-2">
               <span className="min-w-0 flex-1"><span className="font-medium">{h.label}</span>{h.description && <span className="block text-xs text-ink-2">{h.description}</span>}</span>
               <span className="shrink-0 text-[10px] text-ink-2">{h.id}</span>
             </button>

@@ -7,6 +7,7 @@ import { formatImportedDate, formatYear, yearOf, type Precision } from "@/lib/da
 import { aliveIn, personById, TOPICS, WORKS, wd } from "@/lib/explore";
 import { atlasHref, CONTINENT_LABELS, loadIndex, type IndexEvent } from "@/lib/world-index";
 import { recordYear } from "@/lib/explorer";
+import { OWID_SOURCE, people, population, populationAt } from "@/lib/opendata";
 import { Icon } from "../icons";
 import { BadgeToast } from "./Gamify";
 import { ExploreMap, type MapItem } from "./ExploreMap";
@@ -23,6 +24,9 @@ export function YearView() {
   useEffect(() => setDraft(String(y)), [y]);
   useEffect(() => { loadIndex().then(setEvents, () => setFailed(true)); }, []);
   useEffect(() => { recordYear(y); }, [y]);
+  const [world, setWorld] = useState<[number, number][] | null>(null);
+  useEffect(() => { population("OWID_WRL").then(setWorld, () => setWorld([])); }, []);
+  const pop = world ? populationAt(world, y) : null;
   // A new history entry for each year, so the browser's Back returns to the last one.
   const go = (n: number) => router.push(`/explore/year?y=${n}`, { scroll: false });
 
@@ -70,6 +74,7 @@ export function YearView() {
           <SaveInterest kind="year" id={y} label={String(y)} />
         </form>
       </div>
+      {pop != null && <p className="mt-3 inline-flex items-center gap-2 rounded-full bg-paper-2 px-3 py-1 text-sm" data-testid="year-population"><Icon name="people" size={16} className="text-bronze" />About <b>{people(pop)}</b> people lived on Earth in {formatYear(y)}<a className="text-[11px] text-bronze hover:underline" href={OWID_SOURCE} target="_blank" rel="noopener noreferrer">Our World in Data estimate</a></p>}
       <p className="mt-2 max-w-3xl text-sm text-ink-2">The same year in different places, from the best-documented records of each continent. Records tell of events more than of everyday life, so what shows here is what was written down.</p>
 
       <section className="mt-6" aria-labelledby="year-world">

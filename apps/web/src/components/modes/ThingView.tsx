@@ -7,10 +7,14 @@ import { recordSurprise, recordThing } from "@/lib/explorer";
 import { decades, peopleOf, personById, type Topic, TOPIC_NOUN, TOPIC_YEAR, TOPICS, topicById, wd } from "@/lib/explore";
 import { FEATURED_THINGS, pick } from "@/lib/featured";
 import { loadThing, searchEntities } from "@/lib/live";
+import { prefetch } from "@/lib/cache";
+import { enrich, type Enrichment } from "@/lib/wikidata";
 import { Icon } from "../icons";
 import { ExploreMap, type MapItem } from "./ExploreMap";
 import { BadgeToast } from "./Gamify";
 import { LiveSearch } from "./LiveSearch";
+import { MoreSources } from "./MoreSources";
+import { Working } from "./Working";
 import { ModeBar, NextSteps, SaveInterest } from "./shared";
 
 /**
@@ -29,9 +33,23 @@ export function ThingView() {
 function LiveThing({ qid }: { qid: string }) {
   const [t, setT] = useState<Topic | null>(null);
   const [err, setErr] = useState<string | null>(null);
-  useEffect(() => { const ac = new AbortController(); loadThing(qid, ac.signal).then(setT, (e: Error) => { if (e.name !== "AbortError") setErr(e.message); }); return () => ac.abort(); }, [qid]);
-  if (err) return <Waiting><p className="rounded-xl border border-line bg-paper-2 p-4 text-ink-2" role="alert">{err}</p></Waiting>;
-  if (!t) return <Waiting><p className="text-ink-2" role="status">Asking Wikidata where and when this appears… big kinds of thing can take up to a minute.</p><div className="skeleton mt-4 h-28 rounded-lg" /><div className="skeleton mt-4 h-80 rounded-lg" /></Waiting>;
+  const [preview, setPreview] = useState<Enrichment | null>(null);
+  const [name, setName] = useState<string | null>(null);
+  useEffect(() => {
+    const ac = new AbortController();
+    // The summary and picture arrive in under a second: something to read while the map is gathered.
+    enrich(qid).then((e) => { if (!ac.signal.aborted) setPreview(e); }, () => {});
+    searchEntities(qid, ac.signal, 1).then((h) => setName(h[0]?.label ?? null), () => {});
+    // A quick first answer (direct members) appears in seconds; the full answer replaces it when it arrives.
+    loadThing(qid, ac.signal, (partial) => setT((cur) => cur ?? partial)).then(setT, (e: Error) => { if (e.name !== "AbortError") setErr(e.message); });
+    return () => ac.abort();
+  }, [qid]);
+  if (err && !t) return <Waiting><p className="rounded-xl border border-line bg-paper-2 p-4 text-ink-2" role="alert">{err}</p></Waiting>;
+  if (!t) return <Waiting><Working title={name ?? "Following it"} preview={preview} steps={[
+    { label: "Reading what Wikidata says about it", state: name ? "done" : "doing" },
+    { label: "Finding where and when it appears", state: name ? "doing" : "todo", detail: "the first few hundred show as soon as they arrive" },
+    { label: "Putting them on the map and the timeline", state: "todo" },
+  ]} /></Waiting>;
   if (!t.items.length) return <Waiting><p className="rounded-xl border border-line bg-paper-2 p-4 text-ink-2">Wikidata has nothing for <strong>{t.label}</strong> with both a place and a year. Try a style, a kind of building, a movement or an occupation.</p></Waiting>;
   return <Thing t={t} live />;
 }
@@ -61,7 +79,7 @@ function ThingFinder() {
   ], []);
   return (
     <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-      <div className="min-w-0 flex-1 sm:max-w-xl"><LiveSearch label="Find a thing to follow" placeholder="Follow anything: lighthouses, Baroque, Impressionism, astronomers…" local={local} live={(s, sig) => searchEntities(s, sig)} hrefFor={(h) => `/explore/thing?q=${h.id}`} testId="thing-search" /></div>
+      <div className="min-w-0 flex-1 sm:max-w-xl"><LiveSearch label="Find a thing to follow" placeholder="Follow anything: lighthouses, Baroque, Impressionism, astronomers…" local={local} live={(s, sig) => searchEntities(s, sig)} hrefFor={(h) => `/explore/thing?q=${h.id}`} prefetch={(h) => prefetch(() => loadThing(h.id))} testId="thing-search" /></div>
       <button type="button" className="btn btn-primary" onClick={() => { recordSurprise(); router.push(`/explore/thing?find=${encodeURIComponent(pick(FEATURED_THINGS).search)}`); }} data-testid="thing-surprise"><span aria-hidden>🎲</span>Surprise me</button>
     </div>
   );
@@ -113,6 +131,7 @@ function Thing({ t, live = false }: { t: Topic; live?: boolean }) {
       <p className="mt-3 max-w-3xl text-sm text-ink-2">
         {all.length} {many} on Wikidata with a place and a year {TOPIC_YEAR[t.kind]}, from {first ? `${first.label} (${first.year})` : "—"} on. These are the documented ones, not all there were: the record grows where people have written it down.{live && all.length >= 2900 ? " Wikidata has more; this shows the first 3,000 it returned." : ""}
       </p>
+      {t.partial && <p className="mt-3 flex items-center gap-2 rounded-xl bg-bronze-soft/40 px-3 py-2 text-sm" role="status" data-testid="thing-partial">{t.partial === "loading" && <span className="tw-spin inline-block h-3 w-3 rounded-full border-2 border-bronze border-t-transparent" />}{t.partial === "loading" ? <>Showing the first {all.length} found. Wikidata is still gathering the rest; they appear here when it&rsquo;s done.</> : <>Wikidata took too long to list every one, so these are the first {all.length} it returned.</>}<style>{".tw-spin{animation:tw-spin 1s linear infinite}@keyframes tw-spin{to{transform:rotate(360deg)}}@media (prefers-reduced-motion:reduce){.tw-spin{animation:none}}"}</style></p>}
       <div className="mt-3 flex flex-wrap gap-2"><SaveInterest kind="topic" id={key} label={t.label} /><a href={wd(t.qid)} target="_blank" rel="noopener noreferrer" className="btn btn-ghost btn-sm">Wikidata ↗</a></div>
 
       {/* Decade bars: click one to see that decade, or the whole span again. */}
@@ -154,6 +173,7 @@ function Thing({ t, live = false }: { t: Topic; live?: boolean }) {
         ...(peak ? [{ href: `/explore/year?y=${peak[0] + 5}`, icon: "timeline" as const, title: `The world in ${peak[0] + 5}`, why: `In the busiest decade for ${t.label.toLowerCase()}: what else was happening.` }] : []),
         ...TOPICS.filter((x) => x.id !== t.id).slice(0, 1).map((x) => ({ href: `/explore/thing?id=${x.id}`, icon: "network" as const, title: `Follow ${x.label.toLowerCase()}`, why: "Another thing to follow." })),
       ]} />
+      <MoreSources query={t.label} label={t.label.toLowerCase()} />
       <p className="mt-6 flex items-center gap-1.5 text-xs text-ink-2"><Icon name="source" size={14} />Each item links to the Wikidata statement that ties it to {t.label.toLowerCase()}.{live ? " Made just now from Wikidata (CC0)." : ""}</p>
     </div>
   );

@@ -14,6 +14,10 @@ import { ExploreMap, type MapItem } from "./ExploreMap";
 import { BadgeToast } from "./Gamify";
 import { KIND, LifeTime } from "./LifeTime";
 import { LiveSearch } from "./LiveSearch";
+import { MoreSources } from "./MoreSources";
+import { Working } from "./Working";
+import { prefetch } from "@/lib/cache";
+import { enrich, type Enrichment } from "@/lib/wikidata";
 import { artistOf, ModeBar, NextSteps, Pictured, SaveInterest, Src } from "./shared";
 
 /**
@@ -54,9 +58,19 @@ function Premade({ p }: { p: Person }) {
 function LiveLife({ qid, matched }: { qid: string; matched: string | null }) {
   const [data, setData] = useState<LifeData | null>(null);
   const [err, setErr] = useState<string | null>(null);
-  useEffect(() => { const ac = new AbortController(); loadLife(qid, ac.signal).then(setData, (e: Error) => { if (e.name !== "AbortError") setErr(e.message); }); return () => ac.abort(); }, [qid]);
+  const [preview, setPreview] = useState<Enrichment | null>(null);
+  useEffect(() => {
+    const ac = new AbortController();
+    enrich(qid).then((e) => { if (!ac.signal.aborted) setPreview(e); }, () => {});
+    loadLife(qid, ac.signal).then(setData, (e: Error) => { if (e.name !== "AbortError") setErr(e.message); });
+    return () => ac.abort();
+  }, [qid]);
   if (err) return <Shell><p className="mt-6 rounded-xl border border-line bg-paper-2 p-4 text-ink-2" role="alert">{err} <Link href="/explore/life" className="link">Back to all lives</Link></p></Shell>;
-  if (!data) return <Shell><LoadingLife what="Reading this life from Wikidata" /></Shell>;
+  if (!data) return <Shell><div className="mt-6"><Working title={matched ?? preview?.summary?.title ?? "Following a life"} preview={preview} steps={[
+    { label: "Reading the person's record", state: preview ? "done" : "doing" },
+    { label: "Works, homes, studies, offices and awards, with their years", state: preview ? "doing" : "todo" },
+    { label: "The people around them", state: preview ? "doing" : "todo" },
+  ]} /></div></Shell>;
   return <Life data={data} matched={matched} />;
 }
 
@@ -72,17 +86,11 @@ function Finder({ name, from, to }: { name: string; from: number; to: number }) 
     }, (e: Error) => { if (e.name !== "AbortError") setErr(e.message); });
     return () => ac.abort();
   }, [name, from, to, router]);
-  return <Shell>{err ? <p className="mt-6 rounded-xl border border-line bg-paper-2 p-4 text-ink-2" role="alert">{err} <Link href="/explore/life" className="link">Back to all lives</Link></p> : <LoadingLife what={`Finding ${name} on Wikidata`} />}</Shell>;
+  return <Shell>{err ? <p className="mt-6 rounded-xl border border-line bg-paper-2 p-4 text-ink-2" role="alert">{err} <Link href="/explore/life" className="link">Back to all lives</Link></p> : <div className="mt-6"><Working title={name} steps={[{ label: `Finding ${name} on Wikidata, by name and birth years`, state: "doing" }, { label: "Reading the life", state: "todo" }]} /></div>}</Shell>;
 }
 
 const Shell = ({ children }: { children: React.ReactNode }) => (
   <div className="mx-auto max-w-6xl px-4 pb-16 pt-6 sm:px-6"><ModeBar on="life" />{children}</div>
-);
-const LoadingLife = ({ what }: { what: string }) => (
-  <div className="mt-6 grid gap-4 md:grid-cols-[220px_minmax(0,1fr)]" role="status" aria-live="polite">
-    <div className="skeleton h-56 rounded-lg" />
-    <div><p className="text-ink-2">{what}…</p><div className="skeleton mt-3 h-10 w-2/3 rounded" /><div className="skeleton mt-3 h-5 w-1/2 rounded" /><div className="skeleton mt-8 h-24 rounded-xl" /></div>
-  </div>
 );
 
 // ------------------------------------------------------------------------------------------ The page
@@ -186,6 +194,7 @@ function Life({ data, matched }: { data: LifeData; matched?: string | null }) {
         { href: `/explore/year?y=${peak}`, icon: "timeline" as const, title: `The world in ${formatYear(peak)}`, why: `What else was happening while ${p.label} worked.` },
         ...(otherLife ? [{ href: lifeHref(otherLife.id), icon: "person" as const, title: otherLife.label, why: `Follow another life: ${otherLife.sentence ?? otherLife.relation}.` }] : []),
       ]} />
+      <MoreSources query={p.label} label={p.label} />
       {live && <p className="mt-6 flex items-center gap-1.5 text-xs text-ink-2"><Icon name="source" size={14} />Made just now from Wikidata (CC0). Each fact links to the statement it comes from; images link to their Commons page, where the licence is.</p>}
     </div>
   );
@@ -238,7 +247,7 @@ function LifeIndex() {
         <div>
           <h1 className="font-serif text-4xl">Follow a life</h1>
           <p className="mt-1 max-w-2xl text-ink-2">Anyone on Wikidata: their years, works, places and the people around them. Scrub through the life and see what happens at each point.</p>
-          <div className="mt-4 max-w-xl"><LiveSearch label="Find a person" placeholder="Search anyone: Mozart, Hedy Lamarr, your town's mayor in 1900…" local={local} live={searchPeople} hrefFor={(h) => `/explore/life?q=${h.id}`} testId="life-search" /></div>
+          <div className="mt-4 max-w-xl"><LiveSearch label="Find a person" placeholder="Search anyone: Mozart, Hedy Lamarr, your town's mayor in 1900…" local={local} live={searchPeople} hrefFor={(h) => `/explore/life?q=${h.id}`} prefetch={(h) => prefetch(() => loadLife(h.id))} testId="life-search" /></div>
         </div>
         <div className="flex flex-wrap gap-2">
           <button type="button" className="btn btn-primary" onClick={surprise} data-testid="life-surprise"><span aria-hidden>🎲</span>Surprise me</button>

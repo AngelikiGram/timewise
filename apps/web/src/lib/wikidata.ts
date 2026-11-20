@@ -2,6 +2,7 @@
 // Everything is fetched in the browser when an event is opened, and shown with its source and licence.
 // Wikidata is CC0; Wikipedia text is CC BY-SA 4.0, which allows quoting with attribution; each Commons
 // image carries its own licence and author, read from Commons and shown beside it.
+import { cachedJson } from "./cache";
 
 export type Linked = { id: string; label: string };
 export type Fact = { label: string; values: Linked[]; text?: string };
@@ -30,11 +31,8 @@ const LINKS: Record<string, keyof Pick<Enrichment, "before" | "after" | "causes"
 type Claim = { mainsnak: { datavalue?: { value: unknown; type: string } } };
 type Entity = { claims?: Record<string, Claim[]>; sitelinks?: Record<string, { title: string }>; labels?: Record<string, { value: string }> };
 
-async function json<T>(url: string): Promise<T> {
-  const r = await fetch(url);
-  if (!r.ok) throw new Error(`${r.status} from ${new URL(url).host}`);
-  return r.json() as Promise<T>;
-}
+/** Through the shared cache: opening the same event again is instant. */
+const json = <T,>(url: string): Promise<T> => cachedJson<T>(url);
 
 const strip = (html?: string) => html?.replace(/<[^>]+>/g, "").replace(/\s+/g, " ").trim() || undefined;
 

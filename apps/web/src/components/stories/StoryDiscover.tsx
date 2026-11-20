@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { recordSurprise } from "@/lib/explorer";
 import { FEATURED_EVENTS, pick } from "@/lib/featured";
-import { searchEntities } from "@/lib/live";
+import { loadStory, searchEntities } from "@/lib/live";
+import { prefetch } from "@/lib/cache";
 import { LiveSearch } from "../modes/LiveSearch";
 import { loadStoryIndex, type StoryEntry } from "./StoryReader";
 
@@ -27,7 +28,7 @@ export function StoryDiscover({ compact = false }: { compact?: boolean }) {
     <div className={compact ? "" : "rounded-2xl border border-line bg-paper-2 p-4 sm:p-5"} data-testid="story-discover">
       {!compact && <p className="text-sm text-ink-2">Search {index.length ? `${index.length.toLocaleString("en")} ready-made stories` : "the ready-made stories"}, or any event on Wikidata: TIMEWISE tells it on the spot from its documented causes, parts and consequences.</p>}
       <div className={`flex flex-col gap-2 sm:flex-row sm:items-center ${compact ? "" : "mt-3"}`}>
-        <div className="min-w-0 flex-1"><LiveSearch label="Find a story" placeholder="Any event: the French Revolution, Apollo 11, the Black Death…" local={local} live={(s, sig) => searchEntities(s, sig)} hrefFor={(h) => `/stories/live?q=${h.id}`} testId="story-search" /></div>
+        <div className="min-w-0 flex-1"><LiveSearch label="Find a story" placeholder="Any event: the French Revolution, Apollo 11, the Black Death…" local={local} live={(s, sig) => searchEntities(s, sig)} hrefFor={(h) => `/stories/live?q=${h.id}`} prefetch={(h) => prefetch(() => loadStory(h.id))} testId="story-search" /></div>
         <div className="flex gap-2">
           <button type="button" className="btn btn-primary" onClick={surprise} disabled={!index.length} data-testid="story-surprise"><span aria-hidden>🎲</span>Surprise me</button>
           <button type="button" className="btn btn-secondary" onClick={fresh} title="Pick a well-known event and tell it from Wikidata now"><span aria-hidden>✨</span>Make one now</button>

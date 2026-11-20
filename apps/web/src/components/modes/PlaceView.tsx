@@ -14,6 +14,7 @@ import { Icon, type IconName } from "../icons";
 import { ExploreMap, type MapItem } from "./ExploreMap";
 import { BadgeToast, LevelBar } from "./Gamify";
 import { LiveSearch } from "./LiveSearch";
+import { MoreSources } from "./MoreSources";
 
 export const PLACES = ["Vienna", "Salzburg", "Graz", "Athens", "Rome", "London", "Paris", "Prague", "Istanbul", "Venice", "Jerusalem", "Cairo", "Kyoto", "Beijing", "Delhi", "Samarkand", "Timbuktu", "Cusco", "Mexico City", "New York City", "Rio de Janeiro", "Saint Petersburg", "Kraków", "Lisbon"];
 const century = (y: number) => (y < 0 ? -Math.ceil(-y / 100) : Math.floor(y / 100) + 1);
@@ -202,6 +203,7 @@ function Place({ qid }: { qid: string }) {
 
       {points.length > 0 && <section className="mt-8" aria-labelledby="place-map"><h2 id="place-map" className="font-serif text-2xl">Landmarks on the map</h2><div className="mt-3"><ExploreMap items={points} layers={[{ id: "landmarks", label: "Landmarks", color: "#8a5a1c" }]} colorByYear label={`Landmarks of ${name}`} height={420} /></div></section>}
       {!visiting && <div className="mt-8">{visit}</div>}
+      {title && <MoreSources query={title.label} point={b?.point} label={title.label} />}
       <p className="mt-6 flex items-center gap-1.5 text-xs text-ink-2"><Icon name="source" size={14} />Made just now from Wikidata (CC0): items located in {name} (P131), events with it as location (P276), people born here (P19), population (P1082). Every item links to its record. Sports results are left out.</p>
     </Frame>
   );

@@ -1016,3 +1016,13 @@ Database: hosted PostGIS on Supabase, connected.
 - **Fact or myth?** (`/challenges/fact-or-myth`): birth and death dates and places of well-known people, judged as supported (referenced, unqualified), uncertain (circa, disputed…) or marked wrong (deprecated, with the editors' reason). Dates are shown as the statement writes them, in their own calendar. Verdicts are Wikidata's recording, not TIMEWISE's judgement, and the page says so.
 - Explorer XP and six new badges for these; links from Where to begin, the Explore tabs (Places, Why?) and Challenges.
 - Not built: Ask History (free questions answered in prose) — it needs a language model and the no-simulated-AI rule applies.
+
+## Speed, loading and more open data (2026-11-20)
+
+**Implemented and type-checked in isolation; not yet run through the Windows build or browser tests.** The new sources were tried live from a browser.
+
+- **One cache for every live request** (`lib/cache.ts`): the same question is asked once per visit and kept a week in the browser's Cache Storage, so going back to a person, thing, place or story is instant. Leaving a page no longer cancels its request, so the next page gets the answer. Search results start loading on hover.
+- **Things answer in seconds**: a quick first query (direct members, a few hundred) shows the map and decades at once; the full query (every subclass) replaces it when ready. If the full one times out, the quick answer stays and the page says it is partial.
+- **No more blank placeholders**: live pages show what is being looked up, step by step with a clock, and the Wikipedia summary and picture to read meanwhile (`Working.tsx`).
+- **Beyond Wikidata** (`lib/opendata.ts`, `MoreSources.tsx`, loaded only when scrolled into view): Europeana (archives, libraries, museums; pictures shown only under open licences, others linked, rights named), Wikimedia Commons photos taken near a place, Open Library books. Our World in Data population estimates on Explore a year and in the life scrubber. Europeana uses its public demo key unless `NEXT_PUBLIC_EUROPEANA_KEY` is set; get a free key before publishing widely.
+- Tried and not used: the Met's search API (retired), Art Institute of Chicago and Library of Congress (they block requests from other sites), Overpass (often overloaded).

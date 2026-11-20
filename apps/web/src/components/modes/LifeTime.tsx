@@ -6,6 +6,7 @@ import { formatYear, yearOf } from "@/lib/dates";
 import { recordWholeLife } from "@/lib/explorer";
 import type { Moment, MomentKind, Related } from "@/lib/live";
 import { atlasHref, loadIndex, type IndexEvent } from "@/lib/world-index";
+import { OWID_SOURCE, people, population, populationAt } from "@/lib/opendata";
 import { Icon } from "../icons";
 
 export const KIND: Record<MomentKind, { label: string; color: string }> = {
@@ -40,6 +41,8 @@ export function LifeTime({ personId, name, born, died, moments, related, onWindo
   const [world, setWorld] = useState<IndexEvent[] | null>(null);
   const seen = useRef({ min: Infinity, max: -Infinity });
   useEffect(() => { loadIndex().then(setWorld, () => setWorld([])); }, []);
+  const [pop, setPop] = useState<[number, number][] | null>(null);
+  useEffect(() => { population("OWID_WRL").then(setPop, () => setPop([])); }, []);
 
   const all = frame === "all";
   const a = all ? lo : year;
@@ -149,6 +152,7 @@ export function LifeTime({ personId, name, born, died, moments, related, onWindo
           )}
           <div>
             <h3 className="text-xs font-semibold uppercase tracking-wider text-ink-2">Meanwhile in the world</h3>
+            {pop && populationAt(pop, a) != null && <p className="mt-1 text-sm">About {people(populationAt(pop, a)!)} people alive on Earth{all ? ` at the start, ${people(populationAt(pop, b) ?? 0)} at the end` : ""}. <a className="text-[11px] text-bronze hover:underline" href={OWID_SOURCE} target="_blank" rel="noopener noreferrer">Our World in Data</a></p>}
             {!world ? <p className="mt-2 text-sm text-ink-2">Loading…</p> : meanwhile.length ? (
               <ul className="mt-2 grid gap-1.5" data-testid="life-meanwhile">
                 {meanwhile.map((e) => <li key={e.i} className="text-sm"><span className="tabular-nums text-ink-2">{formatYear(yearOf(e.s))}</span> · <Link href={atlasHref(e)} className="hover:text-bronze">{e.t}</Link></li>)}

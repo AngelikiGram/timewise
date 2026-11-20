@@ -13,7 +13,7 @@ export type Person = {
 };
 export type Work = { id: string; label: string; year: number | null; point: [number, number] | null; place: string | null; links: number; people: { id: string; role: string; source: string }[]; image?: Credit };
 export type TopicItem = { id: string; label: string; year: number; point: [number, number] | null; place: string | null; country?: string | null; source: string; people?: string[] };
-export type Topic = { id: string; qid: string; label: string; description?: string | null; kind: "style" | "class" | "field"; evidence: string; items: TopicItem[]; yearSource: string };
+export type Topic = { id: string; qid: string; label: string; description?: string | null; kind: "style" | "class" | "field"; evidence: string; items: TopicItem[]; yearSource: string; /** Looked up live: the rest still loading, or cut short because Wikidata took too long. */ partial?: "loading" | "cut" };
 export type PersonLink = { from: string; to: string; label: string; source: string };
 
 const D = data as unknown as { built: string; people: Person[]; links: PersonLink[]; works: Work[]; topics: Topic[] };
