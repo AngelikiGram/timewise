@@ -49,6 +49,15 @@ export function ChallengeHub() {
         <p className="mt-2 text-xs text-ink-2">A new one each day. The daily bonus is 5 XP, once per day. Progress is kept in this browser only.</p>
       </section>
 
+      <section aria-labelledby="games" className="mt-12">
+        <h2 id="games" className="font-serif text-2xl">Endless games</h2>
+        <p className="text-sm text-ink-2">New rounds every time, from thousands of real records.</p>
+        <ul className="mt-3 grid gap-3 sm:grid-cols-2">
+          <li><Link href="/challenges/timeline" className="card card-link flex h-full items-start gap-3 p-5" data-testid="game-timeline"><span aria-hidden className="text-3xl">🕰️</span><span><span className="block font-serif text-2xl leading-tight">Build your own timeline</span><span className="mt-1 block text-ink-2">Put real events in order, any era, any region. Then see them on the true timeline and the map.</span></span></Link></li>
+          <li><Link href="/challenges/fact-or-myth" className="card card-link flex h-full items-start gap-3 p-5" data-testid="game-facts"><span aria-hidden className="text-3xl">🔍</span><span><span className="block font-serif text-2xl leading-tight">Fact or myth?</span><span className="mt-1 block text-ink-2">Supported, uncertain, or marked wrong? Judge claims about famous lives, then see the record.</span></span></Link></li>
+        </ul>
+      </section>
+
       <section aria-labelledby="case" className="mt-12">
         <h2 id="case" className="font-serif text-2xl">Detective case</h2>
         <Link href={caseStory.href} className="card mt-3 grid gap-4 p-5 sm:grid-cols-[1fr_auto] sm:items-center">

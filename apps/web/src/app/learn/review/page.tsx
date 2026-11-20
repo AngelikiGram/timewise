@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { MemoryReview } from "@/components/lessons/MemoryReview";
 import { ReviewSession } from "@/components/lessons/ReviewSession";
 import { SiteHeader } from "@/components/SiteHeader";
 
@@ -8,7 +9,7 @@ export default function ReviewPage() {
   return (
     <>
       <SiteHeader />
-      <main><ReviewSession /></main>
+      <main><ReviewSession /><MemoryReview /></main>
     </>
   );
 }

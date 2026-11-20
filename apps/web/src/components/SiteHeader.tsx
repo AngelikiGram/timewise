@@ -25,13 +25,15 @@ export const SECTIONS = [
   { id: "my-atlas", primary: true, icon: "idea" as IconName, label: "My Atlas", href: "/my-atlas", match: (p: string) => ["/my-atlas", "/collection", "/profile"].some((x) => p.startsWith(x)) },
 ] as const;
 
-const MODE_PATHS = ["/explore/begin", "/explore/thing", "/explore/year", "/explore/life", "/explore/interests"];
+const MODE_PATHS = ["/explore/begin", "/explore/thing", "/explore/year", "/explore/life", "/explore/interests", "/explore/place", "/explore/why"];
 
 /** What sits inside a section, shown as tabs under the header. */
 export const SUBNAV: Partial<Record<(typeof SECTIONS)[number]["id"], { label: string; href: string; match: (p: string) => boolean }[]>> = {
   explore: [
-    { label: "Where to begin", href: "/explore/begin", match: (p) => MODE_PATHS.some((x) => p.startsWith(x)) },
+    { label: "Where to begin", href: "/explore/begin", match: (p) => MODE_PATHS.some((x) => p.startsWith(x)) && !p.startsWith("/explore/place") && !p.startsWith("/explore/why") },
     { label: "World Map", href: "/atlas", match: (p) => ["/atlas", "/history", "/explore"].some((x) => p.startsWith(x)) && !MODE_PATHS.some((x) => p.startsWith(x)) },
+    { label: "Places", href: "/explore/place", match: (p) => p.startsWith("/explore/place") },
+    { label: "Why?", href: "/explore/why", match: (p) => p.startsWith("/explore/why") },
     { label: "Stories", href: "/stories", match: (p) => p.startsWith("/stories") || p.startsWith("/journey") },
     { label: "Connections", href: "/connections", match: (p) => p.startsWith("/connections") },
   ],

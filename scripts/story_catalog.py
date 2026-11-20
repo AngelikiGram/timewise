@@ -3,12 +3,15 @@
 Input: the region files (records) and data/generated/links.json (statements from scripts/link_harvest.py).
 Output: apps/web/public/data/stories/index.json and one file per story.
 
-Two kinds of story, each making a claim that its own steps support:
+Three kinds of story, each making a claim that its own steps support:
 - chain: "How did A lead to Z?" Each step is joined to the one before by a Wikidata statement of cause,
   effect or succession (has effect, has cause, followed by, follows, replaced by, replaces), and the dates
   run forward. The story's claim is the chain itself; every link cites its statement.
 - episodes: "How did X unfold?" The records Wikidata lists as parts (or significant events) of a larger
   event, in date order. Each step cites its "part of" statement.
+- place: "What happened in X, era by era?" The best-documented records whose home country is X within one
+  era, in date order. The claim is only that: these are the most-documented records TIMEWISE holds for that
+  country and era. Each step links to its own Wikidata record.
 Nothing is written: titles, dates, places and descriptions are Wikidata's. Run from the repository root:
 python scripts/story_catalog.py
 """
@@ -21,7 +24,8 @@ DATA = Path("apps/web/public/data")
 OUT = DATA / "stories"
 LINKS = Path("data/generated/links.json")
 MIN_CHAIN, MAX_CHAIN = 3, 12
-MIN_PARTS, MAX_PARTS = 4, 14
+MIN_PARTS, MAX_PARTS = 3, 14
+MIN_PLACE, MAX_PLACE = 5, 10
 KEEP = ("id", "title", "description", "category", "start", "end", "precision", "lng", "lat", "links", "home", "url", "loc")
 
 # How a statement reads as a step forward in time, from the earlier record to the later one.
@@ -121,14 +125,16 @@ def longest(node, seen=()):
 
 import sys
 sys.setrecursionlimit(10000)
-starts = [n for n in flow if not any(n in flow[m] for m in flow)]
+roots = {n for n in flow if not any(n in flow[m] for m in flow)}
+# Roots first, then chains that begin part-way through a larger web, as long as they mostly tell something new.
+starts = list(roots) + [n for n in flow if n not in roots]
 used_sets = []
 for s in sorted(starts, key=lambda n: -records[n].get("links", 0)):
     path = longest(s)[:MAX_CHAIN]
     if len(path) < MIN_CHAIN:
         continue
     ids = {n for n, _ in path}
-    if any(len(ids & u) / len(ids) > 0.5 for u in used_sets):
+    if any(len(ids & u) / len(ids) > 0.6 for u in used_sets):
         continue
     causes = sum(1 for _, e in path if e and e[1] == "cause")
     cats = [records[n]["category"] for n, _ in path]
@@ -175,6 +181,32 @@ for whole, ps in parts.items():
         "places": sorted({labels.get(r.get("home"), "") for r in steps if r.get("home")} - {""})[:4], "chapters": chapters(steps),
     })
 
+# Places: a country's best-documented records within one era, in date order.
+ERA_LABEL = {"antiquity": "in antiquity", "middle-ages": "in the Middle Ages", "early-modern": "from 1500 to 1800", "long-19th": "from 1800 to 1914", "world-wars": "from 1914 to 1945", "since-1945": "since 1945"}
+by_place = defaultdict(list)
+for k in usable:
+    r = records[k]
+    if r.get("home") in labels:
+        by_place[(r["home"], era_of(year(r["start"])))].append(k)
+for (home, era), ks in sorted(by_place.items()):
+    if len(ks) < MIN_PLACE:
+        continue
+    top = sorted(ks, key=lambda k: -records[k].get("links", 0))[:MAX_PLACE]
+    stem = lambda t: "".join(c for c in t if not c.isdigit()).strip().lower()
+    if len({stem(records[k]["title"]["en"]) for k in top}) < len(top) * 0.6:
+        continue
+    top.sort(key=lambda k: records[k]["start"])
+    steps = [step(k) for k in top]
+    name = labels[home]
+    question = f"What happened in {name} {ERA_LABEL[era]}?"
+    stories.append({
+        "id": f"place-{home}-{era}", "kind": "place", "title": question, "question": question,
+        "claim": f"The {len(steps)} best-documented records TIMEWISE holds for {name} {ERA_LABEL[era]}, out of {len(ks)}, in date order.",
+        "why": f"Records whose home country is {name}, dated {ERA_LABEL[era]}, ranked by how many Wikipedia language editions describe them. They are not joined by statements: this is a tour of what is best documented, not an argument that one led to the next.",
+        "count": len(steps), "from": year(steps[0]["start"]), "to": year(steps[-1]["start"]), "era": era,
+        "places": [name], "chapters": chapters(steps),
+    })
+
 if OUT.exists():
     shutil.rmtree(OUT)
 OUT.mkdir(parents=True)
@@ -183,4 +215,4 @@ for s in stories:
     (OUT / f"{s['id']}.json").write_text(json.dumps(s, ensure_ascii=False, separators=(",", ":")), "utf-8")
 index = [{k: s[k] for k in ("id", "title", "kind", "count", "from", "to", "era", "places")} for s in stories]
 (OUT / "index.json").write_text(json.dumps({"stories": index, "labels": labels}, ensure_ascii=False, separators=(",", ":")), "utf-8")
-print(len(stories), "stories:", sum(s["kind"] == "chain" for s in stories), "chains,", sum(s["kind"] == "episodes" for s in stories), "episodes")
+print(len(stories), "stories:", sum(s["kind"] == "chain" for s in stories), "chains,", sum(s["kind"] == "episodes" for s in stories), "episodes,", sum(s["kind"] == "place" for s in stories), "places")

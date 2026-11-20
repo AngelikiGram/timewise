@@ -24,7 +24,7 @@ export function GeneratedStories() {
   const [all, setAll] = useState<StoryEntry[] | null>(null);
   const [failed, setFailed] = useState(false);
   const [era, setEra] = useState("all");
-  const [kind, setKind] = useState<"all" | "chain" | "episodes">("all");
+  const [kind, setKind] = useState<"all" | "chain" | "episodes" | "place">("all");
   const [q, setQ] = useState("");
   const [shown, setShown] = useState(PAGE);
   useEffect(() => { loadStoryIndex().then((d) => setAll(d.stories), () => setFailed(true)); }, []);
@@ -43,6 +43,7 @@ export function GeneratedStories() {
               <option value="all">All kinds</option>
               <option value="chain">Chains: how A led to B</option>
               <option value="episodes">Episodes: how an event unfolded</option>
+              <option value="place">Places: a country, era by era</option>
             </select>
           </label>
           <label><span className="sr-only">Filter stories by name</span><input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Name or country" className="field !py-1.5 text-sm" /></label>
@@ -59,7 +60,7 @@ export function GeneratedStories() {
             <li key={s.id}>
               <Link href={`/stories/read?id=${s.id}`} className="card card-link flex h-full flex-col p-4" data-testid="generated-story">
                 <span className="flex items-start gap-3">
-                  <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-paper-3 text-bronze"><Icon name={s.kind === "chain" ? "cause" : "parts"} size={22} /></span>
+                  <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-paper-3 text-bronze"><Icon name={s.kind === "chain" ? "cause" : s.kind === "place" ? "place" : "parts"} size={22} /></span>
                   <span className="min-w-0">
                     <span className="block font-serif text-lg leading-tight">{s.title}</span>
                     <span className="mt-0.5 block text-xs text-ink-2">{s.from < 0 ? `${-s.from} BC` : s.from}–{s.to < 0 ? `${-s.to} BC` : s.to} · {s.count} steps{s.places.length ? ` · ${s.places.slice(0, 2).join(", ")}` : ""}</span>

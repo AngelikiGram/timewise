@@ -993,3 +993,26 @@ Database: hosted PostGIS on Supabase, connected.
 7. Done: the first Historical Journey.
 8. Done: first full-history import and atlas for Austria.
 9. **Next:** check a random sample of imported events to measure real accuracy, then add a second country to prove the path works. Society, economy and daily life need sources beyond this import.
+
+## Four ways in: live lookups, the life scrubber, more stories, explorer profile (2026-11-20)
+
+**Implemented, type-checked; not yet run through build, unit or browser tests on Windows.** The live Wikidata queries were tried against the real query service (Mozart, Einstein, lighthouses, Gothic architecture, Impressionism, the French Revolution, World War II).
+
+- **The life, in time** (`LifeTime.tsx`): scrub a life year by year, play it, or set the frame (one year, 5 years, a decade, the whole life). Each stop shows age, dated moments (works, studies, jobs, offices, awards, marriages, homes, children's births, each from a qualified Wikidata statement), people around them who were alive, and well-documented world events from the index. The map shows the life up to the end of the frame.
+- **Any person** (`/explore/life?q=<QID>`): looked up live on Wikidata in the browser (`lib/live.ts`). Search covers the 16 prebuilt lives, 114 featured names (`lib/featured.ts`, matched by name and birth years as the build script does, and the page says what was matched), and all humans on Wikidata. "Surprise me" picks a featured life; "Wildcard" a random human with a portrait. Prebuilt lives also get live dated moments.
+- **Any thing** (`/explore/thing?q=<QID>` or `?find=<words>`): style (P149), kind (P31/P279*), genre, movement with coordinates and a date; or people in a field, occupation or movement, at their birthplace. Very broad kinds can hit the query service's time limit, and the page says so.
+- **Stories**: `scripts/story_catalog.py` now makes 1,100 stories (was 459): chains may start mid-web, episodes need three parts, and a new "place" kind tours a country's best-documented records per era, labelled as a tour, not an argument. Plus `/stories/live?q=<QID>`: any event told on the spot from its causes, parts and effects, each step citing its statement, with Wikipedia's summary under CC BY-SA. Story search and two surprise buttons on `/stories`.
+- **Profile, playful**: `lib/explorer.ts` keeps lives, things, years, stories, surprises and lookups in this browser; XP, seven levels and 16 badges in three tiers, a toast when one is earned. Shown on a "Your profile & badges" tab under Your interests, on `/profile`, and as a level chip in the mode bar. Interests saved from live pages keep their names; suggestions include "Because you explored".
+- Planned: precompute featured lives into `explore.json` (needs the build script run with network access), cache live lookups.
+
+## Timeline game, places, causes network, story memory, fact or myth (2026-11-20)
+
+**Implemented and type-checked in isolation; not yet run through the Windows build, unit or browser tests.** The new Wikidata queries were tried live (Vienna, Athens, Mozart, Einstein, Shakespeare, the French Revolution, World War II); slow query shapes were rewritten.
+
+- **Build your own timeline** (`/challenges/timeline`): endless rounds from the world index, by era, region and difficulty (5 far-apart famous events up to 8 within ~60 years). Drag or use arrows; the reveal shows the true timeline and a map (coordinates fetched live). Perfect rounds build a streak; swapped pairs become review questions.
+- **Explain this place** (`/explore/place`): any place on Wikidata. Summary (Wikipedia, CC BY-SA), founding, population chart (P1082), a per-century bar of records with a list for each century: landmarks as built (P131 + P571, sub-divisions left out), events located there (P276, sports results left out), people born there (P19). Map of landmarks, and a "Visiting?" guide ranked by documentation, said so.
+- **Why did this happen?** (`/explore/why`): causes left, consequences right, as an SVG network grown by clicking (has cause, has effect, immediate cause, follows, followed by). Each arrow names its statement; the page says absent arrows are gaps in the record. Linked from live stories.
+- **Story memory** (`lib/memory.ts`, on `/learn/review`): finished stories, live stories read to the end, lives scrubbed to the end and timeline mistakes become questions (which came first, which year, how old), asked at 1, 3, 7, 16, 35, 90 days.
+- **Fact or myth?** (`/challenges/fact-or-myth`): birth and death dates and places of well-known people, judged as supported (referenced, unqualified), uncertain (circa, disputed…) or marked wrong (deprecated, with the editors' reason). Dates are shown as the statement writes them, in their own calendar. Verdicts are Wikidata's recording, not TIMEWISE's judgement, and the page says so.
+- Explorer XP and six new badges for these; links from Where to begin, the Explore tabs (Places, Why?) and Challenges.
+- Not built: Ask History (free questions answered in prose) — it needs a language model and the no-simulated-AI rule applies.

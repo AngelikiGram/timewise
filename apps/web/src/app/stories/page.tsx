@@ -4,9 +4,10 @@ import { JourneyCatalog } from "@/components/lessons/JourneyCatalog";
 import { SiteHeader } from "@/components/SiteHeader";
 import { StoryCard } from "@/components/StoryCard";
 import { GeneratedStories } from "@/components/stories/GeneratedStories";
+import { StoryDiscover } from "@/components/stories/StoryDiscover";
 import { STORIES } from "@/lib/stories";
 
-export const metadata: Metadata = { title: "Stories · TIMEWISE", description: "Hundreds of map-led stories by place and era, plus hand-checked guided stories and short journeys." };
+export const metadata: Metadata = { title: "Stories · TIMEWISE", description: "Over a thousand map-led stories by place and era, plus hand-checked guided stories and short journeys." };
 
 export default function StoriesPage() {
   return (
@@ -16,7 +17,12 @@ export default function StoriesPage() {
         <h1 className="font-serif text-4xl leading-tight">Stories</h1>
         <p className="mt-1 text-ink-2">Pick a place and an era, and follow its records across the map.</p>
 
-        <section className="mt-6" aria-labelledby="generated">
+        <section className="mt-6" aria-labelledby="discover">
+          <h2 id="discover" className="sr-only">Find a story</h2>
+          <StoryDiscover />
+        </section>
+
+        <section className="mt-8" aria-labelledby="generated">
           <h2 id="generated" className="sr-only">Stories by place and era</h2>
           <GeneratedStories />
         </section>

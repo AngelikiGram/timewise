@@ -10,6 +10,8 @@ import { dueReviews, exportProgress, importProgress, resetProgress, setInterests
 import { TYPE_LABEL, type EntityType } from "@/lib/entities";
 import { CONTINENT_LABELS } from "@/lib/world-index";
 import { Icon } from "../icons";
+import { ExplorerPanel } from "../modes/Gamify";
+import { resetExplorer } from "@/lib/explorer";
 import { nextStep } from "../lessons/LearnHome";
 import { loadCountries, type Feature } from "../network/views";
 
@@ -243,9 +245,15 @@ export function ProfileView() {
               try { importProgress(await f.text()); setImported("Progress loaded."); } catch { setImported("That file isn't a TIMEWISE progress file."); }
             }} />
           </label>
-          <button type="button" className="btn btn-ghost btn-sm text-oxblood" onClick={() => { if (window.confirm("Delete all progress, saved items, notes and your atlas from this browser? This can't be undone.")) resetProgress(); }}>Delete all my progress</button>
+          <button type="button" className="btn btn-ghost btn-sm text-oxblood" onClick={() => { if (window.confirm("Delete all progress, saved items, notes and your atlas from this browser? This can't be undone.")) resetProgress(); resetExplorer(); }}>Delete all my progress</button>
         </div>
         {imported && <p className="mt-2 text-sm" role="status">{imported}</p>}
+      </section>
+
+      <section className="mt-10" aria-labelledby="explorer-title">
+        <h2 id="explorer-title" className="font-serif text-2xl">Explorer level and badges</h2>
+        <p className="mt-1 text-sm text-ink-2">Earned by following lives and things, visiting years and opening stories.</p>
+        <div className="mt-3"><ExplorerPanel /></div>
       </section>
 
       <section className="mt-10" aria-labelledby="done-title">

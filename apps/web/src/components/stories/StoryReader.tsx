@@ -8,6 +8,9 @@ import { formatImportedDate, formatYear, yearOf, type Precision } from "@/lib/da
 import type { Activity } from "@/lib/lessons";
 import { asset } from "@/lib/paths";
 import { saveStoryStep, useProgress } from "@/lib/progress";
+import { recordStory } from "@/lib/explorer";
+import { addCards, storyCards } from "@/lib/memory";
+import { BadgeToast } from "../modes/Gamify";
 import { fetchRecord, type RecordData } from "@/lib/record";
 import { applyBasemapPalette, STYLE_URL } from "../AtlasMap";
 import { categoryIcon, Icon } from "../icons";
@@ -17,9 +20,9 @@ import { SaveButton } from "../ui";
 /** How a step connects to the one before it (or, in an episode story, to the whole): a Wikidata statement. */
 export type Via = { from: string; fromTitle: string; relation: string; kind: "cause" | "succession" | "part"; prop: string; refs: number; on: string };
 export type StoryRecord = { id: string; title: { en: string }; description?: string; category: string; start: string; end?: string; precision: Precision; lng: number; lat: number; links: number; home?: string; url: string; loc?: string; via?: Via };
-export type GeneratedStory = { id: string; title: string; kind: "chain" | "episodes"; question: string; claim: string; why: string; count: number; from: number; to: number; era: string; places: string[]; chapters: { label: string; records: StoryRecord[] }[] };
+export type GeneratedStory = { id: string; title: string; kind: "chain" | "episodes" | "place"; question: string; claim: string; why: string; count: number; from: number; to: number; era: string; places: string[]; chapters: { label: string; records: StoryRecord[] }[] };
 export type StoryEntry = Omit<GeneratedStory, "why" | "chapters" | "question" | "claim">;
-export const KIND_LABEL: Record<GeneratedStory["kind"], string> = { chain: "Chain of documented links", episodes: "A larger event, part by part" };
+export const KIND_LABEL: Record<GeneratedStory["kind"], string> = { chain: "Chain of documented links", episodes: "A larger event, part by part", place: "A place through its best-documented records" };
 
 let index: Promise<{ stories: StoryEntry[]; labels: Record<string, string> }> | null = null;
 export const loadStoryIndex = () => (index ??= fetch(asset("/data/stories/index.json")).then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status))))).catch((e) => { index = null; throw e; }));
@@ -112,6 +115,7 @@ export function StoryReader() {
   const router = useRouter();
   const id = params.get("id") ?? "";
   const [story, setStory] = useState<GeneratedStory | null | undefined>(undefined);
+  useEffect(() => { if (story) recordStory(story.id, story.title); }, [story]);
   const [entries, setEntries] = useState<StoryEntry[]>([]);
   const [labels, setLabels] = useState<Record<string, string>>({});
   const [step, setStep] = useState(-1);
@@ -143,6 +147,8 @@ export function StoryReader() {
   useEffect(() => {
     if (!story || step < 0) return;
     saveStoryStep(story.id, story.chapters[Math.max(0, chapterOf(Math.min(step, end - 1)))].label, Math.min(step + 1, end), step >= end, Math.min(step + 1, end));
+    // A finished story becomes a few review questions for later.
+    if (step >= end) addCards(storyCards(story.chapters.flatMap((c) => c.records).map((r) => ({ id: r.id, title: r.title.en, year: yearOf(r.start) })), { kind: "story", title: story.title, href: `/stories/read?id=${story.id}` }));
     panel.current?.scrollTo({ top: 0 });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [step, story]);
@@ -198,12 +204,13 @@ export function StoryReader() {
           <span className="text-xs tabular-nums text-ink-2">{Math.max(0, Math.min(step + 1, end))}/{end}</span>
         </div>
 
+        <BadgeToast />
         <div className="p-5 sm:p-7" key={step}>
           {step < 0 && (
             <section className="fade-in" data-testid="story-intro">
               <p className="eyebrow">{KIND_LABEL[story.kind]} · {story.count} records</p>
               <h1 className="mt-2 font-serif text-4xl leading-tight">{story.question}</h1>
-              <p className="mt-3 flex gap-2 rounded-xl bg-bronze-soft/40 p-3 leading-relaxed"><Icon name={story.kind === "chain" ? "cause" : "parts"} size={20} className="mt-0.5 shrink-0 text-bronze" /><span>{story.claim}</span></p>
+              <p className="mt-3 flex gap-2 rounded-xl bg-bronze-soft/40 p-3 leading-relaxed"><Icon name={story.kind === "chain" ? "cause" : story.kind === "place" ? "place" : "parts"} size={20} className="mt-0.5 shrink-0 text-bronze" /><span>{story.claim}</span></p>
               <ol className="mt-6 grid gap-3">
                 {story.chapters.map((c, i) => (
                   <li key={c.label} className="flex gap-3">
@@ -249,7 +256,7 @@ export function StoryReader() {
               )}
               <details className="mt-3 text-sm text-ink-2">
                 <summary className="cursor-pointer hover:text-ink">Source and why it&rsquo;s here</summary>
-                <p className="mt-1">Record: <a className="link" href={r.url} target="_blank" rel="noopener noreferrer">Wikidata {r.id} ↗</a> (CC0). Location: {r.loc ? LOC[r.loc] : "from Wikidata"}. {r.via ? <>It&rsquo;s in this story because of the statement above, linking it to {r.via.fromTitle}.</> : <>It&rsquo;s where the story begins.</>}</p>
+                <p className="mt-1">Record: <a className="link" href={r.url} target="_blank" rel="noopener noreferrer">Wikidata {r.id} ↗</a> (CC0). Location: {r.loc ? LOC[r.loc] : "from Wikidata"}. {r.via ? <>It&rsquo;s in this story because of the statement above, linking it to {r.via.fromTitle}.</> : story.kind === "place" ? <>It&rsquo;s one of the best-documented records for this place and era.</> : <>It&rsquo;s where the story begins.</>}</p>
               </details>
               <div className="mt-6 flex flex-wrap items-center gap-2">
                 <button type="button" className="btn btn-secondary" onClick={() => go(step - 1)}><Icon name="back" size={16} />Back</button>

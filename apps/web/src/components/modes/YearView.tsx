@@ -6,7 +6,9 @@ import { useEffect, useMemo, useState } from "react";
 import { formatImportedDate, formatYear, yearOf, type Precision } from "@/lib/dates";
 import { aliveIn, personById, TOPICS, WORKS, wd } from "@/lib/explore";
 import { atlasHref, CONTINENT_LABELS, loadIndex, type IndexEvent } from "@/lib/world-index";
+import { recordYear } from "@/lib/explorer";
 import { Icon } from "../icons";
+import { BadgeToast } from "./Gamify";
 import { ExploreMap, type MapItem } from "./ExploreMap";
 import { ModeBar, NextSteps, SaveInterest } from "./shared";
 
@@ -20,6 +22,7 @@ export function YearView() {
   const [draft, setDraft] = useState(String(y));
   useEffect(() => setDraft(String(y)), [y]);
   useEffect(() => { loadIndex().then(setEvents, () => setFailed(true)); }, []);
+  useEffect(() => { recordYear(y); }, [y]);
   // A new history entry for each year, so the browser's Back returns to the last one.
   const go = (n: number) => router.push(`/explore/year?y=${n}`, { scroll: false });
 
@@ -51,6 +54,7 @@ export function YearView() {
 
   return (
     <div className="mx-auto max-w-6xl px-4 pb-16 pt-6 sm:px-6" data-testid="year">
+      <BadgeToast />
       <ModeBar on="year" here={{ href: `/explore/year?y=${y}`, label: formatYear(y), mode: "year" }} context={{ ...(things[0] ? { thing: { href: `/explore/thing?id=${things[0].t.id}`, label: things[0].t.label } } : {}), ...(alive[0] ? { life: { href: `/explore/life?id=${alive[0].person.id}`, label: alive[0].person.label } } : {}) }} />
       <div className="mt-5 flex flex-wrap items-end justify-between gap-3">
         <div>

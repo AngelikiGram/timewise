@@ -72,14 +72,15 @@ export function decades(years: number[]) {
 export const interestOf = { topic: (id: string) => `topic:${id}`, person: (id: string) => `person:${id}`, year: (y: number) => `year:${y}` };
 
 /** Journeys across the modes that follow from the reader's interests: a thing, a life, a year. */
-export function suggestFor(interests: string[]) {
+export function suggestFor(interests: string[], names: Record<string, string> = {}) {
   const out: { href: string; mode: "thing" | "life" | "year"; title: string; why: string }[] = [];
   const add = (x: (typeof out)[number]) => { if (!out.some((o) => o.href === x.href)) out.push(x); };
   for (const i of interests) {
     const [kind, id] = i.split(":");
     if (kind === "topic") {
       const t = topicById(id);
-      if (!t) continue;
+      // Looked up live: no prebuilt links to follow, but it can be opened again.
+      if (!t) { if (/^Q\d+$/.test(id)) add({ href: `/explore/thing?q=${id}`, mode: "thing", title: `Follow ${names[i] ?? id}`, why: "You saved this" }); continue; }
       add({ href: `/explore/thing?id=${t.id}`, mode: "thing", title: `Follow ${t.label.toLowerCase()}`, why: "You saved this" });
       for (const p of peopleOf(t).slice(0, 2)) add({ href: `/explore/life?id=${p.id}`, mode: "life", title: p.label, why: `Linked to ${t.label.toLowerCase()}` });
       const peak = decades(t.items.map((x) => x.year)).sort((a, b) => b[1] - a[1])[0];
@@ -87,7 +88,7 @@ export function suggestFor(interests: string[]) {
     }
     if (kind === "person") {
       const p = personById(id);
-      if (!p) continue;
+      if (!p) { if (/^Q\d+$/.test(id)) add({ href: `/explore/life?q=${id}`, mode: "life", title: names[i] ?? id, why: "You saved this" }); continue; }
       add({ href: `/explore/life?id=${p.id}`, mode: "life", title: p.label, why: "You saved this" });
       for (const t of topicsOf(p.id)) add({ href: `/explore/thing?id=${t.id}`, mode: "thing", title: `Follow ${t.label.toLowerCase()}`, why: `${p.label} is part of it` });
       for (const l of linksOf(p.id)) { const o = personById(l.from === p.id ? l.to : l.from); if (o) add({ href: `/explore/life?id=${o.id}`, mode: "life", title: o.label, why: `${l.from === p.id ? `${p.label}: ${l.label}` : `${o.label}: ${l.label}`} ${l.from === p.id ? o.label : p.label}` }); }

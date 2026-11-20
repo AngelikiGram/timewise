@@ -2,6 +2,24 @@ import Link from "next/link";
 import { artistOf, PEOPLE, TOPICS, WORKS, type Credit } from "@/lib/explore";
 import { Icon, type IconName } from "../icons";
 
+/** Three more ways in, beside the four: a place, a cause, a game. */
+export function MoreWays() {
+  const ways: { href: string; icon: IconName; title: string; text: string }[] = [
+    { href: "/explore/place", icon: "place", title: "Explain this place", text: "Any city through the centuries, and a short guide for a visit." },
+    { href: "/explore/why", icon: "cause", title: "Why did this happen?", text: "Causes and consequences as a network you grow by clicking." },
+    { href: "/challenges/timeline", icon: "sequence", title: "Build your own timeline", text: "Put real events in order, then see where they fall." },
+    { href: "/challenges/fact-or-myth", icon: "checked", title: "Fact or myth?", text: "Supported, uncertain, or marked wrong? Check the record." },
+  ];
+  return (
+    <section className="mt-10" aria-labelledby="more-ways" data-testid="more-ways">
+      <h2 id="more-ways" className="font-serif text-2xl">Or try</h2>
+      <ul className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        {ways.map((w) => <li key={w.href}><Link href={w.href} className="card card-link flex h-full items-start gap-3 p-4"><Icon name={w.icon} size={24} className="mt-0.5 shrink-0 text-bronze" /><span><span className="block font-serif text-lg leading-tight">{w.title}</span><span className="mt-0.5 block text-sm text-ink-2">{w.text}</span></span></Link></li>)}
+      </ul>
+    </section>
+  );
+}
+
 /** One invitation, four ways in. Each card shows a real image from the collection, credited. */
 export function BeginCards() {
   const nouveau = WORKS.filter((w) => w.image && w.year && w.year >= 1895 && w.year <= 1910).sort((a, b) => b.links - a.links);

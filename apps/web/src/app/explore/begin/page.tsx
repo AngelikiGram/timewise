@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { BeginCards } from "@/components/modes/BeginCards";
+import { BeginCards, MoreWays } from "@/components/modes/BeginCards";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 
@@ -9,7 +9,7 @@ export default function Page() {
   return (
     <>
       <SiteHeader />
-      <main className="mx-auto max-w-6xl px-4 pb-16 pt-6 sm:px-6"><BeginCards /></main>
+      <main className="mx-auto max-w-6xl px-4 pb-16 pt-6 sm:px-6"><BeginCards /><MoreWays /></main>
       <SiteFooter />
     </>
   );

@@ -6,6 +6,8 @@ import { lastOf, readTrail, visit, type Stop } from "@/lib/trail";
 import { artistOf, interestOf } from "@/lib/explore";
 export { artistOf };
 import { setInterests, useProgress } from "@/lib/progress";
+import { rememberName } from "@/lib/explorer";
+import { LevelBar } from "./Gamify";
 import { Icon, type IconName } from "../icons";
 
 /** The four ways in, with the one you're on marked. */
@@ -35,6 +37,7 @@ export function ModeBar({ on, here, context = {} }: { on: ModeId; here?: Stop; c
   };
   return (
     <div className="grid gap-2" data-testid="mode-nav">
+      <div className="flex flex-wrap items-center gap-2">
       <nav aria-label="Ways to explore" className="flex flex-wrap gap-1.5" data-testid="mode-bar">
         {MODES.map((m) => {
           const t = target(m);
@@ -46,6 +49,8 @@ export function ModeBar({ on, here, context = {} }: { on: ModeId; here?: Stop; c
           );
         })}
       </nav>
+      <span className="ml-auto"><LevelBar compact /></span>
+      </div>
       {trail.length > 1 && (
         <nav aria-label="Where you've been" className="flex min-w-0 flex-wrap items-center gap-x-1.5 gap-y-1 text-sm text-ink-2" data-testid="trail">
           {prev && <Link href={prev.href} className="btn btn-ghost btn-sm !px-2" data-testid="trail-back"><Icon name="back" size={15} />Back to {prev.label}</Link>}
@@ -71,7 +76,7 @@ export function SaveInterest({ kind, id, label, compact = false }: { kind: keyof
   const p = useProgress();
   const key = (interestOf[kind] as (x: never) => string)(id as never);
   const on = (p.interests ?? []).includes(key);
-  const toggle = () => setInterests(on ? (p.interests ?? []).filter((x) => x !== key) : [...(p.interests ?? []), key]);
+  const toggle = () => { if (!on) rememberName(key, label); setInterests(on ? (p.interests ?? []).filter((x) => x !== key) : [...(p.interests ?? []), key]); };
   if (compact) {
     return (
       <button type="button" aria-pressed={on} onClick={toggle} data-testid="save-interest" aria-label={on ? `${label}, in your interests. Remove` : `Add ${label} to your interests`}
