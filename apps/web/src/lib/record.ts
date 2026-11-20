@@ -9,6 +9,7 @@
 //   property it came from, the statement's link, and how many references Wikidata gives for it.
 // - contextual: TIMEWISE noticed a shared period or country in its own index. That is not a relationship,
 //   and is labelled as such.
+import { cachedJson } from "./cache";
 import { formatYear } from "./dates";
 
 export type Kind = "event" | "person" | "place" | "invention" | "idea";
@@ -65,7 +66,12 @@ export type RecordData = {
 };
 
 /** Extra facts for linked records, loaded after the network is drawn. */
-export type NodeFacts = { year?: number; coord?: [number, number]; country?: string; human?: boolean };
+/**
+ * What the graph needs about a linked record. `year` is the date it is placed at, and `dateKind` says what that
+ * date is (a birth, a founding, an event, a publication), so the graph can say so. `end` is a death, a
+ * dissolution or an end date, drawn as a span. `links` counts Wikipedia editions, used to show the best known first.
+ */
+export type NodeFacts = { year?: number; end?: number; dateKind?: "born" | "founded" | "happened" | "published"; coord?: [number, number]; country?: string; human?: boolean; links?: number };
 
 const API = "https://www.wikidata.org/w/api.php";
 const MAX_PER_PROP = 6;
@@ -101,11 +107,8 @@ type Entity = {
 };
 
 const qs = (p: Record<string, string>) => new URLSearchParams({ format: "json", origin: "*", ...p }).toString();
-async function json<T>(url: string, signal?: AbortSignal): Promise<T> {
-  const r = await fetch(url, { signal });
-  if (!r.ok) throw new Error(`${r.status} from ${new URL(url).host}`);
-  return r.json() as Promise<T>;
-}
+/** Through the shared cache, so stepping back to a record, or one already hovered, is instant. */
+const json = <T,>(url: string, signal?: AbortSignal): Promise<T> => cachedJson<T>(url, signal);
 const strip = (html?: string) => html?.replace(/<[^>]+>/g, "").replace(/\s+/g, " ").trim() || undefined;
 export const isQid = (s: string | null | undefined): s is string => !!s && /^Q\d+$/.test(s);
 
@@ -265,9 +268,15 @@ export async function fetchRecord(qid: string, signal?: AbortSignal): Promise<Re
 /** Year, place and type of the linked records, in one query to the Wikidata Query Service. */
 export async function fetchNodeFacts(ids: string[], signal?: AbortSignal): Promise<Record<string, NodeFacts>> {
   if (!ids.length) return {};
-  const query = `SELECT ?item (MIN(?d) AS ?date) (SAMPLE(?c) AS ?coord) (SAMPLE(?cl) AS ?country) (MAX(?h) AS ?human) WHERE {
+  const query = `SELECT ?item (MIN(?ev) AS ?event) (MIN(?b) AS ?born) (MAX(?dd) AS ?died) (MIN(?inc) AS ?founded) (MAX(?gone) AS ?ended) (MIN(?pub) AS ?published) (MAX(?sl) AS ?links) (SAMPLE(?c) AS ?coord) (SAMPLE(?cl) AS ?country) (MAX(?h) AS ?human) WHERE {
   VALUES ?item { ${ids.map((i) => `wd:${i}`).join(" ")} }
-  OPTIONAL { ?item wdt:P585|wdt:P580|wdt:P571|wdt:P569|wdt:P575|wdt:P577 ?d }
+  OPTIONAL { ?item wdt:P585|wdt:P580 ?ev }
+  OPTIONAL { ?item wdt:P569 ?b }
+  OPTIONAL { ?item wdt:P570 ?dd }
+  OPTIONAL { ?item wdt:P571 ?inc }
+  OPTIONAL { ?item wdt:P576|wdt:P582 ?gone }
+  OPTIONAL { ?item wdt:P577|wdt:P575 ?pub }
+  OPTIONAL { ?item wikibase:sitelinks ?sl }
   OPTIONAL { ?item wdt:P625 ?c }
   OPTIONAL { ?item wdt:P17 ?cn . ?cn rdfs:label ?cl FILTER(LANG(?cl) = "en") }
   BIND(EXISTS { ?item wdt:P31 wd:Q5 } AS ?h)
@@ -280,12 +289,20 @@ export async function fetchNodeFacts(ids: string[], signal?: AbortSignal): Promi
   for (const b of r.results.bindings) {
     const id = b.item.value.split("/").pop()!;
     const point = b.coord?.value.match(/Point\(([-\d.]+) ([-\d.]+)\)/);
-    const d = b.date?.value;
+    const yr = (k: string) => { const d = b[k]?.value; return d ? (d.startsWith("-") ? -Number(d.slice(1, 5)) : Number(d.slice(0, 4))) : undefined; };
+    // One date to place it at, chosen by what kind of thing it is: a person's birth, an event's date, a
+    // work's publication, an organisation's or place's founding.
+    const human = b.human?.value === "true";
+    const [year, dateKind, end] = human && yr("born") !== undefined ? [yr("born"), "born" as const, yr("died")]
+      : yr("event") !== undefined ? [yr("event"), "happened" as const, yr("ended")]
+      : yr("published") !== undefined ? [yr("published"), "published" as const, undefined]
+      : yr("founded") !== undefined ? [yr("founded"), "founded" as const, yr("ended")]
+      : yr("born") !== undefined ? [yr("born"), "born" as const, yr("died")] : [undefined, undefined, undefined];
     out[id] = {
-      year: d ? (d.startsWith("-") ? -Number(d.slice(1, 5)) : Number(d.slice(0, 4))) : undefined,
+      year, dateKind, end: end !== undefined && year !== undefined && end > year ? end : undefined, links: b.links ? Number(b.links.value) : undefined,
       coord: point ? [Number(point[1]), Number(point[2])] : undefined,
       country: b.country?.value,
-      human: b.human?.value === "true",
+      human,
     };
   }
   return out;

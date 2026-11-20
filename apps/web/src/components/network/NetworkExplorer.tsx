@@ -10,7 +10,7 @@ import { createCollection, update } from "@/lib/progress";
 import { fetchNodeFacts, fetchRecord, GROUPS, isQid, labelsFor, searchWikidata, type Group, type Link as RecordLink, type NodeFacts, type RecordData, type SearchResult } from "@/lib/record";
 import { STORIES } from "@/lib/stories";
 import { CONTINENT_LABELS, loadIndex, loadRegions, type IndexEvent } from "@/lib/world-index";
-import { ConnectionCards, GROUP_ORDER } from "./ConnectionCards";
+import { ConnectionCards, GROUP_ORDER, PER_GROUP } from "./ConnectionCards";
 import { Icon } from "../icons";
 import { LinkDetail, RecordCard } from "./RecordPanel";
 import { MapView } from "./views";
@@ -224,6 +224,14 @@ export function NetworkExplorer() {
     if (country && f?.country !== country) return false;
     return true;
   }), [all, off, contextual, facts, yFrom, yTo, country]);
+  // How many of each group to show, the same in every view; the best documented (most Wikipedia editions) first.
+  const [limits, setLimits] = useState<Partial<Record<Group, number>>>({});
+  useEffect(() => setLimits({}), [id]);
+  const limitOf = useCallback((g: Group) => limits[g] ?? PER_GROUP, [limits]);
+  const setLimit = useCallback((g: Group, n: number) => setLimits((l) => ({ ...l, [g]: Math.max(1, n) })), []);
+  const ranked = useMemo(() => [...filtered].sort((a, b) => (facts[b.target]?.links ?? 0) - (facts[a.target]?.links ?? 0) || a.label.localeCompare(b.label)), [filtered, facts]);
+  const totals = useMemo(() => { const t: Partial<Record<Group, number>> = {}; for (const l of ranked) t[l.group] = (t[l.group] ?? 0) + 1; return t; }, [ranked]);
+  const visible = useMemo(() => { const n: Partial<Record<Group, number>> = {}; return ranked.filter((l) => { n[l.group] = (n[l.group] ?? 0) + 1; return n[l.group]! <= limitOf(l.group); }); }, [ranked, limitOf]);
   const selectedLink = all.find((l) => l.target === selected);
   const filtering = off.size > 0 || !contextual || from || to || country;
   const sequenceNext = record?.links.find((l) => l.relation === "followed by" || l.relation === "replaced by");
@@ -339,7 +347,7 @@ export function NetworkExplorer() {
             <>
               <div className="flex flex-wrap items-baseline justify-between gap-2 px-1">
                 <p className="text-sm text-ink-2" data-testid="network-count">
-                  {filtered.length} of {all.length} connections
+                  Showing {visible.length} of {filtered.length} connections{filtered.length < all.length ? ` (${all.length} before filters)` : ""} · best known first
                   {(from || to) && " · records without a date are hidden while a period is set"}
                 </p>
                 <p className="flex flex-wrap items-center gap-3 text-xs text-ink-2">
@@ -347,9 +355,9 @@ export function NetworkExplorer() {
                   <span className="inline-flex items-center gap-1"><span aria-hidden className="inline-block w-5 border-t-2 border-dashed border-bronze" />contextual</span>
                 </p>
               </div>
-              {view === "network" && <TimeGraph record={record} links={filtered} facts={facts} selected={selected} onStep={(l) => (isQid(l.target) ? open(l.target) : l.href && router.push(l.href))} onDetails={select} loading={factsState === "loading"} />}
-              {view === "cards" && <ConnectionCards record={record} links={filtered} facts={facts} selected={selected} onStep={(l) => (isQid(l.target) ? open(l.target) : l.href && router.push(l.href))} onDetails={select} />}
-              {view === "map" && <MapView record={record} links={filtered} facts={facts} selected={selected} onSelect={select} loading={factsState === "loading"} />}
+              {view === "network" && <TimeGraph record={record} links={visible} totals={totals} limitOf={limitOf} setLimit={setLimit} facts={facts} selected={selected} onStep={(l) => (isQid(l.target) ? open(l.target) : l.href && router.push(l.href))} onDetails={select} loading={factsState === "loading"} />}
+              {view === "cards" && <ConnectionCards record={record} links={ranked} limitOf={limitOf} setLimit={setLimit} facts={facts} selected={selected} onStep={(l) => (isQid(l.target) ? open(l.target) : l.href && router.push(l.href))} onDetails={select} />}
+              {view === "map" && <MapView record={record} links={visible} facts={facts} selected={selected} onSelect={select} loading={factsState === "loading"} />}
               {factsState === "failed" && <p className="mt-2 text-xs text-ink-2">Dates and places of the linked records couldn&rsquo;t be loaded from the Wikidata Query Service, so the period and country filters have nothing to work with.</p>}
               <p className="mt-3 px-1 text-xs text-ink-2">{view === "map" ? "Choose a record to see why it’s connected." : "Choose a record to step to it; the i button explains the link and its source."}</p>
             </>

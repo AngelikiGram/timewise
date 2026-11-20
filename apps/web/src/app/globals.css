@@ -18,6 +18,8 @@
   /* Category colours for charts; the map uses the same values from lib/categories.ts. */
   --cat-war: #a3322a; --cat-politics: #2f5d9a; --cat-state: #7a4a9a; --cat-culture: #b07510;
   --cat-health: #0f7b80; --cat-disaster: #8a6027; --cat-railways: #4f6475; --cat-city: #9a4f6b; --cat-other: #8a8270;
+  /* Kinds of entity in the atlas: shape carries the kind too, so colour is never the only cue. */
+  --type-event: #a8642a; --type-person: #2f5d9a; --type-place: #3d7f4e; --type-country: #0f7b80; --type-organization: #7a4a9a; --type-object: #a3322a;
   color-scheme: light;
 }
 
@@ -35,6 +37,7 @@
   --on-accent: #11151d;
   --cat-war: #ff7a66; --cat-politics: #7fa8ec; --cat-state: #c9a0f0; --cat-culture: #f2c14e;
   --cat-health: #5fd0d4; --cat-disaster: #d6ad66; --cat-railways: #a9bccb; --cat-city: #f09ac0; --cat-other: #a09a8a;
+  --type-event: #e0a35a; --type-person: #7fa8ec; --type-place: #7cc98d; --type-country: #5fd0d4; --type-organization: #c9a0f0; --type-object: #ff7a66;
   color-scheme: dark;
 }
 
@@ -214,3 +217,9 @@ body {
 .tw-dot { width: 9px; height: 9px; border-radius: 999px; background: var(--paper-2); border: 2.5px solid var(--bronze); }
 .tw-dot-focus { width: 14px; height: 14px; background: var(--oxblood); border-color: var(--paper-2); box-shadow: 0 0 0 2px var(--oxblood); }
 @media (max-width: 639px) { .tw-bubble { max-width: 8.5rem; font-size: 0.72rem; } .tw-bubble-focus { max-width: 10rem; font-size: 0.8rem; } }
+
+/* My history atlas: nodes glide with the compositor (transform and opacity only), and links fade in once they land. */
+.atlas-move { transition: transform 480ms cubic-bezier(0.65, 0, 0.35, 1), opacity 380ms ease, box-shadow 150ms ease; will-change: transform, opacity; }
+.atlas-fade { animation: atlas-fade 320ms ease-out both; }
+@keyframes atlas-fade { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .atlas-move { transition: none; } .atlas-fade { animation: none; } }

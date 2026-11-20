@@ -4,11 +4,31 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { formatYear } from "@/lib/dates";
 import { GROUPS, yearOfIso, type Group, type Link, type NodeFacts, type RecordData } from "@/lib/record";
 import { Icon, type IconName } from "../icons";
-import { GROUP_ORDER } from "./ConnectionCards";
+import { GROUP_ORDER, MoreSlider } from "./ConnectionCards";
 
 const GROUP_ICON: Record<Group, IconName> = { cause: "cause", sequence: "sequence", parts: "parts", people: "people", places: "place", ideas: "idea", checked: "checked", period: "period", country: "country" };
 const GUTTER = 156;
 const ROW = 40;
+/** What a chip's position means, by the kind of date it was placed at. */
+const PLACED_AT: Record<NonNullable<NodeFacts["dateKind"]>, string> = { born: "at birth; the line runs to death", founded: "at founding; the line runs to its end", happened: "when it happened", published: "at publication" };
+/** The chip's year, said plainly: "b. 1756", "1756–1791", "f. 1200". */
+function when(f: NodeFacts) {
+  if (f.year === undefined) return "";
+  if (f.dateKind === "born") return f.end !== undefined ? `${formatYear(f.year)}–${formatYear(f.end)}` : `b. ${formatYear(f.year)}`;
+  if (f.dateKind === "founded") return `f. ${formatYear(f.year)}`;
+  return formatYear(f.year);
+}
+/** How a linked record stands in time to the one in focus, in words. */
+function relative(f: NodeFacts, fy: number | undefined, focus: string) {
+  if (fy === undefined || f.year === undefined) return "";
+  if (f.dateKind === "born") {
+    if (fy < f.year) return `born ${f.year - fy} years after ${focus}`;
+    if (f.end !== undefined && fy > f.end) return `died ${fy - f.end} years before ${focus}`;
+    return `aged about ${fy - f.year} at the time of ${focus}`;
+  }
+  const d = f.year - fy;
+  return d === 0 ? `the same year as ${focus}` : `${Math.abs(d)} years ${d > 0 ? "after" : "before"} ${focus}`;
+}
 const LANE_PAD = 12;
 
 function useWidth() {
@@ -31,9 +51,13 @@ const nice = (span: number) => [1, 2, 5, 10, 20, 25, 50, 100, 200, 250, 500, 100
  * at its own date in a lane for its kind of link, and the overview underneath can be brushed (drag a
  * rectangle) to zoom into a span of years. Records Wikidata doesn't date are listed apart, not placed.
  */
-export function TimeGraph({ record, links, facts, selected, onStep, onDetails, loading }: {
+export function TimeGraph({ record, links, facts, selected, onStep, onDetails, loading, totals, limitOf, setLimit }: {
   record: RecordData;
+  /** The links shown: the first few of each group, as set below each lane. */
   links: Link[];
+  totals: Partial<Record<Group, number>>;
+  limitOf: (g: Group) => number;
+  setLimit: (g: Group, n: number) => void;
   facts: Record<string, NodeFacts>;
   selected?: string;
   onStep: (link: Link) => void;
@@ -77,13 +101,13 @@ export function TimeGraph({ record, links, facts, selected, onStep, onDetails, l
         rows[r].push(cx);
         return { ...m, cx, r };
       });
-      const height = Math.max(1, rows.length) * ROW + LANE_PAD * 2;
+      const height = Math.max(narrow ? 1 : 2, rows.length) * ROW + LANE_PAD * 2 + (narrow && (totals[g] ?? 0) > 1 ? 28 : 0);
       const lane = { g, top, height, placed, before: members.filter((m) => m.y < d0).length, after: members.filter((m) => m.y > d1).length };
       top += height;
       return lane;
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [lanes.join(), dated, facts, d0, d1, W, chip]);
+  }, [lanes.join(), dated, facts, d0, d1, W, chip, totals]);
   const H = (layout.at(-1) ? layout.at(-1)!.top + layout.at(-1)!.height : 60) + 8;
   const fx = fy !== undefined && fy >= d0 && fy <= d1 ? x(fy) : null;
   const step = nice(d1 - d0);
@@ -137,6 +161,13 @@ export function TimeGraph({ record, links, facts, selected, onStep, onDetails, l
         <svg className="absolute inset-0 h-full w-full" aria-hidden>
           {layout.map((ln, i) => <rect key={ln.g} x={0} y={ln.top} width={W} height={ln.height} fill={i % 2 ? "var(--paper-3)" : "transparent"} opacity={0.45} />)}
           {ticks.map((t) => <g key={t}><line x1={x(t)} x2={x(t)} y1={26} y2={H} stroke="var(--line)" strokeDasharray="2 4" />{(fx === null || Math.abs(x(t) - fx) > 110) && <text x={x(t)} y={18} textAnchor="middle" className="fill-ink-2 text-[11px] tabular-nums">{formatYear(t)}</text>}</g>)}
+          {layout.flatMap((ln) => ln.placed.map((p) => {
+            const f = facts[p.l.target];
+            if (f?.end === undefined) return null;
+            const cy = ln.top + LANE_PAD + p.r * ROW + ROW / 2 - 4;
+            const x2 = x(Math.min(f.end, d1));
+            return <g key={`s-${p.l.target}`}><line x1={p.cx} x2={x2} y1={cy} y2={cy} stroke="var(--navy)" strokeWidth={4} strokeLinecap="round" opacity={0.35} />{f.end <= d1 && <line x1={x2} x2={x2} y1={cy - 7} y2={cy + 7} stroke="var(--navy)" strokeWidth={2} opacity={0.6} />}</g>;
+          }))}
           {fx !== null && layout.flatMap((ln) => ln.placed.map((p) => {
             const cy = ln.top + LANE_PAD + p.r * ROW + ROW / 2 - 4;
             const dashed = !p.l.documented;
@@ -145,12 +176,22 @@ export function TimeGraph({ record, links, facts, selected, onStep, onDetails, l
           }))}
           {fx !== null && <line x1={fx} x2={fx} y1={26} y2={H} stroke="var(--oxblood)" strokeWidth={2.5} />}
         </svg>
-        {!narrow && layout.map((ln) => (
-          <div key={`l-${ln.g}`} className="absolute left-0 flex items-start gap-2 px-3 text-xs font-semibold text-ink-2" style={{ top: ln.top + LANE_PAD, width: GUTTER }}>
-            <Icon name={GROUP_ICON[ln.g]} size={16} className="shrink-0 text-bronze" />
-            <span className="leading-tight">{GROUPS[ln.g].label}{!GROUPS[ln.g].documented && <span className="block font-normal">same time or place</span>}</span>
-          </div>
-        ))}
+        {layout.map((ln) => {
+          const kinds = ln.placed.map((p) => facts[p.l.target]?.dateKind).filter(Boolean) as NonNullable<NodeFacts["dateKind"]>[];
+          const main = kinds.sort((a, b) => kinds.filter((k) => k === b).length - kinds.filter((k) => k === a).length)[0];
+          const slider = <MoreSlider compact what={GROUPS[ln.g].label.toLowerCase()} shown={limitOf(ln.g)} total={totals[ln.g] ?? 0} onChange={(n) => setLimit(ln.g, n)} />;
+          return narrow ? (
+            <div key={`l-${ln.g}`} className="absolute left-2 right-2 z-10 flex items-center justify-between gap-2 text-[11px] font-semibold text-ink-2" style={{ top: ln.top + ln.height - 30 }}>
+              <span className="flex items-center gap-1"><Icon name={GROUP_ICON[ln.g]} size={13} className="text-bronze" />{GROUPS[ln.g].label}</span>{slider}
+            </div>
+          ) : (
+            <div key={`l-${ln.g}`} className="absolute left-0 z-10 px-3 text-xs text-ink-2" style={{ top: ln.top + LANE_PAD, width: GUTTER }}>
+              <span className="flex items-start gap-2 font-semibold"><Icon name={GROUP_ICON[ln.g]} size={16} className="shrink-0 text-bronze" /><span className="leading-tight">{GROUPS[ln.g].label}{!GROUPS[ln.g].documented && <span className="block font-normal">same time or place</span>}</span></span>
+              {main && <span className="mt-0.5 block text-[10px] leading-tight">Placed {PLACED_AT[main]}</span>}
+              <div className="mt-1">{slider}</div>
+            </div>
+          );
+        })}
         {fx !== null && (
           <span className="absolute z-10 -translate-x-1/2 whitespace-nowrap rounded-full bg-oxblood px-2.5 py-0.5 text-xs font-semibold text-white shadow" style={{ left: Math.min(W - 70, Math.max(70, fx)), top: 4 }}>
             {record.label.length > 28 ? `${record.label.slice(0, 27)}…` : record.label} · {formatYear(fy!)}
@@ -160,8 +201,8 @@ export function TimeGraph({ record, links, facts, selected, onStep, onDetails, l
           const on = p.l.target === selected;
           return (
             <div key={p.l.target} className={`absolute flex items-center rounded-full border bg-paper shadow-sm transition-shadow hover:shadow-md ${p.l.documented ? "border-bronze/70" : "border-dashed border-bronze/60"} ${on ? "ring-2 ring-oxblood" : ""}`} style={{ left: p.cx - chip / 2, top: ln.top + LANE_PAD + p.r * ROW + 2, width: chip, height: ROW - 10 }} data-node={p.l.target} data-documented={p.l.documented}>
-              <button type="button" onClick={() => onStep(p.l)} className="flex min-w-0 flex-1 items-center gap-1.5 pl-2.5 text-left text-xs outline-none focus-visible:underline" title={`${p.l.label} (${formatYear(p.y)}): ${p.l.relation}`} aria-label={`${p.l.label}, ${formatYear(p.y)}: ${p.l.relation}${p.l.documented ? "" : ", not a documented link"}. Explore from here`}>
-                <span className="shrink-0 tabular-nums text-ink-2">{formatYear(p.y)}</span>
+              <button type="button" onClick={() => onStep(p.l)} className="flex min-w-0 flex-1 items-center gap-1.5 pl-2.5 text-left text-xs outline-none focus-visible:underline" title={`${p.l.label} (${when(facts[p.l.target])}): ${p.l.relation}. ${relative(facts[p.l.target], fy, record.label)}`} aria-label={`${p.l.label}, ${when(facts[p.l.target])}: ${p.l.relation}${p.l.documented ? "" : ", not a documented link"}. ${relative(facts[p.l.target], fy, record.label)}. Explore from here`}>
+                <span className="shrink-0 tabular-nums text-ink-2">{when(facts[p.l.target])}</span>
                 <span className="truncate font-medium text-ink">{p.l.label}</span>
               </button>
               <button type="button" onClick={() => onDetails(p.l.target)} className="grid h-full w-7 shrink-0 place-items-center rounded-r-full text-ink-2 hover:text-ink focus-visible:ring-2 focus-visible:ring-bronze" aria-label={`Why is ${p.l.label} connected?`}><Icon name="info" size={13} /></button>

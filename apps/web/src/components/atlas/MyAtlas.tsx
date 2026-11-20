@@ -8,6 +8,7 @@ import { isWikidata, TYPE_LABEL, wikidataUrl, type EntityType } from "@/lib/enti
 import { lessonHref, pathById } from "@/lib/lessons";
 import { exploreEntity, logAnswer, toggleSaveEntity, useProgress, type AtlasEdge, type AtlasNode } from "@/lib/progress";
 import { fetchRecord, statementUrl, type RecordData } from "@/lib/record";
+import { prefetch } from "@/lib/cache";
 import { Icon, iconPath, type IconName } from "../icons";
 import { TYPE_ICON } from "./EntityPanel";
 import { restoreLinkQuestion } from "./ConnectExercise";
@@ -22,12 +23,14 @@ const PW = 172, PH = 48, FW = 230, FH = 76, MS = 460;
 type Zone = "top" | "bottom" | "left" | "right";
 type Placed = { id: string; x: number; y: number; t: number };
 type Pos = { x: number; y: number; o: number };
-const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
 const TYPES: EntityType[] = ["event", "person", "place", "country", "organization", "object"];
 const STATE_LABEL = { encountered: "Encountered", explored: "Explored", saved: "Saved", practised: "Practised" } as const;
+const STATE_COLOR = { encountered: "var(--ink-2)", explored: "var(--type-person)", saved: "var(--bronze)", practised: "var(--type-place)" } as const;
 
 type Neighbour = { id: string; node?: AtlasNode; label: string; type: EntityType; edge?: AtlasEdge; preview?: { relation: string; url: string; group: string } };
 
+/** A colour for each kind of entity, from globals.css (light and dark). Shape and icon say the kind too. */
+export const TYPE_COLOR: Record<EntityType, string> = { event: "var(--type-event)", person: "var(--type-person)", place: "var(--type-place)", country: "var(--type-country)", organization: "var(--type-organization)", object: "var(--type-object)" };
 /** A distinct outline for each kind of entity, so type never depends on colour or icon alone. */
 function Shape({ type, r, className }: { type: EntityType; r: number; className?: string }) {
   if (type === "person") return <rect x={-r} y={-r} width={2 * r} height={2 * r} rx={r * 0.45} className={className} />;
@@ -39,9 +42,10 @@ function Shape({ type, r, className }: { type: EntityType; r: number; className?
 }
 /** The type's outline with its icon inside: type never rests on colour alone. */
 function TypeBadge({ type, size = 30, dim, solid }: { type: EntityType; size?: number; dim?: boolean; solid?: boolean }) {
+  const c = TYPE_COLOR[type];
   return (
-    <svg viewBox="-16 -16 32 32" width={size} height={size} className={`shrink-0 ${solid ? "text-paper" : dim ? "text-ink-2" : "text-bronze"}`} aria-hidden>
-      <Shape type={type} r={12} className={solid ? "fill-bronze" : `fill-paper ${dim ? "stroke-ink-2/60" : "stroke-bronze"} [stroke-width:1.5]`} />
+    <svg viewBox="-16 -16 32 32" width={size} height={size} className={`shrink-0 ${solid ? "text-paper" : dim ? "text-ink-2" : ""}`} style={solid || dim ? undefined : { color: c }} aria-hidden>
+      <g style={solid ? { fill: c } : { stroke: dim ? undefined : c }}><Shape type={type} r={12} className={solid ? "" : `fill-paper ${dim ? "stroke-ink-2/60" : ""} [stroke-width:1.8]`} /></g>
       <path d={iconPath(TYPE_ICON[type])} transform="translate(-8,-8) scale(0.667)" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
@@ -219,41 +223,47 @@ export function MyAtlas() {
     return out;
   }, [shown, node, W]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Glide from the old layout to the new one: the chosen node moves to the centre, new ones grow out of it, old ones fade.
+  // While a Wikidata entity's statements load, hold the old picture briefly, so the graph moves once, not twice.
+  // Hovered neighbours are fetched ahead and kept in the cache, so the wait is usually nothing.
+  const [hold, setHold] = useState(false);
+  useEffect(() => {
+    if (!node || !isWikidata(node.id)) { setHold(false); return; }
+    setHold(true);
+    const t = setTimeout(() => setHold(false), 700);
+    return () => clearTimeout(t);
+  }, [current]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { if (wd !== "loading") setHold(false); }, [wd]);
+
+  // Glide from the old layout to the new one with CSS transitions (transform and opacity, run by the browser's
+  // compositor): the chosen node moves to the centre, the old centre moves to its new place or fades, new
+  // neighbours grow out of where the focus came from. React renders three times per step, not every frame.
   const [frame, setFrame] = useState<Record<string, Pos>>({});
-  const frameRef = useRef<Record<string, Pos>>({});
+  const [moving, setMoving] = useState(false);
+  const prevRef = useRef<Record<string, Pos>>({});
   const kept = useRef<Record<string, Neighbour>>({});
   for (const nb of shown) kept.current[nb.id] = nb;
-  // Animate only when the layout itself changes, not on every re-render.
+  if (node) kept.current[node.id] = { id: node.id, node, label: node.label, type: node.type };
   const layoutKey = `${current}|${cx},${cy}|${placed.map((pl) => `${pl.id}@${Math.round(pl.x)},${Math.round(pl.y)}`).join(";")}`;
   useEffect(() => {
-    if (!current) return;
+    if (!current || hold) return;
     const target: Record<string, Pos> = { [current]: { x: cx, y: cy, o: 1 } };
     for (const pl of placed) target[pl.id] = { x: pl.x, y: pl.y, o: 1 };
-    const start = frameRef.current;
-    const origin = start[current] ?? { x: cx, y: cy, o: 1 };
-    const ids = new Set([...Object.keys(start), ...Object.keys(target)]);
-    const a: Record<string, Pos> = {}, b: Record<string, Pos> = {};
-    for (const id of ids) {
-      a[id] = start[id] ?? { x: origin.x, y: origin.y, o: 0 };
-      b[id] = target[id] ?? { ...a[id], o: 0 };
-    }
-    const still = !Object.keys(start).length || window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const finish = () => { frameRef.current = target; setFrame(target); };
-    if (still) { finish(); return; }
-    let raf = 0;
-    const t0 = performance.now();
-    const step = (now: number) => {
-      const k = ease(Math.min(1, (now - t0) / MS));
-      const f: Record<string, Pos> = {};
-      for (const id of ids) f[id] = { x: a[id].x + (b[id].x - a[id].x) * k, y: a[id].y + (b[id].y - a[id].y) * k, o: a[id].o + (b[id].o - a[id].o) * k };
-      frameRef.current = f;
-      setFrame(f);
-      if (k < 1) raf = requestAnimationFrame(step); else finish();
-    };
-    raf = requestAnimationFrame(step);
-    return () => cancelAnimationFrame(raf);
-  }, [layoutKey]); // eslint-disable-line react-hooks/exhaustive-deps
+    const prev = prevRef.current;
+    prevRef.current = target;
+    const still = !Object.keys(prev).length || window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (still) { setFrame(target); setMoving(false); return; }
+    const origin = prev[current] ?? { x: cx, y: cy, o: 1 };
+    const start: Record<string, Pos> = {}, end: Record<string, Pos> = { ...target };
+    for (const id of Object.keys(target)) start[id] = prev[id] ?? { x: origin.x, y: origin.y, o: 0 };
+    for (const id of Object.keys(prev)) if (!target[id]) { start[id] = prev[id]; end[id] = { ...prev[id], o: 0 }; }
+    setFrame(start);
+    setMoving(true);
+    let r2 = 0;
+    const r1 = requestAnimationFrame(() => { r2 = requestAnimationFrame(() => setFrame(end)); });
+    const done = setTimeout(() => { setFrame(target); setMoving(false); }, MS + 80);
+    return () => { cancelAnimationFrame(r1); cancelAnimationFrame(r2); clearTimeout(done); };
+  }, [layoutKey, hold]); // eslint-disable-line react-hooks/exhaustive-deps
+  const warm = (id: string) => { if (isWikidata(id)) prefetch(() => fetchRecord(id)); };
 
   /** The point where the line from (x1,y1) towards (x2,y2) leaves a w×h box centred on (x1,y1). */
   const exit = (x1: number, y1: number, x2: number, y2: number, w: number, h: number) => {
@@ -282,13 +292,16 @@ export function MyAtlas() {
         {/* Left: search, filters, paths, suggestions, and the whole atlas as a list */}
         <aside className="border-b border-line p-4 lg:border-b-0 lg:border-r" aria-label="Filters">
           <h1 className="font-serif text-2xl">My history atlas</h1>
-          <p className="mt-1 text-xs text-ink-2">{counts.encountered} encountered · {counts.explored} explored · {counts.saved} saved · {counts.practised} practised. Its size isn&rsquo;t a score.</p>
+          <ul className="mt-2 grid grid-cols-4 gap-1 text-center" aria-label="Your atlas so far">
+            {(Object.keys(STATE_LABEL) as (keyof typeof STATE_LABEL)[]).map((k) => <li key={k} className="rounded-lg px-1 py-1.5" style={{ background: `color-mix(in srgb, ${STATE_COLOR[k]} 13%, transparent)` }}><span className="block font-serif text-lg leading-none tabular-nums" style={{ color: STATE_COLOR[k] }}>{counts[k]}</span><span className="text-[10px] text-ink-2">{STATE_LABEL[k].toLowerCase()}</span></li>)}
+          </ul>
+          <p className="mt-1 text-[11px] text-ink-2">Its size isn&rsquo;t a score.</p>
           <label className="mt-3 block"><span className="sr-only">Search my atlas</span><input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search my atlas" className="field !py-1.5 text-sm" /></label>
           <fieldset className="mt-3"><legend className="text-xs font-semibold uppercase tracking-wider text-ink-2">Types</legend>
             <div className="mt-1.5 flex flex-wrap gap-1.5">
               {TYPES.filter((t) => all.some((n) => n.type === t)).map((t) => (
-                <button key={t} type="button" aria-pressed={types.has(t)} onClick={() => setTypes((s) => { const n = new Set(s); if (n.has(t)) n.delete(t); else n.add(t); return n; })} className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs ${types.has(t) ? "border-bronze bg-paper-2" : "border-line text-ink-2 line-through opacity-60"}`}>
-                  <svg viewBox="-12 -12 24 24" className="h-3.5 w-3.5" aria-hidden><Shape type={t} r={8} className="fill-none stroke-current" /></svg>{TYPE_LABEL[t]}
+                <button key={t} type="button" aria-pressed={types.has(t)} onClick={() => setTypes((s) => { const n = new Set(s); if (n.has(t)) n.delete(t); else n.add(t); return n; })} className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs ${types.has(t) ? "bg-paper-2" : "border-line text-ink-2 line-through opacity-60"}`} style={types.has(t) ? { borderColor: TYPE_COLOR[t] } : undefined}>
+                  <svg viewBox="-12 -12 24 24" className="h-3.5 w-3.5" aria-hidden style={{ color: types.has(t) ? TYPE_COLOR[t] : undefined }}><Shape type={t} r={8} className={types.has(t) ? "fill-current stroke-current" : "fill-none stroke-current"} /></svg>{TYPE_LABEL[t]}<span className="text-ink-2">{all.filter((n) => n.type === t).length}</span>
                 </button>
               ))}
             </div>
@@ -310,7 +323,7 @@ export function MyAtlas() {
           <details className="mt-4" open={list.length < 30}>
             <summary className="cursor-pointer text-xs font-semibold uppercase tracking-wider text-ink-2">All {list.length} in the atlas, as a list</summary>
             <ul className="mt-1.5 max-h-72 overflow-y-auto" data-testid="atlas-list-alt">
-              {list.map((n) => <li key={n.id}><button type="button" onClick={() => go(n.id)} aria-current={n.id === current ? "true" : undefined} className={`flex w-full items-center gap-2 rounded px-2 py-1 text-left text-sm hover:bg-paper-3 ${n.id === current ? "bg-paper-3 font-semibold" : ""}`}><Icon name={TYPE_ICON[n.type]} size={14} className="shrink-0 text-bronze" /><span className="truncate">{n.label}</span>{n.saved && <span className="ml-auto text-bronze" aria-label="saved">★</span>}</button></li>)}
+              {list.map((n) => <li key={n.id}><button type="button" onClick={() => go(n.id)} aria-current={n.id === current ? "true" : undefined} className={`flex w-full items-center gap-2 rounded px-2 py-1 text-left text-sm hover:bg-paper-3 ${n.id === current ? "bg-paper-3 font-semibold" : ""}`}><Icon name={TYPE_ICON[n.type]} size={14} className="shrink-0" style={{ color: TYPE_COLOR[n.type] }} /><span className="truncate">{n.label}</span>{n.saved && <span className="ml-auto text-bronze" aria-label="saved">★</span>}</button></li>)}
             </ul>
           </details>
         </aside>
@@ -330,23 +343,32 @@ export function MyAtlas() {
                   <marker key={k} id={`atlas-arrow-${k}`} viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill={k === "doc" ? "var(--bronze)" : "var(--ink-2)"} /></marker>
                 ))}
               </defs>
-              {node && frame[current!] && shown.map((nb) => {
+              {/* Where things go, tinted: people above, places below, earlier left, later right */}
+              <rect x={0} y={0} width={W} height={H * 0.24} fill="var(--type-person)" opacity={0.06} />
+              <rect x={0} y={H * 0.76} width={W} height={H * 0.24} fill="var(--type-place)" opacity={0.07} />
+              <rect x={0} y={H * 0.24} width={W * 0.24} height={H * 0.52} fill="var(--type-event)" opacity={0.05} />
+              <rect x={W * 0.76} y={H * 0.24} width={W * 0.24} height={H * 0.52} fill="var(--type-event)" opacity={0.09} />
+              <text x={10} y={16} fontSize={10} fill="var(--type-person)" opacity={0.8}>PEOPLE AND GROUPS</text>
+              <text x={10} y={H - 8} fontSize={10} fill="var(--type-place)" opacity={0.85}>PLACES</text>
+              <text x={10} y={H / 2 - 70} fontSize={10} fill="var(--ink-2)" opacity={0.7}>◀ EARLIER</text>
+              <text x={W - 10} y={H / 2 - 70} fontSize={10} textAnchor="end" fill="var(--ink-2)" opacity={0.7}>LATER ▶</text>
+              {node && !moving && frame[current!] && shown.map((nb) => {
                 const f = frame[current!], p = frame[nb.id];
                 if (!p) return null;
                 const [ax, ay] = exit(f.x, f.y, p.x, p.y, FW + 10, FH + 10);
                 const [bx, by] = exit(p.x, p.y, f.x, f.y, PW + 10, PH + 10);
                 const doc = !!nb.edge, inward = nb.edge?.to === current;
-                return <line key={nb.id} x1={ax} y1={ay} x2={bx} y2={by} opacity={p.o} stroke={doc ? "var(--bronze)" : "var(--ink-2)"} strokeOpacity={doc ? 0.85 : 0.55} strokeWidth={doc ? 2 : 1.4} strokeDasharray={doc ? undefined : "2 4"} strokeLinecap="round" markerEnd={inward ? undefined : `url(#atlas-arrow-${doc ? "doc" : "wd"})`} markerStart={inward ? `url(#atlas-arrow-${doc ? "doc" : "wd"})` : undefined} />;
+                return <line key={`${current}-${nb.id}`} className="atlas-fade" x1={ax} y1={ay} x2={bx} y2={by} stroke={doc ? TYPE_COLOR[nb.type] : "var(--ink-2)"} strokeOpacity={doc ? 0.85 : 0.55} strokeWidth={doc ? 2 : 1.4} strokeDasharray={doc ? undefined : "2 4"} strokeLinecap="round" markerEnd={inward ? undefined : `url(#atlas-arrow-${doc ? "doc" : "wd"})`} markerStart={inward ? `url(#atlas-arrow-${doc ? "doc" : "wd"})` : undefined} />;
               })}
             </svg>
             {/* Relation labels sit on their line, nearer the neighbour, so labels in one row stay apart */}
-            {node && frame[current!] && shown.map((nb) => {
+            {node && !moving && frame[current!] && shown.map((nb) => {
               const f = frame[current!], p = frame[nb.id], pl = placed.find((x) => x.id === nb.id);
               if (!p || !pl) return null;
               const [ax, ay] = exit(f.x, f.y, p.x, p.y, FW + 10, FH + 10);
               const [bx, by] = exit(p.x, p.y, f.x, f.y, PW + 10, PH + 10);
               const text = hiddenEdge(nb) ? "?" : nb.edge?.label ?? nb.preview?.relation ?? "";
-              return <span key={`l-${nb.id}`} className={`pointer-events-none absolute left-0 top-0 max-w-[9.5rem] truncate whitespace-nowrap rounded-full border px-2 py-px text-[11px] ${nb.edge ? "border-bronze/50 bg-paper text-ink" : "border-line bg-paper text-ink-2"}`} style={{ transform: pl.t < 0 ? `translate(${p.x}px, ${p.y - PH / 2 - 11}px) translate(-50%, -50%)` : `translate(${ax + (bx - ax) * pl.t}px, ${ay + (by - ay) * pl.t}px) translate(-50%, -50%)`, opacity: p.o }} title={text}>{text}</span>;
+              return <span key={`l-${current}-${nb.id}`} className={`atlas-fade pointer-events-none absolute left-0 top-0 max-w-[9.5rem] truncate whitespace-nowrap rounded-full border px-2 py-px text-[11px] ${nb.edge ? "bg-paper text-ink" : "border-line bg-paper text-ink-2"}`} style={{ transform: pl.t < 0 ? `translate(${p.x}px, ${p.y - PH / 2 - 11}px) translate(-50%, -50%)` : `translate(${ax + (bx - ax) * pl.t}px, ${ay + (by - ay) * pl.t}px) translate(-50%, -50%)`, borderColor: nb.edge ? TYPE_COLOR[nb.type] : undefined }} title={text}>{text}</span>;
             })}
             {/* Neighbours as pills; ones leaving fade where they stand */}
             {Object.entries(frame).filter(([id]) => id !== current && kept.current[id]).map(([id, p]) => {
@@ -355,10 +377,10 @@ export function MyAtlas() {
               const unexplored = !!nb.preview && !nb.node;
               const sub = unexplored ? "Wikidata · not explored yet" : [TYPE_LABEL[nb.type], nb.node?.dates ?? (nb.node?.year !== undefined ? String(nb.node.year) : "")].filter(Boolean).join(" · ");
               return (
-                <button key={id} type="button" tabIndex={live ? 0 : -1} disabled={!live} onClick={() => open(nb)} data-atlas-node={live ? id : undefined} data-preview={live ? unexplored : undefined}
+                <button key={id} type="button" tabIndex={live ? 0 : -1} disabled={!live} onClick={() => open(nb)} onMouseEnter={() => warm(id)} onFocus={() => warm(id)} data-atlas-node={live ? id : undefined} data-preview={live ? unexplored : undefined}
                   aria-label={hiddenNode(nb) ? "Hidden entity" : `${nb.label}, ${TYPE_LABEL[nb.type]}${unexplored ? ", not explored yet" : ""}`} title={hiddenNode(nb) ? "Hidden until you restore the link" : nb.label}
-                  className={`absolute left-0 top-0 flex items-center gap-2 rounded-xl border bg-paper-2 px-2 text-left shadow-sm transition-shadow hover:shadow-md focus-visible:outline-2 focus-visible:outline-oxblood ${unexplored ? "border-dashed border-ink-2/50" : "border-bronze/70"}`}
-                  style={{ width: PW, height: PH, transform: `translate(${p.x - PW / 2}px, ${p.y - PH / 2}px)`, opacity: p.o, pointerEvents: live ? undefined : "none" }}>
+                  className={`atlas-move absolute left-0 top-0 flex items-center gap-2 rounded-xl border border-l-4 bg-paper-2 px-2 text-left shadow-sm hover:-translate-y-px hover:shadow-md focus-visible:outline-2 focus-visible:outline-oxblood ${unexplored ? "border-dashed" : ""}`}
+                  style={{ width: PW, height: PH, transform: `translate(${p.x - PW / 2}px, ${p.y - PH / 2}px)`, opacity: p.o, pointerEvents: live ? undefined : "none", borderColor: unexplored ? undefined : TYPE_COLOR[nb.type], borderLeftColor: TYPE_COLOR[nb.type] }}>
                   <TypeBadge type={nb.type} dim={unexplored} />
                   <span className="min-w-0 flex-1 leading-tight"><span className="block truncate text-[13px] font-semibold">{hiddenNode(nb) ? "?" : nb.label}</span><span className="block truncate text-[11px] text-ink-2">{sub}</span></span>
                 </button>
@@ -367,7 +389,7 @@ export function MyAtlas() {
             {node && (() => {
               const f = frame[current!] ?? { x: cx, y: cy, o: 1 };
               return (
-                <div data-atlas-focus={node.id} className="absolute left-0 top-0 flex items-center gap-3 rounded-2xl border-2 border-bronze bg-bronze-soft px-3 shadow-md" style={{ width: FW, height: FH, transform: `translate(${f.x - FW / 2}px, ${f.y - FH / 2}px)` }}>
+                <div key={`focus-${node.id}`} data-atlas-focus={node.id} className="atlas-move absolute left-0 top-0 flex items-center gap-3 rounded-2xl border-2 px-3 shadow-lg" style={{ width: FW, height: FH, transform: `translate(${f.x - FW / 2}px, ${f.y - FH / 2}px)`, borderColor: TYPE_COLOR[node.type], background: `color-mix(in srgb, ${TYPE_COLOR[node.type]} 16%, var(--paper-2))` }}>
                   <TypeBadge type={node.type} size={40} solid />
                   <span className="min-w-0 flex-1"><span className="line-clamp-2 font-serif text-[15px] font-semibold leading-tight" title={node.label}>{node.label}</span><span className="mt-0.5 block truncate text-[11px] text-ink-2">{[TYPE_LABEL[node.type], node.dates ?? detail?.when.text].filter(Boolean).join(" · ")}</span></span>
                 </div>
@@ -389,12 +411,12 @@ export function MyAtlas() {
           )}
           {/* Phones: the entity, then its connections as cards */}
           <ul className="grid gap-2 p-4 sm:hidden">
-            {shown.map((nb) => <li key={nb.id}><button type="button" onClick={() => open(nb)} className={`card flex w-full items-center gap-3 p-3 text-left ${nb.preview && !nb.node ? "border-dashed" : ""}`}><TypeBadge type={nb.type} dim={!!nb.preview && !nb.node} /><span className="min-w-0 flex-1"><span className="block truncate font-medium">{nb.label}</span><span className="text-xs text-ink-2">{nb.edge ? nb.edge.label : `${nb.preview?.relation} · documented on Wikidata${nb.node ? "" : ", not explored yet"}`}</span></span></button></li>)}
+            {shown.map((nb) => <li key={nb.id}><button type="button" onClick={() => open(nb)} className={`card flex w-full items-center gap-3 border-l-4 p-3 text-left ${nb.preview && !nb.node ? "border-dashed" : ""}`} style={{ borderLeftColor: TYPE_COLOR[nb.type] }}><TypeBadge type={nb.type} dim={!!nb.preview && !nb.node} /><span className="min-w-0 flex-1"><span className="block truncate font-medium">{nb.label}</span><span className="text-xs text-ink-2">{nb.edge ? nb.edge.label : `${nb.preview?.relation} · documented on Wikidata${nb.node ? "" : ", not explored yet"}`}</span></span></button></li>)}
           </ul>
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1 px-4 pb-3 text-xs text-ink-2" data-testid="atlas-legend">
             <span className="inline-flex items-center gap-1"><svg width="26" height="8" aria-hidden><line x1="1" y1="4" x2="20" y2="4" stroke="var(--bronze)" strokeWidth="2" /><path d="M19,0 L25,4 L19,8 z" fill="var(--bronze)" /></svg>sourced, in your atlas</span>
             <span className="inline-flex items-center gap-1"><svg width="26" height="8" aria-hidden><line x1="1" y1="4" x2="20" y2="4" stroke="var(--ink-2)" strokeWidth="1.4" strokeDasharray="2 4" strokeLinecap="round" /><path d="M19,0 L25,4 L19,8 z" fill="var(--ink-2)" /></svg>documented on Wikidata</span>
-            <span>People above · places below · earlier left · later right</span>
+            <span className="inline-flex flex-wrap gap-x-2">{TYPES.filter((t) => all.some((n) => n.type === t)).map((t) => <span key={t} className="inline-flex items-center gap-1"><span className="h-2.5 w-2.5 rounded-full" style={{ background: TYPE_COLOR[t] }} />{TYPE_LABEL[t]}</span>)}</span>
             {wd === "loading" && <span className="text-bronze">Reading Wikidata statements…</span>}
             {wd === "failed" && <span>Wikidata unreachable: showing your sourced links only.</span>}
             <span className="ml-auto flex gap-2">
@@ -413,7 +435,7 @@ export function MyAtlas() {
               <p className="mt-3 text-sm leading-relaxed">{node.description ?? detail?.description ?? "No description is recorded."}</p>
               <p className="mt-1 text-xs text-ink-2">Source: {node.source?.url ? <a className="link" href={node.source.url} target="_blank" rel="noopener noreferrer">{node.source.label} ↗</a> : "TIMEWISE checked collection"}</p>
               <ul className="mt-3 grid grid-cols-2 gap-1 text-xs" data-testid="atlas-states">
-                {(Object.keys(STATE_LABEL) as (keyof typeof STATE_LABEL)[]).map((k) => <li key={k} className={`rounded-md border px-2 py-1 ${node[k] ? "border-bronze bg-bronze-soft/40" : "border-dashed border-line text-ink-2"}`}>{STATE_LABEL[k]}{node[k] ? ` · ${ago(node[k])}` : ": not yet"}</li>)}
+                {(Object.keys(STATE_LABEL) as (keyof typeof STATE_LABEL)[]).map((k) => <li key={k} className={`rounded-md border px-2 py-1 ${node[k] ? "" : "border-dashed border-line text-ink-2"}`} style={node[k] ? { borderColor: STATE_COLOR[k], background: `color-mix(in srgb, ${STATE_COLOR[k]} 14%, transparent)` } : undefined}>{STATE_LABEL[k]}{node[k] ? ` · ${ago(node[k])}` : ": not yet"}</li>)}
               </ul>
               <div className="mt-3 flex flex-wrap gap-2">
                 <button type="button" className="btn btn-primary btn-sm" aria-pressed={!!node.saved} onClick={() => toggleSaveEntity(node)}>{node.saved ? "Saved ✓" : "Save"}</button>
