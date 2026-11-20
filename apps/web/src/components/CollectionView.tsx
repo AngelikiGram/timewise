@@ -109,7 +109,7 @@ export function CollectionView() {
           ["Challenges done", `${completedChallenges}/${CHALLENGES.length}`],
           ["XP", totalXp(p)],
         ].map(([k, v]) => (
-          <div key={k} className="card p-4"><dt className="text-xs uppercase tracking-wider text-ink-2">{k}</dt><dd className="mt-1 font-serif text-3xl tabular-nums">{v}</dd></div>
+          <div key={k} className="card p-4"><dt className="text-xs text-ink-2">{k}</dt><dd className="mt-1 font-serif text-3xl tabular-nums">{v}</dd></div>
         ))}
       </dl>
 
@@ -230,7 +230,7 @@ export function CollectionView() {
             <div>
               <h2 className="font-serif text-2xl">Topics to revisit</h2>
               <ul className="mt-3 space-y-1 text-sm">{p.mistakes.slice(-5).reverse().map((m) => <li key={m.prompt}>{m.prompt}</li>)}</ul>
-              <Link href="/challenges#review" className="link mt-2 inline-block text-sm">Review them →</Link>
+              <Link href="/challenges#review" className="link mt-2 inline-block text-sm">Review them</Link>
             </div>
           )}
         </section>

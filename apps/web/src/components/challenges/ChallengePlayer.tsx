@@ -149,7 +149,7 @@ function Order({ c, mode, seed = 1, done, onSubmit }: Props<Extract<Challenge, {
                 score, max: items.length,
                 lines: correct.map((id, i) => ({ ok: items[i] === id, text: `${i + 1}. ${ev(id).title.en}: ${formatWhen(ev(id).when)}` })),
                 explanation: <p>The dates come from the sourced claims for each event. {correct.map((id) => `${ev(id).title.en} (${formatWhen(ev(id).when)})`).join(", then ")}.</p>,
-                mistakes: score < items.length ? [{ prompt: `${c.title}: put in order`, correct: correct.map((id) => ev(id).title.en).join(" → ") }] : [],
+                mistakes: score < items.length ? [{ prompt: `${c.title}: put in order`, correct: correct.map((id) => ev(id).title.en).join(" ") }] : [],
               });
             }}
           >
@@ -396,7 +396,7 @@ function Establish({ c, mode, done, onSubmit }: Props<Extract<Challenge, { kind:
   const [pick, setPick] = useState("");
   return (
     <div>
-      <blockquote className="rounded-md border-l-4 border-bronze bg-paper-3/60 p-4 font-serif text-lg leading-snug">{cl.statement.en}</blockquote>
+      <blockquote className="rounded-lg bg-paper-3/60 p-4 font-serif text-lg leading-snug">{cl.statement.en}</blockquote>
       <ul className="mt-3 space-y-2 text-sm">
         {cl.evidence.map((e) => (
           <li key={e.sourceId} className="rounded-md border border-line p-3">

@@ -18,7 +18,7 @@ export function ContinueLearning() {
     <section className="mx-auto max-w-7xl px-4 pb-2 pt-8 sm:px-6" aria-labelledby="continue" data-testid="continue">
       <div className="flex items-baseline justify-between gap-3">
         <h2 id="continue" className="font-serif text-2xl sm:text-3xl">Continue your journey</h2>
-        <Link href="/collection" className="link text-sm">My Collection →</Link>
+        <Link href="/collection" className="link text-sm">My Collection</Link>
       </div>
       <ul className="mt-4 flex gap-3 overflow-x-auto pb-2">
         {unfinished.map(({ s, saved }) => {
@@ -26,7 +26,7 @@ export function ContinueLearning() {
           return (
             <li key={s.id} className="w-72 shrink-0">
               <Link href={s.kind === "journey" ? `${s.href}?chapter=${saved!.chapterId}&step=${saved!.step}` : s.href} className="card block h-full border-bronze/60 p-4">
-                <span className="text-xs font-semibold uppercase tracking-wider text-bronze">Unfinished story</span>
+                <span className="text-xs font-semibold text-bronze">Unfinished story</span>
                 <span className="mt-1 block font-serif text-lg leading-snug">{s.title}</span>
                 {chapter && <span className="mt-1 block text-sm text-ink-2">Next: {chapter.title}</span>}
               </Link>

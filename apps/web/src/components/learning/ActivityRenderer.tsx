@@ -67,7 +67,7 @@ export function ActivityRenderer({
       {/* Activity Header */}
       <header className="border-b border-line bg-paper-3 px-4 py-3">
         <div className="flex flex-wrap items-center gap-2 mb-2">
-          <span className="inline-block border px-2 py-0.5 text-xs font-semibold uppercase tracking-wider border-navy text-navy dark:border-bronze dark:text-bronze">
+          <span className="inline-block border px-2 py-0.5 text-xs font-semibold border-navy text-navy dark:border-bronze dark:text-bronze">
             {t(activity.prompt).split(".")[0]} {/* First sentence as label */}
           </span>
           <span className="text-xs text-ink-2">
@@ -124,7 +124,7 @@ export function ActivityRenderer({
       {/* Explanation (shown after completion or on demand) */}
       {completed && (
         <div className="border-t border-line bg-paper p-4" data-testid="activity-explanation">
-          <h4 className="font-semibold text-sm uppercase tracking-wider text-ink-2 mb-2">Why this answer?</h4>
+          <h4 className="font-semibold text-sm text-ink-2 mb-2">Why this answer?</h4>
           <p className="text-sm leading-relaxed text-ink">{t(activity.explanation)}</p>
           <div className="mt-3 flex flex-wrap gap-2 text-xs text-ink-2">
             <span className="border border-line px-2 py-0.5 rounded-full">Grounded in {activity.claimIds.length} claim(s)</span>
@@ -137,4 +137,4 @@ export function ActivityRenderer({
       )}
     </article>
   );
-}
+}

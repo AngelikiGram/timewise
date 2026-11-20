@@ -95,7 +95,7 @@ export function Overview({ data, countries, tabs, mapHref, atlasFor }: {
             {data.events.toLocaleString("en")} events{data.earliest !== null ? ` from ${formatYear(data.earliest)} to today` : ""}, across {data.countries} present-day countries. They are imported from Wikidata and haven&rsquo;t been reviewed, so read them as a map of what is documented, and open any one to see its source.
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
-            <Link href={mapHref} className="rounded-sm bg-navy px-5 py-3 font-medium text-on-accent dark:bg-bronze">Explore it on the map →</Link>
+            <Link href={mapHref} className="rounded-sm bg-navy px-5 py-3 font-medium text-on-accent dark:bg-bronze">Explore it on the map</Link>
             <a href="#eras" className="rounded-sm border border-line px-5 py-3 font-medium hover:border-bronze">Jump to the eras</a>
           </div>
           <dl className="mt-10 grid grid-cols-2 gap-6 border-y border-line py-6 sm:grid-cols-4">

@@ -18,7 +18,7 @@ const SUPPORT_STYLE: Record<SupportStatus, string> = {
 export function SupportBadge({ status }: { status: SupportStatus }) {
   const { label, help } = SUPPORT_LABELS[status];
   return (
-    <span title={help} className={`inline-block border px-1.5 py-0.5 text-xs font-semibold uppercase tracking-wider ${SUPPORT_STYLE[status]}`}>
+    <span title={help} className={`inline-block border px-1.5 py-0.5 text-xs font-semibold ${SUPPORT_STYLE[status]}`}>
       {label}
     </span>
   );
@@ -123,7 +123,7 @@ export function EvidencePanel({ event }: { event: HistoricalEvent | null }) {
       )}
       <p className="leading-relaxed">{event.summary.en}</p>
       {(event.when.note || event.placeNote || event.noPlaceReason) && (
-        <aside className="space-y-1 border-l-2 border-bronze pl-3 text-sm text-ink-2">
+        <aside className="space-y-1 rounded-lg bg-paper-3/50 p-3 text-sm text-ink-2">
           {event.when.note && <p>{event.when.note}</p>}
           {event.placeNote && <p>{event.placeNote}</p>}
           {event.noPlaceReason && <p>{event.noPlaceReason}</p>}
@@ -152,7 +152,7 @@ export function EvidencePanel({ event }: { event: HistoricalEvent | null }) {
             {shapes.map((g) => (
               <li key={g.id} className="border border-line bg-paper-2 p-3 text-sm">
                 <p className="font-serif text-base leading-snug">{g.name}</p>
-                <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-bronze" title={DERIVATION_LABELS[g.derivation].help}>{DERIVATION_LABELS[g.derivation].label}</p>
+                <p className="mt-1 text-xs font-semibold text-bronze" title={DERIVATION_LABELS[g.derivation].help}>{DERIVATION_LABELS[g.derivation].label}</p>
                 <p className="mt-1 text-ink-2">{g.note}</p>
                 <details className="mt-2 text-xs text-ink-2">
                   <summary className="cursor-pointer text-bronze">Geometry details</summary>

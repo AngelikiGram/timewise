@@ -51,9 +51,9 @@ export function LiveSearch({ placeholder, local, live, hrefFor, label, testId, p
       </div>
       {q.trim().length >= 2 && (
         <div className="absolute inset-x-0 top-full z-30 mt-1 max-h-[26rem] overflow-y-auto rounded-xl border border-line bg-paper p-1 shadow-lg" data-testid="live-results">
-          {mine.length > 0 && <p className="px-3 pt-2 text-[11px] font-semibold uppercase tracking-wider text-ink-2">Ready in TIMEWISE</p>}
+          {mine.length > 0 && <p className="px-3 pt-2 text-[11px] font-semibold text-ink-2">Ready in TIMEWISE</p>}
           {mine.map((x) => <Link key={x.id} href={x.href} className="block rounded-lg px-3 py-2 hover:bg-paper-2"><span className="font-medium">{x.label}</span>{x.sub && <span className="block text-xs text-ink-2">{x.sub}</span>}</Link>)}
-          {fresh.length > 0 && <p className="px-3 pt-2 text-[11px] font-semibold uppercase tracking-wider text-ink-2">Look up on Wikidata now</p>}
+          {fresh.length > 0 && <p className="px-3 pt-2 text-[11px] font-semibold text-ink-2">Look up on Wikidata now</p>}
           {fresh.map((h) => (
             <button key={h.id} type="button" onClick={() => open(h)} onMouseEnter={() => prefetch?.(h)} onFocus={() => prefetch?.(h)} className="flex w-full items-start gap-2 rounded-lg px-3 py-2 text-left hover:bg-paper-2">
               <span className="min-w-0 flex-1"><span className="font-medium">{h.label}</span>{h.description && <span className="block text-xs text-ink-2">{h.description}</span>}</span>

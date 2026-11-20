@@ -299,7 +299,7 @@ function ActivityPlayer({ activityId, journeyId, chapterId }: ActivityPlayerProp
                 </svg>
               </Link>
               <div>
-                <p className="text-xs font-semibold uppercase tracking-wider text-ink-2">
+                <p className="text-xs font-semibold text-ink-2">
                   {activity.type.replace("_", " ")} · {activity.difficulty.charAt(0).toUpperCase() + activity.difficulty.slice(1)}
                 </p>
                 <h1 className="font-serif text-xl sm:text-2xl text-ink truncate max-w-[400px]">
@@ -432,4 +432,4 @@ function getDifficultyColor(difficulty: string): string {
   }
 }
 
-export default ActivityPlayer;
+export default ActivityPlayer;

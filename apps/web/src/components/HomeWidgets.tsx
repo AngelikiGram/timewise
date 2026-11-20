@@ -56,7 +56,7 @@ export function MeanwhileYears() {
           {picks.map((e) => (
             <li key={e.i}>
               <Link href={atlasHref(e)} className="card flex h-full flex-col p-4">
-                <span className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-ink-2">
+                <span className="flex items-center gap-2 text-xs font-semibold text-ink-2">
                   <span aria-hidden className="h-2.5 w-2.5 rounded-full" style={{ background: categoryVar(e.c) }} />
                   {CONTINENT_LABELS[e.ct!]}
                 </span>

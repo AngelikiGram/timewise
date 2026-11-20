@@ -28,7 +28,7 @@ function describeGrowth(g: AtlasGrowth) {
 
 /** The text a question is filed under in Review, the same whether it was missed or added by hand. */
 const reviewPrompt = (a: Activity) => `${a.prompt}${a.kind === "choice" && a.context ? ` ${a.context}` : a.kind === "timeline" ? ` ${a.target}` : ""}`;
-const correctOf = (a: Activity) => (a.kind === "choice" ? a.options.find((o) => o.id === a.answer)?.label ?? "" : a.kind === "order" ? a.items.map((x) => x.label).join(" → ") : a.answer === 0 ? `Before ${a.anchors[0].label}` : a.answer === a.anchors.length ? `After ${a.anchors[a.anchors.length - 1].label}` : `Between ${a.anchors[a.answer - 1].label} and ${a.anchors[a.answer].label}`);
+const correctOf = (a: Activity) => (a.kind === "choice" ? a.options.find((o) => o.id === a.answer)?.label ?? "" : a.kind === "order" ? a.items.map((x) => x.label).join(" ") : a.answer === 0 ? `Before ${a.anchors[0].label}` : a.answer === a.anchors.length ? `After ${a.anchors[a.anchors.length - 1].label}` : `Between ${a.anchors[a.answer - 1].label} and ${a.anchors[a.answer].label}`);
 import { continentOfPath, ERA_COLOR, eraOf, lessonHref, loadLesson, nextInPath, pathById, SKILLS, type LearnCard, type Lesson, type Skill } from "@/lib/lessons";
 import { CreditedImage, ReviewBadge, SaveButton } from "../ui";
 import { ActivityView, MiniMap, Sources, type Answer } from "./activities";
@@ -92,7 +92,7 @@ function Overview({ cards, onJump }: { cards: LearnCard[]; onJump: (i: number) =
               <img src={s.image.url} alt={s.image.title} className="h-24 w-24 shrink-0 rounded-lg object-cover" />
             )}
             <div className="min-w-0">
-              <p className="text-xs font-semibold uppercase tracking-wider text-bronze">Step {sel + 1} · {s.when}{s.where ? ` · ${s.where}` : ""}</p>
+              <p className="text-xs font-semibold text-bronze">Step {sel + 1} · {s.when}{s.where ? ` · ${s.where}` : ""}</p>
               <p className="font-serif text-2xl leading-tight">{s.title}</p>
               {s.summary && <p className="mt-1 text-sm leading-relaxed">{s.summary.length > 320 ? `${s.summary.slice(0, 310).replace(/\s\S*$/, "")}…` : s.summary}</p>}
               {!s.summary && s.claims[0] && <p className="mt-1 text-sm leading-relaxed">{s.claims[0].text}</p>}
@@ -117,7 +117,7 @@ function EntityButton({ entity, onOpen, met, children, className = "" }: { entit
 function Card({ card, review, onOpen, metBefore, context }: { card: LearnCard; review: Lesson["review"]; onOpen: (e: Entity) => void; metBefore: (id: string) => boolean; context?: React.ReactNode }) {
   return (
     <article data-testid="learn-card">
-      <p className="text-xs font-semibold uppercase tracking-wider text-bronze">{card.when}{card.where ? <> · {card.place ? <EntityButton entity={card.place} onOpen={onOpen} met={metBefore(card.place.id)} className="uppercase tracking-wider">{card.where}</EntityButton> : card.where}</> : ""}</p>
+      <p className="text-xs font-semibold text-bronze">{card.when}{card.where ? <> · {card.place ? <EntityButton entity={card.place} onOpen={onOpen} met={metBefore(card.place.id)} className="">{card.where}</EntityButton> : card.where}</> : ""}</p>
       <h2 className="mt-1 font-serif text-3xl leading-tight" tabIndex={-1} data-step-heading><EntityButton entity={card.entity} onOpen={onOpen} met={metBefore(card.entity.id)} className="text-left">{card.title}</EntityButton></h2>
       {(card.people?.length ?? 0) > 0 && (
         <p className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm" data-testid="card-people">
@@ -154,7 +154,7 @@ function Card({ card, review, onOpen, metBefore, context }: { card: LearnCard; r
       )}
       <div className="mt-4 flex flex-wrap gap-2">
         <SaveButton id={card.id} title={card.title} href={card.saveHref} context={card.where} />
-        {card.explore && <Link href={card.explore} className="btn btn-sm btn-ghost">Explore connections →</Link>}
+        {card.explore && <Link href={card.explore} className="btn btn-sm btn-ghost">Explore connections</Link>}
       </div>
     </article>
   );
@@ -364,7 +364,7 @@ export function LessonPlayer() {
               <div className="mt-5 rounded-xl bg-bronze-soft/50 p-4" data-testid="atlas-growth">
                 <p className="font-semibold">Your atlas grew: {describeGrowth(growth)}.</p>
                 {growth.earlier.length > 0 && <p className="mt-1 text-sm">Already in your atlas from earlier lessons: {growth.earlier.map((e) => e.label).join(", ")}.</p>}
-                <Link href={`/my-atlas?back=${encodeURIComponent(lessonHref(lesson.id, lesson.pathId))}`} className="link mt-2 inline-block text-sm">Open my atlas →</Link>
+                <Link href={`/my-atlas?back=${encodeURIComponent(lessonHref(lesson.id, lesson.pathId))}`} className="link mt-2 inline-block text-sm">Open my atlas</Link>
               </div>
             )}
             {growth && progress.atlas && <ConnectExercise lessonId={lesson.id} nodes={progress.atlas.nodes} edges={progress.atlas.edges} />}
@@ -399,18 +399,18 @@ export function LessonPlayer() {
                 <ul className="mt-1 list-disc pl-5">{lesson.gaps.map((g) => <li key={g}>{g}</li>)}</ul>
               </div>
             )}
-            {asked > score && <p className="mt-4"><Link href="/learn/review" className="link">Review the {asked - score} question{asked - score > 1 ? "s" : ""} you missed →</Link></p>}
+            {asked > score && <p className="mt-4"><Link href="/learn/review" className="link">Review the {asked - score} question{asked - score > 1 ? "s" : ""} you missed</Link></p>}
             <div className="mt-6 flex flex-col gap-2 sm:flex-row">
               {next ? (
-                <button type="button" className="btn btn-primary" onClick={() => router.push(lessonHref(next.id, lesson.pathId))} data-testid="next-lesson">Next lesson: {next.title} →</button>
+                <button type="button" className="btn btn-primary" onClick={() => router.push(lessonHref(next.id, lesson.pathId))} data-testid="next-lesson">Next lesson: {next.title}</button>
               ) : (
-                <Link href="/learn" className="btn btn-primary">Path complete: choose another →</Link>
+                <Link href="/learn" className="btn btn-primary">Path complete: choose another</Link>
               )}
               <button type="button" className="btn btn-secondary" onClick={() => { setAnswers({}); setXp(null); go(0); }}>Replay</button>
             </div>
             <h2 className="mt-8 font-serif text-xl">Keep exploring</h2>
             <ul className="mt-2 grid gap-1.5">
-              {lesson.related.map((r) => <li key={r.href}><Link href={r.href} className="link">{r.label} →</Link></li>)}
+              {lesson.related.map((r) => <li key={r.href}><Link href={r.href} className="link">{r.label}</Link></li>)}
             </ul>
           </section>
         )}

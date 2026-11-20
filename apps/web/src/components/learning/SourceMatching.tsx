@@ -65,7 +65,7 @@ export function SourceMatching({ activity, currentAnswer, onSubmit, completed, l
       <div className="grid gap-4 md:grid-cols-2">
         {/* Claims Column */}
         <div className="space-y-3">
-          <h4 className="font-semibold text-sm uppercase tracking-wider text-ink-2">
+          <h4 className="font-semibold text-sm text-ink-2">
             {lang === "de" ? "Behauptungen" : "Claims"}
           </h4>
           {claims.map(claim => {
@@ -104,7 +104,7 @@ export function SourceMatching({ activity, currentAnswer, onSubmit, completed, l
 
         {/* Sources Column */}
         <div className="space-y-3">
-          <h4 className="font-semibold text-sm uppercase tracking-wider text-ink-2">
+          <h4 className="font-semibold text-sm text-ink-2">
             {lang === "de" ? "Quellen" : "Sources"}
           </h4>
           {sourceList.map(source => {
@@ -203,8 +203,8 @@ function SupportBadge({ status }: { status: Claim["support"] }) {
   };
   const label = labels[status];
   return (
-    <span className="inline-block border px-1.5 py-0.5 text-xs font-semibold uppercase tracking-wider border-navy text-navy dark:border-bronze dark:text-bronze">
+    <span className="inline-block border px-1.5 py-0.5 text-xs font-semibold border-navy text-navy dark:border-bronze dark:text-bronze">
       {label.en}
     </span>
   );
-}
+}

@@ -36,10 +36,10 @@ export function StoryCard({ story, large = false }: { story: Story; large?: bool
               <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-line" role="progressbar" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100} aria-label="Progress">
                 <div className="h-full rounded-full bg-bronze" style={{ width: `${pct}%` }} />
               </div>
-              <span className="mt-3 inline-flex font-semibold text-bronze">{saved.finished ? "Read again →" : "Continue →"}</span>
+              <span className="mt-3 inline-flex font-semibold text-bronze">{saved.finished ? "Read again" : "Continue"}</span>
             </div>
           ) : (
-            <span className="inline-flex font-semibold text-bronze">{story.kind === "case" ? "Open the case →" : "Start the story →"}</span>
+            <span className="inline-flex font-semibold text-bronze">{story.kind === "case" ? "Open the case" : "Start the story"}</span>
           )}
         </div>
       </div>

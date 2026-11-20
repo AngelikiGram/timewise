@@ -36,7 +36,7 @@ export function ArchivalMaterial({ eventId }: { eventId: string }) {
               // eslint-disable-next-line @next/next/no-img-element
               <img src={item.preview_url} alt={item.title} loading="lazy" className="mb-2 max-h-56 w-full border border-line object-cover" />
             )}
-            <p className="text-xs font-semibold uppercase tracking-wider text-bronze" title={RELATION_LABELS[item.relation].help}>{RELATION_LABELS[item.relation].label}</p>
+            <p className="text-xs font-semibold text-bronze" title={RELATION_LABELS[item.relation].help}>{RELATION_LABELS[item.relation].label}</p>
             <p title={item.title} className="mt-1 line-clamp-3 font-serif text-base leading-snug">{item.title}</p>
             <p className="mt-1 text-ink-2">{item.note}</p>
             <p className="mt-2 text-xs text-ink-2">

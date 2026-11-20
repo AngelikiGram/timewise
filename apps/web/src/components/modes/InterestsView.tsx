@@ -58,13 +58,13 @@ function ForYou() {
   return (
     <>
       <section aria-labelledby="pick">
-        <h2 id="pick" className="text-sm font-semibold uppercase tracking-wider text-ink-2">Things</h2>
+        <h2 id="pick" className="text-sm font-semibold text-ink-2">Things</h2>
         <div className="mt-2 flex flex-wrap gap-2">{TOPICS.map((t) => <SaveInterest key={t.id} compact kind="topic" id={t.id} label={t.label} />)}</div>
-        <h2 className="mt-4 text-sm font-semibold uppercase tracking-wider text-ink-2">People</h2>
+        <h2 className="mt-4 text-sm font-semibold text-ink-2">People</h2>
         <div className="mt-2 flex flex-wrap gap-2">{PEOPLE.map((x) => <SaveInterest key={x.id} compact kind="person" id={x.id} label={x.label} />)}</div>
         {custom.length > 0 && (
           <>
-            <h2 className="mt-4 text-sm font-semibold uppercase tracking-wider text-ink-2">Saved from your searches</h2>
+            <h2 className="mt-4 text-sm font-semibold text-ink-2">Saved from your searches</h2>
             <div className="mt-2 flex flex-wrap gap-2" data-testid="custom-interests">{custom.map((k) => { const [kind, id] = k.split(":"); return <SaveInterest key={k} compact kind={kind as "person" | "topic"} id={id} label={e.names[k] ?? id} />; })}</div>
           </>
         )}
@@ -85,7 +85,7 @@ function ForYou() {
 
       <section className="mt-8" aria-labelledby="lessons-for-you">
         <h2 id="lessons-for-you" className="font-serif text-2xl">Lessons to go with them</h2>
-        <ul className="mt-3 grid gap-3 md:grid-cols-3">{paths.map(({ path, why }) => <li key={path.id}><Link href={`/learn?path=${path.id}`} className="card card-link block h-full p-4"><span className="text-xs font-semibold uppercase tracking-wider text-bronze">{why}</span><span className="mt-1 block font-serif text-lg leading-tight">{path.title}</span></Link></li>)}</ul>
+        <ul className="mt-3 grid gap-3 md:grid-cols-3">{paths.map(({ path, why }) => <li key={path.id}><Link href={`/learn?path=${path.id}`} className="card card-link block h-full p-4"><span className="text-xs font-semibold text-bronze">{why}</span><span className="mt-1 block font-serif text-lg leading-tight">{path.title}</span></Link></li>)}</ul>
       </section>
     </>
   );
@@ -98,7 +98,7 @@ function Cards({ list, testId }: { list: ReturnType<typeof suggestFor>; testId: 
         <li key={s.href}>
           <Link href={s.href} className="card card-link flex h-full items-start gap-3 p-4">
             <Icon name={MODE_ICON[s.mode]} size={22} className="mt-0.5 shrink-0 text-bronze" />
-            <span><span className="block text-xs font-semibold uppercase tracking-wider text-bronze">{MODE_LABEL[s.mode]}</span><span className="block font-serif text-lg leading-tight">{s.title}</span><span className="block text-sm text-ink-2">{s.why}</span></span>
+            <span><span className="block text-xs font-semibold text-bronze">{MODE_LABEL[s.mode]}</span><span className="block font-serif text-lg leading-tight">{s.title}</span><span className="block text-sm text-ink-2">{s.why}</span></span>
           </Link>
         </li>
       ))}

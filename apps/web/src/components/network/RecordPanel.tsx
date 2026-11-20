@@ -108,9 +108,9 @@ export function LinkDetail({ link, record, facts, onBack, onOpen }: { link: Reco
       <div className="mt-2"><Why link={link} record={record} /></div>
       <div className="mt-4 flex flex-wrap gap-2">
         {isRecord ? (
-          <button type="button" className="btn btn-primary" onClick={() => onOpen(link)} data-testid="open-link">Explore from here →</button>
+          <button type="button" className="btn btn-primary" onClick={() => onOpen(link)} data-testid="open-link">Explore from here</button>
         ) : link.href ? (
-          <Link href={link.href} className="btn btn-primary">Open the checked event →</Link>
+          <Link href={link.href} className="btn btn-primary">Open the checked event</Link>
         ) : null}
         {isRecord && <SaveButton id={link.target} title={link.label} href={explorerHref(link.target)} context={link.description} />}
       </div>
@@ -138,7 +138,7 @@ export function RecordCard({ record, links, onPick }: { record: RecordData; link
 
   return (
     <article data-testid="record-card">
-      <p className="text-xs font-semibold uppercase tracking-wider text-bronze">{KIND_LABEL[record.kind]}{record.types.length > 0 && <span className="font-normal normal-case tracking-normal text-ink-2"> · {record.types.join(", ")}</span>}</p>
+      <p className="text-xs font-semibold text-bronze">{KIND_LABEL[record.kind]}{record.types.length > 0 && <span className="font-normal normal-case tracking-normal text-ink-2"> · {record.types.join(", ")}</span>}</p>
       <h2 className="mt-1 font-serif text-3xl leading-tight">{record.label}</h2>
       {record.description && <p className="mt-1 text-ink-2">{record.description}</p>}
       <dl className="mt-3 grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-sm">

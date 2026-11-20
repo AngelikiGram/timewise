@@ -292,7 +292,7 @@ function LearningOverview({
             href={`/learn/activities/${nextActivity.id}?journey=${journeyId}${chapterId ? `&chapter=${chapterId}` : ""}`}
             className="inline-flex items-center gap-2 px-4 py-2 bg-navy text-on-accent rounded-sm font-medium hover:opacity-90 transition-opacity"
           >
-            {nextActivity.type.replace("_", " ")} →
+            {nextActivity.type.replace("_", " ")}
           </Link>
         </section>
       )}
@@ -405,4 +405,4 @@ function getDifficultyColor(difficulty: ActivityDifficulty): string {
     case "core": return "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400";
     case "advanced": return "bg-oxblood-100 text-oxblood-700 dark:bg-oxblood-900/30 dark:text-oxblood-400";
   }
-}
+}

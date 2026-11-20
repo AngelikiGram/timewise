@@ -119,7 +119,7 @@ export function LifeTime({ personId, name, born, died, moments, related, onWindo
 
       <div className="mt-5 grid gap-5 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
         <div>
-          <h3 className="text-xs font-semibold uppercase tracking-wider text-ink-2">In {name}&rsquo;s life</h3>
+          <h3 className="text-xs font-semibold text-ink-2">In {name}&rsquo;s life</h3>
           {byYear.length ? (
             <ol className={`mt-2 grid gap-2 ${all ? "max-h-[28rem] overflow-y-auto pr-1" : ""}`} data-testid="life-moments">
               {byYear.map(([y, ms]) => (
@@ -144,21 +144,21 @@ export function LifeTime({ personId, name, born, died, moments, related, onWindo
         <div className="grid content-start gap-5">
           {alive.length > 0 && (
             <div>
-              <h3 className="text-xs font-semibold uppercase tracking-wider text-ink-2">People around them, alive then</h3>
+              <h3 className="text-xs font-semibold text-ink-2">People around them, alive then</h3>
               <ul className="mt-2 flex flex-wrap gap-1.5" data-testid="life-alive">
-                {alive.slice(0, 12).map((r) => <li key={r.id}><Link href={/^Q\d+$/.test(r.id) ? `/explore/life?q=${r.id}` : `/explore/life?id=${r.id}`} className="chip !min-h-7 !text-xs">{r.label}{r.born != null && !all && <span className="text-ink-2">, {Math.max(0, a - r.born)}</span>}</Link></li>)}
+                {alive.slice(0, 12).map((r) => <li key={r.id}><Link href={/^Q\d+$/.test(r.id) ? `/explore/life?q=${r.id}` : `/explore/life?id=${r.id}`} className="chip !min-h-7 !text-xs">{r.label}{r.born != null && !all && <span className="text-ink-2">age {Math.max(0, a - r.born)}</span>}</Link></li>)}
               </ul>
             </div>
           )}
           <div>
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-ink-2">Meanwhile in the world</h3>
+            <h3 className="text-xs font-semibold text-ink-2">Meanwhile in the world</h3>
             {pop && populationAt(pop, a) != null && <p className="mt-1 text-sm">About {people(populationAt(pop, a)!)} people alive on Earth{all ? ` at the start, ${people(populationAt(pop, b) ?? 0)} at the end` : ""}. <a className="text-[11px] text-bronze hover:underline" href={OWID_SOURCE} target="_blank" rel="noopener noreferrer">Our World in Data</a></p>}
             {!world ? <p className="mt-2 text-sm text-ink-2">Loading…</p> : meanwhile.length ? (
               <ul className="mt-2 grid gap-1.5" data-testid="life-meanwhile">
                 {meanwhile.map((e) => <li key={e.i} className="text-sm"><span className="tabular-nums text-ink-2">{formatYear(yearOf(e.s))}</span> · <Link href={atlasHref(e)} className="hover:text-bronze">{e.t}</Link></li>)}
               </ul>
             ) : <p className="mt-2 text-sm text-ink-2">No well-documented events start in these years.</p>}
-            {!all && <Link href={`/explore/year?y=${a}`} className="link mt-2 inline-block text-sm">Explore {formatYear(a)} →</Link>}
+            {!all && <Link href={`/explore/year?y=${a}`} className="link mt-2 inline-block text-sm">Explore {formatYear(a)}</Link>}
           </div>
         </div>
       </div>

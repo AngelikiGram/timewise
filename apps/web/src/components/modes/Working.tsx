@@ -43,8 +43,8 @@ export function Working({ title, steps, preview }: { title: string; steps: Step[
           </figure>
         )}
         {preview?.summary ? (
-          <blockquote className="mt-3 rounded-xl border-l-4 border-bronze bg-paper-2 p-4 leading-relaxed">
-            <span className="mb-1 block text-xs font-semibold uppercase tracking-wider text-bronze">While you wait</span>
+          <blockquote className="mt-4 font-serif text-lg leading-relaxed">
+            <span className="mb-1 block text-sm text-ink-2">While you wait, from Wikipedia:</span>
             {preview.summary.text}
             <footer className="mt-2 text-xs text-ink-2">From <a className="link" href={preview.summary.url} target="_blank" rel="noopener noreferrer">Wikipedia: {preview.summary.title}</a>, CC BY-SA 4.0.</footer>
           </blockquote>

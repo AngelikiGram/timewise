@@ -85,7 +85,7 @@ export function YearView() {
         <ul className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3" data-testid="year-continents">
           {byContinent.map(([c, list]) => (
             <li key={c} className="card p-4">
-              <p className="text-xs font-semibold uppercase tracking-wider text-bronze">{CONTINENT_LABELS[c]}</p>
+              <p className="text-xs font-semibold text-bronze">{CONTINENT_LABELS[c]}</p>
               <ul className="mt-2 grid gap-2">
                 {list.map((e) => <li key={e.i} className="text-sm"><Link href={atlasHref(e)} className="font-medium hover:text-bronze">{e.t}</Link><span className="block text-xs text-ink-2">{formatImportedDate(e.s, e.e, e.p as Precision)}</span></li>)}
               </ul>

@@ -55,7 +55,7 @@ export function MemoryReview() {
         </div>
       )}
       {queue && !c && (
-        <div className="card mt-4 p-5"><p className="font-serif text-2xl">{right} of {queue.length} right. {right === queue.length ? "🧠✨" : ""}</p><button type="button" className="btn btn-secondary mt-3" onClick={() => setQueue(null)}>Done</button></div>
+        <div className="card mt-4 p-5"><p className="font-serif text-2xl">{right} of {queue.length} right.</p><button type="button" className="btn btn-secondary mt-3" onClick={() => setQueue(null)}>Done</button></div>
       )}
     </section>
   );

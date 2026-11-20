@@ -256,7 +256,7 @@ export function JourneyPlayer({ id }: { id: string }) {
                 <div className="min-w-0">
                   <p className="eyebrow">{journey.title.en} · Chapter {position.chapter + 1} of {journey.chapters.length}</p>
                   <h1 className="mt-2 font-serif text-3xl leading-[1.1] sm:text-4xl" data-testid="journey-question">{chapter.question.en}</h1>
-                  {chapter.connection && <p className="mt-2 border-l-2 border-bronze pl-3 text-sm italic text-ink-2">{chapter.connection.en}</p>}
+                  {chapter.connection && <p className="mt-2 text-sm italic text-ink-2">{chapter.connection.en}</p>}
                 </div>
                 <div className="flex items-center gap-2 self-start" role="group" aria-label="How to read this chapter">
                   <button
@@ -283,7 +283,7 @@ export function JourneyPlayer({ id }: { id: string }) {
                 <div className="space-y-4">
                   {/* Key Claims for this beat */}
                   <section className="space-y-3" aria-labelledby="claims-heading">
-                    <h2 id="claims-heading" className="text-sm font-semibold uppercase tracking-wider text-ink-2">
+                    <h2 id="claims-heading" className="text-sm font-semibold text-ink-2">
                       {currentEventClaims.length === 1 ? "Key claim" : "Key claims"} ({currentEventClaims.length})
                     </h2>
                     {currentEventClaims.map((claim) => (
@@ -324,12 +324,12 @@ export function JourneyPlayer({ id }: { id: string }) {
 
                   {/* Chapter summary at last beat */}
                   {position.beat === chapter.eventIds.length - 1 && (
-                    <p className="mt-5 bg-paper-3 p-3 text-sm leading-relaxed border-l-3 border-bronze">{chapter.summary.en}</p>
+                    <p className="mt-5 rounded-lg bg-paper-3 p-3 text-sm leading-relaxed">{chapter.summary.en}</p>
                   )}
 
                   <div className="flex flex-wrap items-center gap-2">
                     <SaveButton id={event.id} title={event.title.en} href={`/journeys/${journey.id}?chapter=${chapter.id}&step=${position.beat + 1}`} start={event.when.start} context={journey.title.en} />
-                    <Link href={`/explore?event=${event.id}`} className="btn btn-sm btn-ghost">Go deeper on this event →</Link>
+                    <Link href={`/explore?event=${event.id}`} className="btn btn-sm btn-ghost">Go deeper on this event</Link>
                   </div>
                   <NoteField id={event.id} title={event.title.en} href={`/journeys/${journey.id}?chapter=${chapter.id}&step=${position.beat + 1}`} />
                   <LearningModeToggle journeyId={journey.id} chapterId={chapter.id} lang="en" />
@@ -371,7 +371,7 @@ export function JourneyPlayer({ id }: { id: string }) {
                   {position.beat === chapter.eventIds.length - 1 && <p className="mt-5 bg-paper-3 p-3 text-sm leading-relaxed">{chapter.summary.en}</p>}
                   <div className="flex flex-wrap items-center gap-2">
                     <SaveButton id={event.id} title={event.title.en} href={`/journeys/${journey.id}?chapter=${chapter.id}&step=${position.beat + 1}`} start={event.when.start} context={journey.title.en} />
-                    <Link href={`/explore?event=${event.id}`} className="btn btn-sm btn-ghost">Go deeper on this event →</Link>
+                    <Link href={`/explore?event=${event.id}`} className="btn btn-sm btn-ghost">Go deeper on this event</Link>
                   </div>
                   <NoteField id={event.id} title={event.title.en} href={`/journeys/${journey.id}?chapter=${chapter.id}&step=${position.beat + 1}`} />
                   <LearningModeToggle journeyId={journey.id} chapterId={chapter.id} lang="en" />
@@ -409,4 +409,4 @@ export function JourneyPlayer({ id }: { id: string }) {
 /** The usual coverage note, moved clear of the story card that covers the map's left side. */
 function CoverageNoteRight() {
   return <div className="[&>p]:!bottom-[4.5rem] [&>p]:!left-auto [&>p]:!right-4"><CoverageNote /></div>;
-}
+}

@@ -170,12 +170,12 @@ export function TimelineOrdering({ activity, currentAnswer, onSubmit, completed,
           <p className="font-medium">{isCorrect ? (lang === "de" ? "Richtig!" : "Correct!") : (lang === "de" ? "Nicht ganz richtig." : "Not quite right.")}</p>
           <p className="text-sm text-ink-2 mt-1">
             {lang === "de"
-              ? `Die korrekte Reihenfolge: ${correctOrder.map(id => t(eventById.get(id)!.title, lang)).join(" → ")}`
-              : `Correct order: ${correctOrder.map(id => t(eventById.get(id)!.title, lang)).join(" → ")}`
+              ? `Die korrekte Reihenfolge: ${correctOrder.map(id => t(eventById.get(id)!.title, lang)).join(" ")}`
+              : `Correct order: ${correctOrder.map(id => t(eventById.get(id)!.title, lang)).join(" ")}`
             }
           </p>
         </div>
       )}
     </div>
   );
-}
+}

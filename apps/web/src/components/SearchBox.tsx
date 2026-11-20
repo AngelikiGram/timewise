@@ -205,7 +205,7 @@ export function SearchBox({ size = "large", placeholder }: { size?: "large" | "c
                     onMouseEnter={() => setActive(i)}
                     className={`flex w-full items-baseline gap-3 px-4 py-2.5 text-left ${i === active ? "bg-paper-3" : ""}`}
                   >
-                    <span className={`w-24 shrink-0 text-xs font-semibold uppercase tracking-wider ${hit.kind === "Checked" || hit.kind === "Investigate" ? "text-navy" : "text-ink-2"}`}>{hit.kind}</span>
+                    <span className={`w-24 shrink-0 text-xs font-semibold ${hit.kind === "Checked" || hit.kind === "Investigate" ? "text-navy" : "text-ink-2"}`}>{hit.kind}</span>
                     <span className="min-w-0 flex-1 font-serif text-base text-ink">{hit.label}</span>
                     <span className="hidden shrink-0 text-xs text-ink-2 sm:inline">{hit.detail}</span>
                   </button>

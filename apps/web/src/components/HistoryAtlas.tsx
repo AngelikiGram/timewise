@@ -652,7 +652,7 @@ export function HistoryAtlas({ region, regions }: { region: Region; regions: Reg
   // ---------- Pieces ----------
   const regionPicker = (
     <label className="block">
-      <span className="text-xs font-semibold uppercase tracking-wider text-ink-2">Region</span>
+      <span className="text-xs font-semibold text-ink-2">Region</span>
       <select value={region.id} onChange={(e) => router.push(e.target.value === "world" ? "/atlas" : `/atlas/${e.target.value}`)} className="field mt-1 font-serif text-lg" data-testid="region-picker">
         <option value="world">The whole world</option>
         <optgroup label="Continents">{regions.filter((r) => r.kind === "continent").map((r) => <option key={r.id} value={r.id}>{r.label.en}</option>)}</optgroup>
@@ -665,7 +665,7 @@ export function HistoryAtlas({ region, regions }: { region: Region; regions: Reg
     <div className="space-y-3">
       <input aria-label="Search events" value={query} onChange={(e) => setQuery(e.target.value)} placeholder={`Search ${isWorld ? "the world map" : region.label.en}…`} className="field text-sm" />
       <div>
-        <p className="text-xs font-semibold uppercase tracking-wider text-ink-2">Themes</p>
+        <p className="text-xs font-semibold text-ink-2">Themes</p>
         <div className="mt-1.5 flex flex-wrap gap-1.5">
           {usedCategories.map((c) => (
             <button key={c} type="button" aria-pressed={categories.includes(c)} onClick={() => setCategories(categories.includes(c) ? categories.filter((x) => x !== c) : [...categories, c])} className="chip !min-h-8 !px-2.5 !text-[0.8rem]">
@@ -676,7 +676,7 @@ export function HistoryAtlas({ region, regions }: { region: Region; regions: Reg
       </div>
       {isCountry && (
         <fieldset data-testid="scope-filter">
-          <legend className="text-xs font-semibold uppercase tracking-wider text-ink-2">Which events</legend>
+          <legend className="text-xs font-semibold text-ink-2">Which events</legend>
           <div role="radiogroup" aria-label="Which events" className="mt-1.5 grid grid-cols-3 gap-1 rounded-lg border border-line bg-paper-2 p-1 text-[0.8rem]" data-testid="country-mode">
             {([
               ["in", `In ${region.label.en}`, "Located inside today's borders"],
@@ -831,7 +831,7 @@ export function HistoryAtlas({ region, regions }: { region: Region; regions: Reg
       </div>
       {marks.length > 0 && (
         <div className="mt-1.5 border-t border-dashed border-line pt-1">
-          <span className="block text-[11px] text-ink-2" id="top-records-label"><span className="font-semibold uppercase tracking-wider">Top records</span> · the best documented here, one dot each. Click to open.</span>
+          <span className="block text-[11px] text-ink-2" id="top-records-label"><span className="font-semibold">Top records</span> · the best documented here, one dot each. Click to open.</span>
           {/* Full width, so each dot sits under its year in the bars above. Not a count. */}
           <div className="relative h-6" role="group" aria-labelledby="top-records-label" data-testid="timeline-records">
             {marks.map(({ e, x }) => {
@@ -912,10 +912,10 @@ export function HistoryAtlas({ region, regions }: { region: Region; regions: Reg
               <p data-testid="atlas-count" role="status" className="text-sm text-ink-2">{countText}</p>
               {!isWorld && (
                 <Link href={region.kind === "continent" ? `/history/${region.id}` : region.continent ? `/history/${region.continent}` : "/history"} className="link text-sm">
-                  {region.kind === "continent" ? `Charts and eras of ${region.label.en} →` : "Continent overview, with charts →"}
+                  {region.kind === "continent" ? `Charts and eras of ${region.label.en}` : "Continent overview, with charts"}
                 </Link>
               )}
-              {isWorld && <Link href="/atlas/countries" className="link block text-sm">Browse countries by coverage →</Link>}
+              {isWorld && <Link href="/atlas/countries" className="link block text-sm">Browse countries by coverage</Link>}
               {filters}
             </div>
             {list}

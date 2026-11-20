@@ -209,7 +209,7 @@ export function MapPlacement({ activity, currentAnswer, onSubmit, completed, lan
 
         {/* Placed Events List */}
         <div className="space-y-2 mt-4">
-          <h4 className="font-semibold text-sm uppercase tracking-wider text-ink-2">
+          <h4 className="font-semibold text-sm text-ink-2">
             {lang === "de" ? "Platzierte Ereignisse" : "Placed Events"}
           </h4>
           {renderPlacedEvents()}
@@ -246,4 +246,4 @@ export function MapPlacement({ activity, currentAnswer, onSubmit, completed, lan
       </div>
     </div>
   );
-}
+}

@@ -194,8 +194,8 @@ function SupportBadge({ status }: { status: SupportStatus }) {
   };
   const label = labels[status];
   return (
-    <span className="inline-block border px-1.5 py-0.5 text-xs font-semibold uppercase tracking-wider border-navy text-navy dark:border-bronze dark:text-bronze shrink-0">
+    <span className="inline-block border px-1.5 py-0.5 text-xs font-semibold border-navy text-navy dark:border-bronze dark:text-bronze shrink-0">
       {label.en}
     </span>
   );
-}
+}

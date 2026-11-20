@@ -119,7 +119,7 @@ export function Pictured({ image, alt, className = "" }: { image?: { url: string
   return (
     <figure className={className}>
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={image.url} alt={alt} loading="lazy" className="h-full max-h-64 w-full rounded-lg object-cover" />
+      <img src={image.url} alt={alt} loading="lazy" className="h-56 w-full rounded-lg object-cover object-[50%_20%] sm:h-full sm:max-h-64" />
       <figcaption className="mt-1 truncate text-[11px] text-ink-2">{[artistOf(image.artist), image.license].filter(Boolean).join(" · ")}{image.page && <> · <a className="link" href={image.page} target="_blank" rel="noopener noreferrer">Wikimedia Commons</a></>}</figcaption>
     </figure>
   );

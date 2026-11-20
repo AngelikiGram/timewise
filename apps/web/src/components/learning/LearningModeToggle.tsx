@@ -268,7 +268,7 @@ export function LearningModeToggle({ journeyId, chapterId, lang = "en", onActivi
       {/* Mode Toggle Bar */}
       <div className="flex items-center justify-between p-3 border-b border-line bg-paper-3">
         <div className="flex items-center gap-3">
-          <span className="text-xs font-semibold uppercase tracking-wider text-ink-2">
+          <span className="text-xs font-semibold text-ink-2">
             {lang === "de" ? "Lernmodus" : "Learning Mode"}
           </span>
           <button
@@ -319,7 +319,7 @@ export function LearningModeToggle({ journeyId, chapterId, lang = "en", onActivi
               <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path d="M12.707 15.707a1 1 0 01-1.414 0l-5-5a1 1 0 010-1.414l5-5a1 1 0 111.414 1.414L8.414 9l4.293 4.293a1 1 0 010 1.414z"/></svg>
             </button>
             <div className="flex-1 text-center">
-              <p className="text-xs font-medium uppercase tracking-wider text-ink-2">
+              <p className="text-xs font-medium text-ink-2">
                 {lang === "de" ? "Aktivität" : "Activity"} {currentActivityIndex + 1} / {totalActivities}
               </p>
               <p className="text-sm font-serif text-ink truncate">{currentActivity.prompt[lang]?.split(".")[0] ?? currentActivity.prompt.en.split(".")[0]}</p>
@@ -350,4 +350,4 @@ export function LearningModeToggle({ journeyId, chapterId, lang = "en", onActivi
       )}
     </div>
   );
-}
+}

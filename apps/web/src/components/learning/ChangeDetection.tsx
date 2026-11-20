@@ -73,7 +73,7 @@ export function ChangeDetection({ activity, currentAnswer, onSubmit, completed, 
           const event = eventById.get(eventId)!;
           return (
             <div key={eventId} className="p-3 rounded-sm border border-line bg-paper-2">
-              <span className="text-xs font-semibold uppercase tracking-wider text-ink-2">
+              <span className="text-xs font-semibold text-ink-2">
                 {i === 0 ? (lang === "de" ? "Früher" : "Earlier") : (lang === "de" ? "Später" : "Later")}
               </span>
               <p className="mt-1 font-serif text-base">{t(event.title, lang)}</p>
@@ -85,7 +85,7 @@ export function ChangeDetection({ activity, currentAnswer, onSubmit, completed, 
 
       {/* Geometry Changes */}
       <div className="space-y-3">
-        <h4 className="font-semibold text-sm uppercase tracking-wider text-ink-2">
+        <h4 className="font-semibold text-sm text-ink-2">
           {lang === "de" ? "Geografische Änderungen" : "Geographic Changes"}
         </h4>
         {allGeometries.map(geometry => {
@@ -188,4 +188,4 @@ export function ChangeDetection({ activity, currentAnswer, onSubmit, completed, 
       )}
     </div>
   );
-}
+}

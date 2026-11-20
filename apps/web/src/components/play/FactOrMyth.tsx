@@ -108,7 +108,7 @@ export function FactOrMyth() {
               <p className="font-serif text-xl">{picked === c.verdict ? "Right!" : `Not quite: it's “${VERDICTS.find((x) => x.id === c.verdict)!.label}”.`}</p>
               <p className="mt-1">{c.why}</p>
               {detail && detail.preferred.length > 0 && <p className="mt-1 text-sm">The value Wikidata prefers: <b>{detail.preferred.slice(0, 2).join("; ")}</b>.</p>}
-              <p className="mt-2 flex flex-wrap gap-3 text-sm"><a className="link" href={c.source} target="_blank" rel="noopener noreferrer">See the statement and its references ↗</a><Link className="link" href={`/explore/life?${PEOPLE.some((p) => p.id === c.personId) ? "id" : "q"}=${c.personId}`}>Follow {c.person}&rsquo;s life →</Link></p>
+              <p className="mt-2 flex flex-wrap gap-3 text-sm"><a className="link" href={c.source} target="_blank" rel="noopener noreferrer">See the statement and its references ↗</a><Link className="link" href={`/explore/life?${PEOPLE.some((p) => p.id === c.personId) ? "id" : "q"}=${c.personId}`}>Follow {c.person}&rsquo;s life</Link></p>
               <button type="button" className="btn btn-primary mt-3" onClick={() => { setI(i + 1); setPicked(null); }} data-testid="fact-next">{i + 1 < claims.length ? "Next claim" : "See my score"}<Icon name="forward" size={15} /></button>
             </div>
           )}
@@ -117,7 +117,7 @@ export function FactOrMyth() {
 
       {finished && (
         <div className="mt-6 max-w-xl rounded-2xl border-2 border-bronze/50 bg-paper p-6" data-testid="fact-done">
-          <p className="font-serif text-3xl">{score} of {claims!.length} {score === claims!.length ? "— a perfect record! 🏆" : score >= claims!.length / 2 ? "— a good eye. 🔍" : "— myths are sneaky. 🕵️"}</p>
+          <p className="font-serif text-3xl">{score} of {claims!.length} right</p>
           <p className="mt-2 text-ink-2">“Marked wrong” isn&rsquo;t always a myth: it can be an old calendar, a rounding, or a disputed hypothesis. The statement page says which.</p>
           <button type="button" className="btn btn-primary mt-4" onClick={start}>Play another round</button>
         </div>

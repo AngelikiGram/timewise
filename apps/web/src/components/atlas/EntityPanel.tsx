@@ -67,7 +67,7 @@ export function EntityPanel({ entity, edges, labels, lessonTitle, lessonHref, on
         <div className="flex items-start gap-3">
           <span className="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-bronze text-paper"><Icon name={TYPE_ICON[entity.type]} size={26} /></span>
           <div className="min-w-0 flex-1">
-            <p className="text-xs font-semibold uppercase tracking-wider text-bronze">{TYPE_LABEL[entity.type]}{entity.dates ? ` · ${entity.dates}` : rec?.when.text ? ` · ${rec.when.text}` : ""}</p>
+            <p className="text-xs font-semibold text-bronze">{TYPE_LABEL[entity.type]}{entity.dates ? ` · ${entity.dates}` : rec?.when.text ? ` · ${rec.when.text}` : ""}</p>
             <h2 className="font-serif text-2xl leading-tight">{entity.label}</h2>
           </div>
           <button ref={close} type="button" onClick={onClose} className="btn btn-ghost btn-icon" aria-label="Close and return to the lesson">✕</button>

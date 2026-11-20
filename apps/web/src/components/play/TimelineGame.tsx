@@ -8,6 +8,7 @@ import { recordRound, useExplorer } from "@/lib/explorer";
 import { pointOf, qidOf, sparql, v } from "@/lib/live";
 import { addCards, firstCard } from "@/lib/memory";
 import { atlasHref, CONTINENT_LABELS, loadIndex, type IndexEvent } from "@/lib/world-index";
+import { CATEGORY_LABELS } from "@/lib/categories";
 import { ExploreMap, type MapItem } from "../modes/ExploreMap";
 import { BadgeToast, LevelBar } from "../modes/Gamify";
 
@@ -112,7 +113,7 @@ export function TimelineGame() {
       {cards.length > 0 && (
         <div className="mt-5 grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
           <div>
-            <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-ink-2">{done ? "Your order" : "Earliest"}</p>
+            <p className="mb-2 text-xs font-semibold text-ink-2">{done ? "Your order" : "Earliest"}</p>
             <ol className="grid gap-2" data-testid="timeline-cards">
               {order.map((id, i) => {
                 const c = byId.get(id)!;
@@ -122,7 +123,7 @@ export function TimelineGame() {
                     className={`flex items-center gap-3 rounded-xl border-2 bg-paper p-3 transition-colors ${done ? (ok ? "border-green-700/60 bg-green-50 [[data-theme=dark]_&]:bg-green-950/30" : "border-oxblood/60 bg-oxblood/5") : drag === i ? "border-bronze opacity-60" : "cursor-grab border-line hover:border-bronze"}`}>
                     <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-paper-3 font-serif tabular-nums">{i + 1}</span>
                     <Icon name={categoryIcon(c.c)} size={20} className="shrink-0 text-bronze" />
-                    <span className="min-w-0 flex-1"><span className="block font-medium leading-snug">{c.t}</span>{done && <span className="block text-sm text-ink-2">{formatImportedDate(c.s, c.e, c.p as Precision)}{!ok && <> · belongs at {truth.indexOf(id) + 1}</>}</span>}</span>
+                    <span className="min-w-0 flex-1"><span className="block font-medium leading-snug">{c.t}</span>{!done && <span className="block text-xs text-ink-2">{[CATEGORY_LABELS[c.c], c.k ? c.k.replaceAll("_", " ").replace(/^./, (x) => x.toUpperCase()) : c.ct ? CONTINENT_LABELS[c.ct] : null].filter(Boolean).join(", ")}</span>}{done && <span className="block text-sm text-ink-2">{formatImportedDate(c.s, c.e, c.p as Precision)}{!ok && <> · belongs at {truth.indexOf(id) + 1}</>}</span>}</span>
                     {!done ? (
                       <span className="flex shrink-0 flex-col">
                         <button type="button" className="btn btn-ghost btn-sm !min-h-0 !px-1.5 !py-0.5" aria-label={`Move ${c.t} earlier`} onClick={() => move(i, i - 1)} disabled={i === 0}>▲</button>
@@ -137,7 +138,7 @@ export function TimelineGame() {
             <div className="mt-4 flex flex-wrap items-center gap-3">
               {!done ? <button type="button" className="btn btn-primary" onClick={submit} data-testid="timeline-submit">Check my timeline</button> : (
                 <>
-                  <p className="font-serif text-2xl" role="status" data-testid="timeline-score">{right === order.length ? "Perfect! 🎉" : `${right} of ${order.length} in the right place`}</p>
+                  <p className="font-serif text-2xl" role="status" data-testid="timeline-score">{right === order.length ? "All in the right place" : `${right} of ${order.length} in the right place`}</p>
                   <button type="button" className="btn btn-primary" onClick={newRound}>Next round<Icon name="forward" size={15} /></button>
                 </>
               )}
@@ -176,7 +177,7 @@ function Reveal({ events }: { events: IndexEvent[] }) {
   return (
     <div className="grid gap-4" data-testid="timeline-reveal">
       <div className="rounded-xl border border-line bg-paper-2 p-4">
-        <p className="text-xs font-semibold uppercase tracking-wider text-ink-2">The real timeline · {formatYear(lo)}–{formatYear(hi)}</p>
+        <p className="text-xs font-semibold text-ink-2">The real timeline · {formatYear(lo)}–{formatYear(hi)}</p>
         <div className="relative mt-3" style={{ height: events.length * 30 + 20 }}>
           <span className="absolute left-0 right-0 top-2 h-1 rounded bg-bronze/40" />
           {events.map((x, i) => {

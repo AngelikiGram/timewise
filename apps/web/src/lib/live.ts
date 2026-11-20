@@ -201,7 +201,10 @@ async function worksFor(qid: string, signal?: AbortSignal): Promise<Work[]> {
     if (!w.people.some((x) => x.role === v(r, "role"))) w.people.push({ id: qid, role: v(r, "role")!, source: prop === "P800" ? wdUrl(qid, "P800") : wdUrl(id, prop) });
     works.set(id, w);
   }
-  return [...works.values()].sort((a, b) => b.links - a.links).slice(0, 30).sort((a, b) => (a.year ?? 9999) - (b.year ?? 9999));
+  // Editions and translations are separate items with the same title: keep the earliest of each title.
+  const byTitle = new Map<string, Work>();
+  for (const w of [...works.values()].sort((a, b) => (a.year ?? 9999) - (b.year ?? 9999))) { const k = w.label.toLowerCase().trim(); const o = byTitle.get(k); if (!o) byTitle.set(k, w); else { o.links = Math.max(o.links, w.links); o.point ??= w.point; o.image ??= w.image; } }
+  return [...byTitle.values()].sort((a, b) => b.links - a.links).slice(0, 30).sort((a, b) => (a.year ?? 9999) - (b.year ?? 9999));
 }
 
 /** Everything the life page needs about one person, read from Wikidata now. */

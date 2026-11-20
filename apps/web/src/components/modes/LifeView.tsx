@@ -126,7 +126,9 @@ function Life({ data, matched }: { data: LifeData; matched?: string | null }) {
   const topics = live ? [] : topicsOf(p.id);
   const things = [...(p.movements ?? []), ...(p.fields ?? [])].slice(0, 3);
   const peak = works.filter((w) => w.year != null)[Math.floor(works.filter((w) => w.year != null).length / 2)]?.year ?? (b != null ? b + 35 : 1900);
-  const chips = [...(p.occupations ?? []), ...(p.movements ?? []), ...(p.memberOf ?? []), ...(p.fields ?? [])].slice(0, 12);
+  const allChips = [...(p.occupations ?? []), ...(p.movements ?? []), ...(p.fields ?? []), ...(p.memberOf ?? [])];
+  const [allTags, setAllTags] = useState(false);
+  const chips = allTags ? allChips : allChips.slice(0, 6);
   const followable = new Set([...(p.movements ?? []), ...(p.fields ?? [])].map((x) => x.id));
   const otherLife = related[0];
 
@@ -148,6 +150,7 @@ function Life({ data, matched }: { data: LifeData; matched?: string | null }) {
           </dl>
           <ul className="mt-3 flex flex-wrap gap-1.5 text-xs">
             {chips.map((x) => <li key={x.id}>{followable.has(x.id) && live ? <Link href={`/explore/thing?q=${x.id}`} className="chip !min-h-7 !text-xs" title={`Follow ${x.label} across the map`}><Icon name="network" size={12} />{x.label}</Link> : <a href={x.source} target="_blank" rel="noopener noreferrer" className="chip !min-h-7 !text-xs">{x.label}</a>}</li>)}
+          {allChips.length > 6 && <li><button type="button" className="chip !min-h-7 !text-xs" onClick={() => setAllTags(!allTags)} aria-expanded={allTags}>{allTags ? "Fewer" : `${allChips.length - 6} more`}</button></li>}
           </ul>
           <div className="mt-4 flex flex-wrap gap-2">
             <SaveInterest kind="person" id={p.id} label={p.label} />
@@ -173,20 +176,7 @@ function Life({ data, matched }: { data: LifeData; matched?: string | null }) {
         </section>
       </div>
 
-      {related.length > 0 && (
-        <section className="mt-8" aria-labelledby="life-people">
-          <h2 id="life-people" className="font-serif text-2xl">People around them</h2>
-          <ul className="mt-3 grid gap-2 sm:grid-cols-2" data-testid="life-people">
-            {related.map((r) => (
-              <li key={r.id} className="flex items-center gap-3 rounded-lg border border-line bg-paper-2 p-3 text-sm">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                {r.image ? <img src={r.image.url} alt="" className="h-10 w-10 shrink-0 rounded-full object-cover object-top" loading="lazy" /> : <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-paper-3 text-bronze"><Icon name="person" size={18} /></span>}
-                <span className="min-w-0"><Link href={lifeHref(r.id)} className="font-semibold hover:text-bronze">{r.label}</Link>{r.born != null && <span className="text-xs text-ink-2"> ({formatYear(r.born)}{r.died != null ? `–${formatYear(r.died)}` : ""})</span>}<span className="block text-ink-2">{r.sentence ?? `${p.label} ${r.relation} ${r.label}`}<Src href={r.source} /></span></span>
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
+      {related.length > 0 && <People p={p} related={related} />}
 
       <NextSteps items={[
         ...topics.map((t) => ({ href: `/explore/thing?id=${t.id}`, icon: "network" as const, title: `Follow ${t.label.toLowerCase()}`, why: `${p.label} is part of it. See how it spread.` })),
@@ -250,8 +240,8 @@ function LifeIndex() {
           <div className="mt-4 max-w-xl"><LiveSearch label="Find a person" placeholder="Search anyone: Mozart, Hedy Lamarr, your town's mayor in 1900…" local={local} live={searchPeople} hrefFor={(h) => `/explore/life?q=${h.id}`} prefetch={(h) => prefetch(() => loadLife(h.id))} testId="life-search" /></div>
         </div>
         <div className="flex flex-wrap gap-2">
-          <button type="button" className="btn btn-primary" onClick={surprise} data-testid="life-surprise"><span aria-hidden>🎲</span>Surprise me</button>
-          <button type="button" className="btn btn-secondary" onClick={wildcard} disabled={busy} title="A random person from all of Wikidata: anyone with a portrait, a birthplace and an occupation"><span aria-hidden>🃏</span>{busy ? "Drawing…" : "Wildcard"}</button>
+          <button type="button" className="btn btn-primary" onClick={surprise} data-testid="life-surprise">Surprise me</button>
+          <button type="button" className="btn btn-secondary" onClick={wildcard} disabled={busy} title="A random person from all of Wikidata: anyone with a portrait, a birthplace and an occupation">{busy ? "Drawing…" : "Wildcard"}</button>
         </div>
       </div>
       {err && <p className="mt-2 text-sm text-oxblood" role="alert">{err}</p>}
@@ -279,7 +269,7 @@ function LifeIndex() {
         <div className="mt-4 grid gap-4 md:grid-cols-2 lg:grid-cols-3" data-testid="featured-lives">
           {eras.map((era) => (
             <div key={era} className="card p-4">
-              <h3 className="text-xs font-semibold uppercase tracking-wider text-bronze">{ERA_LABEL[era]}</h3>
+              <h3 className="text-xs font-semibold text-bronze">{ERA_LABEL[era]}</h3>
               <ul className="mt-2 flex flex-wrap gap-1.5">
                 {FEATURED_PEOPLE.filter((f) => f.era === era).map((f) => <li key={f.name}><Link href={findHref(f)} className="chip !min-h-7 !text-xs">{f.name}</Link></li>)}
               </ul>
@@ -288,5 +278,40 @@ function LifeIndex() {
         </div>
       </section>
     </div>
+  );
+}
+
+// Relations grouped by what they are, so a long list reads as family, teachers and students, and the rest.
+const GROUP_OF = (r: Related) =>
+  /married|partner|child|parent|sibling|relative/.test(r.relation) ? "Family"
+  : /student|teacher|supervisor|doctoral/.test(r.relation) ? "Teachers and students"
+  : /influenced/.test(r.relation) ? "Influences" : "Worked with or linked to";
+const SHORT = (r: Related) => r.sentence ?? r.relation.replace(/^was (the |a |an )?/, "").replace(/ of$/, "").replace(/^(married to|partner of)$/, "spouse or partner");
+
+function People({ p, related }: { p: Person; related: Related[] }) {
+  const [open, setOpen] = useState<Record<string, boolean>>({});
+  const groups = ["Family", "Teachers and students", "Influences", "Worked with or linked to"].map((g) => ({ g, list: related.filter((r) => GROUP_OF(r) === g) })).filter((x) => x.list.length);
+  return (
+    <section className="mt-8" aria-labelledby="life-people">
+      <h2 id="life-people" className="font-serif text-2xl">People around {p.label}</h2>
+      <div className="mt-3 grid gap-6 md:grid-cols-2" data-testid="life-people">
+        {groups.map(({ g, list }) => (
+          <div key={g}>
+            <h3 className="text-sm font-semibold text-ink-2">{g} <span className="font-normal">({list.length})</span></h3>
+            <ul className="mt-2 grid gap-1.5">
+              {(open[g] ? list : list.slice(0, 6)).map((r) => (
+                <li key={r.id} className="flex items-center gap-3 text-sm">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  {r.image ? <img src={r.image.url} alt="" className="h-9 w-9 shrink-0 rounded-full object-cover object-top" loading="lazy" /> : <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-paper-3 text-ink-2"><Icon name="person" size={16} /></span>}
+                  <span className="min-w-0"><Link href={lifeHref(r.id)} className="font-semibold hover:text-bronze">{r.label}</Link>{r.born != null && <span className="text-xs text-ink-2"> {formatYear(r.born)}{r.died != null ? `–${formatYear(r.died)}` : ""}</span>}
+                    <span className="block text-xs text-ink-2">{SHORT(r)}<Src href={r.source} /></span></span>
+                </li>
+              ))}
+            </ul>
+            {list.length > 6 && <button type="button" className="link mt-1 text-sm" onClick={() => setOpen({ ...open, [g]: !open[g] })}>{open[g] ? "Show fewer" : `Show all ${list.length}`}</button>}
+          </div>
+        ))}
+      </div>
+    </section>
   );
 }

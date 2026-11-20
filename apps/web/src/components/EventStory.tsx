@@ -150,7 +150,7 @@ export function EventStory({ item, when, place, href, onBack, onPick, known, con
       <div className="mt-4 flex flex-wrap items-center gap-2 px-5">
         <SaveButton id={item.id} title={title} href={href} start={item.start} context={place} />
         <button type="button" onClick={share} className="btn btn-sm btn-secondary" aria-live="polite">{copied ? "Link copied" : "Share"}</button>
-        {/^Q\d+$/.test(item.id) && <Link href={`/connections?id=${item.id}`} className="btn btn-sm btn-secondary" data-testid="explore-connections">Explore connections →</Link>}
+        {/^Q\d+$/.test(item.id) && <Link href={`/connections?id=${item.id}`} className="btn btn-sm btn-secondary" data-testid="explore-connections">Explore connections</Link>}
       </div>
 
       <div className="space-y-7 px-5 pb-8 pt-6">
@@ -201,8 +201,8 @@ export function EventStory({ item, when, place, href, onBack, onPick, known, con
           <div role="tabpanel" id={`panel-${tab}`} aria-labelledby={`tab-${tab}`} className="mt-3" data-testid={`panel-${tab}`}>
             {tab === "why" && (
               <>
-                {data?.partOf.length ? <div className="border-l-2 pl-3" style={{ borderColor: categoryVar(item.category) }}><p className="text-sm font-semibold">Part of</p><div className="mt-1 flex flex-wrap gap-x-3 gap-y-1">{data.partOf.slice(0, 6).map(linkTo)}</div></div> : null}
-                {item.checked && <p className="mt-2 leading-relaxed">This event is part of a hand-checked story. <Link href={item.url} className="link">See its evidence →</Link></p>}
+                {data?.partOf.length ? <div><p className="text-sm font-semibold">Part of</p><div className="mt-1 flex flex-wrap gap-x-3 gap-y-1">{data.partOf.slice(0, 6).map(linkTo)}</div></div> : null}
+                {item.checked && <p className="mt-2 leading-relaxed">This event is part of a hand-checked story. <Link href={item.url} className="link">See its evidence</Link></p>}
                 {!item.checked && (item.links ?? 0) > 0 && <p className="mt-2 text-sm text-ink-2">Written about in {item.links} Wikipedia {item.links === 1 ? "language" : "languages"}: how widely it&rsquo;s documented, not how important it was.</p>}
                 {data && !data.partOf.length && !item.checked && <p className="mt-2 text-sm text-ink-2">Wikidata doesn&rsquo;t record what this was part of. See what came before and what changed.</p>}
                 {connected}
@@ -233,7 +233,7 @@ export function EventStory({ item, when, place, href, onBack, onPick, known, con
           </summary>
           <div className="space-y-3 px-4 pb-4 text-sm leading-relaxed">
             {item.checked ? (
-              <p>Each statement about this event was compared by hand with a linked source. The claims, the sources and how far each can be trusted are on its evidence page. <Link href={item.url} className="link">Open the evidence →</Link></p>
+              <p>Each statement about this event was compared by hand with a linked source. The claims, the sources and how far each can be trusted are on its evidence page. <Link href={item.url} className="link">Open the evidence</Link></p>
             ) : (
               <>
                 <p><strong>Record:</strong> Wikidata, a community-maintained database (CC0). Not reviewed here: treat it as a lead, not a verified fact. <a href={item.url} target="_blank" rel="noopener noreferrer" className="link">Open the Wikidata record ↗</a></p>

@@ -140,7 +140,7 @@ export function LessonSide({ lesson, focus, hidden, path, progress, growth, onOp
               <Icon name="source" size={16} className="text-bronze" />
               <span className="font-semibold">Sources</span>
               {sources.slice(0, 2).map((s) => <a key={s.url} href={s.url} target="_blank" rel="noopener noreferrer" className="chip max-w-[12rem] !text-xs"><span className="truncate">{s.label}</span></a>)}
-              {sources.length > 2 && <button type="button" className="link ml-auto text-sm" onClick={() => setShowSources(!showSources)}>{showSources ? "Fewer" : `All ${sources.length}`} →</button>}
+              {sources.length > 2 && <button type="button" className="link ml-auto text-sm" onClick={() => setShowSources(!showSources)}>{showSources ? "Fewer" : `All ${sources.length}`}</button>}
             </div>
             {showSources && <ul className="mt-2 grid gap-1 text-xs">{sources.map((s) => <li key={s.url}><a className="link" href={s.url} target="_blank" rel="noopener noreferrer">{s.label} ↗</a></li>)}</ul>}
           </>
@@ -162,7 +162,7 @@ export function LessonSide({ lesson, focus, hidden, path, progress, growth, onOp
         <section className="card p-4" data-testid="side-path">
           <div className="flex items-baseline justify-between gap-2"><h2 className="font-serif text-lg leading-tight">{path.title}</h2><span className="text-sm tabular-nums text-ink-2">{done}/{path.lessons.length}</span></div>
           <div className="mt-2 h-2.5 overflow-hidden rounded-full bg-line"><div className="h-full rounded-full bg-navy [[data-theme=dark]_&]:bg-bronze" style={{ width: `${(done / path.lessons.length) * 100}%` }} /></div>
-          <Link href={`/learn?path=${path.id}`} className="link mt-2 inline-block text-sm">See the path →</Link>
+          <Link href={`/learn?path=${path.id}`} className="link mt-2 inline-block text-sm">See the path</Link>
         </section>
       )}
 

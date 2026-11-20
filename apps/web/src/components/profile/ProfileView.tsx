@@ -129,7 +129,7 @@ export function ProfileView() {
       <p className="mt-1 text-xs text-ink-2">{shareable ? "A share link carries a summary (lessons, paths, accuracy, badges, countries). Nothing is uploaded; your progress stays in this browser." : "Private: your progress stays in this browser, and no link can show it."}</p>
 
       <div className="card mt-6 flex flex-col gap-3 border-2 border-bronze/40 p-5 sm:flex-row sm:items-center">
-        <div className="min-w-0 flex-1"><p className="text-xs font-semibold uppercase tracking-wider text-bronze">{step.resume ? "Continue where you stopped" : "Up next"}</p><p className="font-serif text-2xl">{step.title}</p></div>
+        <div className="min-w-0 flex-1"><p className="text-xs font-semibold text-bronze">{step.resume ? "Continue where you stopped" : "Up next"}</p><p className="font-serif text-2xl">{step.title}</p></div>
         <Link href={lessonHref(step.id, step.pathId)} className="btn btn-primary">{step.resume ? "Continue" : "Start"}</Link>
       </div>
 
@@ -138,7 +138,7 @@ export function ProfileView() {
         <li className="card p-4"><p className="font-serif text-3xl tabular-nums">{pathsDone.length}</p><p className="text-sm text-ink-2">paths complete</p></li>
         <li className="card p-4"><p className="font-serif text-3xl tabular-nums">{acc.total ? `${Math.round((acc.ok / acc.total) * 100)}%` : "–"}</p><p className="text-sm text-ink-2">answers right{acc.total ? ` (${acc.ok}/${acc.total})` : ""}</p></li>
         <li className="card p-4"><p className="font-serif text-3xl tabular-nums">{current}</p><p className="text-sm text-ink-2">days in a row · best {best}</p></li>
-        <li className="card p-4"><Link href="/collection" className="block"><p className="font-serif text-3xl tabular-nums">{Object.keys(p.bookmarks).length}</p><p className="text-sm text-ink-2">saved events →</p></Link></li>
+        <li className="card p-4"><Link href="/collection" className="block"><p className="font-serif text-3xl tabular-nums">{Object.keys(p.bookmarks).length}</p><p className="text-sm text-ink-2">saved events</p></Link></li>
       </ul>
 
       <div className="mt-8 grid gap-4 lg:grid-cols-3">
@@ -181,9 +181,9 @@ export function ProfileView() {
           return (
             <div className="mt-2 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
               {types.map((t) => (
-                <div key={t} className="card p-3"><p className="text-xs font-semibold uppercase tracking-wider text-ink-2">{TYPE_LABEL[t]}s</p><ul className="mt-1 grid gap-0.5 text-sm">{saved.filter((n) => n.type === t).map((n) => <li key={n.id}><Link className="link" href={`/my-atlas?focus=${encodeURIComponent(n.id)}`}>{n.label}</Link></li>)}</ul></div>
+                <div key={t} className="card p-3"><p className="text-xs font-semibold text-ink-2">{TYPE_LABEL[t]}s</p><ul className="mt-1 grid gap-0.5 text-sm">{saved.filter((n) => n.type === t).map((n) => <li key={n.id}><Link className="link" href={`/my-atlas?focus=${encodeURIComponent(n.id)}`}>{n.label}</Link></li>)}</ul></div>
               ))}
-              <div className="card p-3"><p className="text-xs font-semibold uppercase tracking-wider text-ink-2">Saved records and sources</p><p className="mt-1 text-sm"><Link href="/collection" className="link">{Object.keys(p.bookmarks).length} in Saved →</Link></p></div>
+              <div className="card p-3"><p className="text-xs font-semibold text-ink-2">Saved records and sources</p><p className="mt-1 text-sm"><Link href="/collection" className="link">{Object.keys(p.bookmarks).length} in Saved</Link></p></div>
             </div>
           );
         })()}

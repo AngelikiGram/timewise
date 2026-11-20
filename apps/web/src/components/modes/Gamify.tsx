@@ -40,7 +40,7 @@ export function LevelBar({ compact = false }: { compact?: boolean }) {
     <div className="flex items-center gap-4" data-testid="level-bar">
       <span className="grid h-16 w-16 shrink-0 place-items-center rounded-2xl bg-bronze font-serif text-3xl text-paper shadow-sm">{l.n}</span>
       <div className="min-w-0 flex-1">
-        <p className="text-xs font-semibold uppercase tracking-wider text-bronze">Level {l.n}</p>
+        <p className="text-xs font-semibold text-bronze">Level {l.n}</p>
         <p className="font-serif text-2xl leading-tight">{l.title}</p>
         <div className="mt-2 h-3 overflow-hidden rounded-full bg-line" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={pct} aria-label="Progress to the next level"><div className="h-full rounded-full bg-gradient-to-r from-bronze to-oxblood transition-[width] duration-700" style={{ width: `${pct}%` }} /></div>
         <p className="mt-1 text-xs text-ink-2">{l.xp} XP{l.to ? ` · ${l.to - l.xp} more to ${l.nextTitle}` : " · the top level"}</p>
@@ -64,7 +64,7 @@ export function BadgeToast() {
     return (
       <div className="pointer-events-none fixed inset-x-0 bottom-6 z-50 flex justify-center px-4" role="status" aria-live="polite" data-testid="memory-toast">
         <div className="pointer-events-auto flex items-center gap-3 rounded-2xl border-2 border-navy/40 bg-paper p-3 pr-5 shadow-xl">
-          <span aria-hidden className="text-3xl">🧠</span>
+          <Icon name="idea" size={26} className="shrink-0 text-navy" />
           <span><span className="block font-serif text-lg leading-tight">{cards} review question{cards === 1 ? "" : "s"} saved</span><span className="block text-xs text-ink-2">They come back in a day, then at growing intervals.</span></span>
           <Link href="/learn/review" className="btn btn-secondary btn-sm ml-2">Review</Link>
         </div>
@@ -76,7 +76,7 @@ export function BadgeToast() {
     <div className="pointer-events-none fixed inset-x-0 bottom-6 z-50 flex justify-center px-4" role="status" aria-live="polite" data-testid="badge-toast">
       <div className="pointer-events-auto flex animate-[tw-pop_.5s_ease-out] items-center gap-3 rounded-2xl border-2 bg-paper p-3 pr-5 shadow-xl" style={{ borderColor: TIER_STYLE[shown[0].tier].ring }}>
         <Medal b={shown[0]} size={52} />
-        <span><span className="block text-xs font-semibold uppercase tracking-wider text-bronze">Badge earned!</span><span className="block font-serif text-xl leading-tight">{shown[0].label}</span><span className="block text-xs text-ink-2">{shown[0].help}{shown.length > 1 ? ` · and ${shown.length - 1} more` : ""}</span></span>
+        <span><span className="block text-xs font-semibold text-bronze">Badge earned!</span><span className="block font-serif text-xl leading-tight">{shown[0].label}</span><span className="block text-xs text-ink-2">{shown[0].help}{shown.length > 1 ? ` · and ${shown.length - 1} more` : ""}</span></span>
         <Link href="/explore/interests?tab=profile" className="btn btn-secondary btn-sm ml-2">See all</Link>
       </div>
       <style>{"@keyframes tw-pop{0%{transform:translateY(30px) scale(.8);opacity:0}70%{transform:translateY(-4px) scale(1.04);opacity:1}100%{transform:none}}"}</style>

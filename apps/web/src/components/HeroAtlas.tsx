@@ -22,7 +22,7 @@ export function HeroAtlas() {
       <Link href={`/explore?event=${event.id}`} key={event.id} className="fade-in absolute inset-x-3 bottom-8 block border border-line bg-paper-2/95 p-4 backdrop-blur transition-colors hover:border-bronze sm:left-auto sm:right-4 sm:w-80">
         <span className="eyebrow">{formatWhen(event.when)} · {placeLabel(event)}</span>
         <span className="mt-1 block font-serif text-xl leading-tight">{event.title.en}</span>
-        <span className="mt-2 block text-xs text-bronze">Inspect the evidence →</span>
+        <span className="mt-2 block text-xs text-bronze">Inspect the evidence</span>
       </Link>
     </div>
   );

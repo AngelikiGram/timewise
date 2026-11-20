@@ -103,7 +103,7 @@ function Teller({ qid }: { qid: string }) {
               </figure>
             )}
             {more?.summary && (
-              <blockquote className="rounded-xl border-l-4 border-bronze bg-paper-2 p-4 leading-relaxed">
+              <blockquote className="font-serif text-lg leading-relaxed">
                 {more.summary.text}
                 <footer className="mt-2 text-xs text-ink-2">From <a className="link" href={more.summary.url} target="_blank" rel="noopener noreferrer">Wikipedia: {more.summary.title}</a>, CC BY-SA 4.0.</footer>
               </blockquote>
@@ -119,7 +119,7 @@ function Teller({ qid }: { qid: string }) {
                 </div>
                 {cur && (
                   <div className="mt-3 rounded-xl border-2 border-bronze/50 bg-paper p-4" aria-live="polite" data-testid="live-story-step">
-                    <p className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-bronze"><Icon name={GROUP[cur.group].icon} size={14} />{GROUP[cur.group].title}</p>
+                    <p className="flex items-center gap-1.5 text-xs font-semibold text-bronze"><Icon name={GROUP[cur.group].icon} size={14} />{GROUP[cur.group].title}</p>
                     <p className="mt-1 font-serif text-2xl leading-tight">{cur.label}</p>
                     <p className="text-sm text-ink-2">{[cur.year != null ? formatYear(cur.year) : "Undated", cur.description].filter(Boolean).join(" · ")}</p>
                     <p className="mt-2 text-sm">{cur.label} {cur.relation} {story.label}. <a className="link text-xs" href={cur.source} target="_blank" rel="noopener noreferrer">statement ↗</a></p>

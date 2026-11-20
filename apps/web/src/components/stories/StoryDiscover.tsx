@@ -30,8 +30,8 @@ export function StoryDiscover({ compact = false }: { compact?: boolean }) {
       <div className={`flex flex-col gap-2 sm:flex-row sm:items-center ${compact ? "" : "mt-3"}`}>
         <div className="min-w-0 flex-1"><LiveSearch label="Find a story" placeholder="Any event: the French Revolution, Apollo 11, the Black Death…" local={local} live={(s, sig) => searchEntities(s, sig)} hrefFor={(h) => `/stories/live?q=${h.id}`} prefetch={(h) => prefetch(() => loadStory(h.id))} testId="story-search" /></div>
         <div className="flex gap-2">
-          <button type="button" className="btn btn-primary" onClick={surprise} disabled={!index.length} data-testid="story-surprise"><span aria-hidden>🎲</span>Surprise me</button>
-          <button type="button" className="btn btn-secondary" onClick={fresh} title="Pick a well-known event and tell it from Wikidata now"><span aria-hidden>✨</span>Make one now</button>
+          <button type="button" className="btn btn-primary" onClick={surprise} disabled={!index.length} data-testid="story-surprise">Surprise me</button>
+          <button type="button" className="btn btn-secondary" onClick={fresh} title="Pick a well-known event and tell it from Wikidata now">Make one now</button>
         </div>
       </div>
       {!compact && (

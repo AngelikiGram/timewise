@@ -59,7 +59,7 @@ export function ReviewSession() {
               <li key={m.prompt} className="rounded-md border border-line p-3 text-sm">
                 <p>{m.prompt}</p>
                 <p className="mt-1 text-ink-2">Answer: {m.correct}</p>
-                <Link href={`/challenges/${m.challengeId}`} className="link mt-1 inline-block">Try the challenge again →</Link>
+                <Link href={`/challenges/${m.challengeId}`} className="link mt-1 inline-block">Try the challenge again</Link>
               </li>
             ))}
           </ul>

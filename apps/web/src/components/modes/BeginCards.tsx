@@ -27,9 +27,9 @@ export function BeginCards() {
   const year = nouveau.find((w) => w.year === 1900) ?? nouveau[1];
   const thing = nouveau[0];
   const cards: { href: string; icon: IconName; title: string; text: string; image?: Credit; alt: string }[] = [
-    { href: `/explore/thing?id=${TOPICS[0]?.id ?? ""}`, icon: "network", title: "Follow a thing", text: `${TOPICS.map((t) => t.label).join(", ")}: where and when each spread.`, image: thing?.image, alt: thing?.label ?? "" },
+    { href: `/explore/thing?id=${TOPICS[0]?.id ?? ""}`, icon: "network", title: "Follow a thing", text: "A style, a kind of building, a movement: where and when it spread.", image: thing?.image, alt: thing?.label ?? "" },
     { href: `/explore/year?y=${year?.year ?? 1900}`, icon: "timeline", title: "Explore a year", text: "One year in different places at once.", image: year?.image, alt: year?.label ?? "" },
-    { href: "/explore/life", icon: "person", title: "Follow a life", text: `${PEOPLE.length} documented lives of Vienna around 1900.`, image: portrait?.image, alt: portrait ? `Portrait of ${portrait.label}` : "" },
+    { href: "/explore/life", icon: "person", title: "Follow a life", text: "Anyone on Wikidata: their years, works, places and people.", image: portrait?.image, alt: portrait ? `Portrait of ${portrait.label}` : "" },
     { href: "/explore/interests", icon: "idea", title: "Follow your interests", text: "Pick what you care about; journeys combine the other three.", alt: "" },
   ];
   return (

@@ -75,7 +75,7 @@ export default function AboutPage() {
           <details className="card p-4">
             <summary className="cursor-pointer font-semibold">A checked claim, in full</summary>
             <div className="mt-3 grid gap-4 md:grid-cols-[1fr_1.4fr]">
-              <p className="text-sm text-ink-2">A real record from the hand-checked collection, including the limits of its evidence. <Link href={`/explore?event=${showcase.eventId}`} className="link">See it on the map →</Link></p>
+              <p className="text-sm text-ink-2">A real record from the hand-checked collection, including the limits of its evidence. <Link href={`/explore?event=${showcase.eventId}`} className="link">See it on the map</Link></p>
               <ClaimCard claim={showcase} />
             </div>
           </details>

@@ -46,7 +46,7 @@ function Frame({ children }: { children: React.ReactNode }) {
       <BadgeToast />
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
         <div className="min-w-0 flex-1 sm:max-w-xl"><LiveSearch label="Find an event" placeholder="Why did… the French Revolution happen? World War I? The Reformation?" local={FEATURED_EVENTS.map((e) => ({ id: e, label: e, href: `/explore/why?find=${encodeURIComponent(e)}` }))} live={(s, sig) => searchEntities(s, sig)} hrefFor={(h) => `/explore/why?q=${h.id}`} testId="why-search" /></div>
-        <button type="button" className="btn btn-primary" onClick={() => { recordSurprise(); router.push(`/explore/why?find=${encodeURIComponent(pick(FEATURED_EVENTS))}`); }}><span aria-hidden>🎲</span>Surprise me</button>
+        <button type="button" className="btn btn-primary" onClick={() => { recordSurprise(); router.push(`/explore/why?find=${encodeURIComponent(pick(FEATURED_EVENTS))}`); }}>Surprise me</button>
         <span className="sm:ml-auto"><LevelBar compact /></span>
       </div>
       <div className="mt-6">{children}</div>
@@ -131,6 +131,7 @@ function Network({ root }: { root: string }) {
         <li className="inline-flex items-center gap-1.5"><svg width="28" height="8"><line x1="0" y1="4" x2="28" y2="4" stroke="var(--ink-2)" strokeWidth="2" strokeDasharray="4 3" /></svg>came before → came after</li>
         <li>Click a box to open its own causes and effects.</li>
       </ul>
+      {!lonely && rootNode.state === "open" && nodes.size <= 4 && <p className="mt-3 text-sm text-ink-2">Wikidata documents only {nodes.size - 1} direct cause or effect link{nodes.size === 2 ? "" : "s"} for {rootNode.label}. Click a box to follow the chain further, or <Link className="link" href={`/stories/live?q=${root}`}>read it as a story through its parts</Link>, or see its <Link className="link" href={`/connections?id=${root}`}>people, places and other connections</Link>.</p>}
       {lonely && <p className="mt-4 rounded-xl border border-line bg-paper-2 p-4 text-ink-2">Wikidata records no causes or effects for {rootNode.label} yet. Try a larger event, or <Link className="link" href={`/stories/live?q=${root}`}>read it as a story</Link> through its parts.</p>}
       <div className="mt-4 grid gap-4 xl:grid-cols-[minmax(0,1fr)_320px]">
         <div className="overflow-auto rounded-2xl border border-line bg-paper-2" style={{ maxHeight: "70vh" }} data-testid="why-graph">
@@ -170,7 +171,7 @@ function Network({ root }: { root: string }) {
         <aside className="rounded-2xl border border-line bg-paper p-4" aria-live="polite" data-testid="why-panel">
           {s && (
             <>
-              <p className="text-xs font-semibold uppercase tracking-wider text-bronze">{s.id === root ? "The event" : s.depth < 0 ? "A cause, or what came before" : "A consequence, or what came after"}</p>
+              <p className="text-xs font-semibold text-bronze">{s.id === root ? "The event" : s.depth < 0 ? "A cause, or what came before" : "A consequence, or what came after"}</p>
               <h2 className="mt-1 font-serif text-2xl leading-tight">{s.label}</h2>
               <p className="text-sm text-ink-2">{[s.year != null ? formatYear(s.year) : null, s.description].filter(Boolean).join(" · ")}</p>
               <ul className="mt-3 grid gap-1.5 text-sm">

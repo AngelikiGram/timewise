@@ -372,7 +372,7 @@ export function NetworkExplorer() {
               <>
                 <RecordCard record={record} links={all} onPick={(l) => select(l.target)} />
                 <div className="mt-4 flex flex-wrap gap-2">
-                  {sequenceNext && <button type="button" className="btn btn-primary btn-sm whitespace-normal text-left" onClick={() => open(sequenceNext.target)}>Next in sequence: {sequenceNext.label} →</button>}
+                  {sequenceNext && <button type="button" className="btn btn-primary btn-sm whitespace-normal text-left" onClick={() => open(sequenceNext.target)}>Next in sequence: {sequenceNext.label}</button>}
                   <button type="button" className="btn btn-secondary btn-sm" onClick={() => share("record")}>{copied === "record" ? "Link copied" : "Share"}</button>
                 </div>
               </>

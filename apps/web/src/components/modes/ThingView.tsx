@@ -80,7 +80,7 @@ function ThingFinder() {
   return (
     <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
       <div className="min-w-0 flex-1 sm:max-w-xl"><LiveSearch label="Find a thing to follow" placeholder="Follow anything: lighthouses, Baroque, Impressionism, astronomers…" local={local} live={(s, sig) => searchEntities(s, sig)} hrefFor={(h) => `/explore/thing?q=${h.id}`} prefetch={(h) => prefetch(() => loadThing(h.id))} testId="thing-search" /></div>
-      <button type="button" className="btn btn-primary" onClick={() => { recordSurprise(); router.push(`/explore/thing?find=${encodeURIComponent(pick(FEATURED_THINGS).search)}`); }} data-testid="thing-surprise"><span aria-hidden>🎲</span>Surprise me</button>
+      <button type="button" className="btn btn-primary" onClick={() => { recordSurprise(); router.push(`/explore/thing?find=${encodeURIComponent(pick(FEATURED_THINGS).search)}`); }} data-testid="thing-surprise">Surprise me</button>
     </div>
   );
 }
@@ -158,7 +158,7 @@ function Thing({ t, live = false }: { t: Topic; live?: boolean }) {
             {shown.slice(0, 200).map((x) => (
               <li key={x.id} className="flex items-baseline gap-3 px-3 py-2 text-sm">
                 <Link href={`/explore/year?y=${x.year}`} className="w-12 shrink-0 tabular-nums text-bronze hover:underline" title={`Explore ${x.year}`}>{x.year}</Link>
-                <span className="min-w-0 flex-1"><button type="button" onClick={() => setFocus(x.id)} className="text-left hover:text-bronze" title="Show on the map">{x.label}</button>{x.place && <span className="text-ink-2"> · {x.place}</span>}{t.kind === "field" && <Link href={lifeLink(x.id)} className="ml-1 text-xs text-bronze hover:underline">life →</Link>}</span>
+                <span className="min-w-0 flex-1"><button type="button" onClick={() => setFocus(x.id)} className="text-left hover:text-bronze" title="Show on the map">{x.label}</button>{x.place && <span className="text-ink-2"> · {x.place}</span>}{t.kind === "field" && <Link href={lifeLink(x.id)} className="ml-1 text-xs text-bronze hover:underline">life</Link>}</span>
                 <a href={x.source} target="_blank" rel="noopener noreferrer" className="shrink-0 text-[11px] text-bronze hover:underline">source</a>
               </li>
             ))}

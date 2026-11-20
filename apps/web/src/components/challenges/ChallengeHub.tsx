@@ -6,6 +6,7 @@ import { CHALLENGES, challengeById, dailyChallenge, FORMATS, type Challenge } fr
 import { clearMistake, totalXp, useProgress } from "@/lib/progress";
 import { STORIES } from "@/lib/stories";
 import { ChallengePlayer } from "./ChallengePlayer";
+import { Icon } from "../icons";
 
 const KINDS = Object.keys(FORMATS) as Challenge["kind"][];
 
@@ -32,9 +33,9 @@ export function ChallengeHub() {
           <p className="mt-2 max-w-2xl text-lg text-ink-2">Short puzzles built from the hand-checked collection. Every answer is explained, with its source.</p>
         </div>
         <dl className="flex gap-6 text-center" aria-label="Your progress">
-          <div><dt className="text-xs uppercase tracking-wider text-ink-2">XP</dt><dd className="font-serif text-3xl tabular-nums" data-testid="xp-total">{totalXp(p)}</dd></div>
-          <div><dt className="text-xs uppercase tracking-wider text-ink-2">Completed</dt><dd className="font-serif text-3xl tabular-nums">{CHALLENGES.filter((c) => done(c.id)).length}/{CHALLENGES.length}</dd></div>
-          <div><dt className="text-xs uppercase tracking-wider text-ink-2">Daily streak</dt><dd className="font-serif text-3xl tabular-nums">{streak}</dd></div>
+          <div><dt className="text-xs text-ink-2">XP</dt><dd className="font-serif text-3xl tabular-nums" data-testid="xp-total">{totalXp(p)}</dd></div>
+          <div><dt className="text-xs text-ink-2">Completed</dt><dd className="font-serif text-3xl tabular-nums">{CHALLENGES.filter((c) => done(c.id)).length}/{CHALLENGES.length}</dd></div>
+          <div><dt className="text-xs text-ink-2">Daily streak</dt><dd className="font-serif text-3xl tabular-nums">{streak}</dd></div>
         </dl>
       </header>
 
@@ -53,8 +54,8 @@ export function ChallengeHub() {
         <h2 id="games" className="font-serif text-2xl">Endless games</h2>
         <p className="text-sm text-ink-2">New rounds every time, from thousands of real records.</p>
         <ul className="mt-3 grid gap-3 sm:grid-cols-2">
-          <li><Link href="/challenges/timeline" className="card card-link flex h-full items-start gap-3 p-5" data-testid="game-timeline"><span aria-hidden className="text-3xl">🕰️</span><span><span className="block font-serif text-2xl leading-tight">Build your own timeline</span><span className="mt-1 block text-ink-2">Put real events in order, any era, any region. Then see them on the true timeline and the map.</span></span></Link></li>
-          <li><Link href="/challenges/fact-or-myth" className="card card-link flex h-full items-start gap-3 p-5" data-testid="game-facts"><span aria-hidden className="text-3xl">🔍</span><span><span className="block font-serif text-2xl leading-tight">Fact or myth?</span><span className="mt-1 block text-ink-2">Supported, uncertain, or marked wrong? Judge claims about famous lives, then see the record.</span></span></Link></li>
+          <li><Link href="/challenges/timeline" className="card card-link flex h-full items-start gap-3 p-5" data-testid="game-timeline"><Icon name="sequence" size={28} className="mt-1 shrink-0 text-bronze" /><span><span className="block font-serif text-2xl leading-tight">Build your own timeline</span><span className="mt-1 block text-ink-2">Put real events in order, any era, any region. Then see them on the true timeline and the map.</span></span></Link></li>
+          <li><Link href="/challenges/fact-or-myth" className="card card-link flex h-full items-start gap-3 p-5" data-testid="game-facts"><Icon name="checked" size={28} className="mt-1 shrink-0 text-bronze" /><span><span className="block font-serif text-2xl leading-tight">Fact or myth?</span><span className="mt-1 block text-ink-2">Supported, uncertain, or marked wrong? Judge claims about famous lives, then see the record.</span></span></Link></li>
         </ul>
       </section>
 
@@ -119,7 +120,7 @@ export function ChallengeHub() {
       <section className="mt-12 rounded-lg border border-line p-5">
         <h2 className="font-serif text-xl">Activities inside the story</h2>
         <p className="mt-1 text-ink-2">The Austria story has its own chapter activities: cause and effect, perspectives and evidence gaps.</p>
-        <Link href="/learn" className="link mt-2 inline-block">Open the story activities →</Link>
+        <Link href="/learn" className="link mt-2 inline-block">Open the story activities</Link>
       </section>
     </main>
   );

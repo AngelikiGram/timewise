@@ -93,7 +93,7 @@ export function SaveButton({ id, title, href, start, context, compact = false }:
       )}
       {open && (
         <div id={menuId} className="absolute left-0 top-full z-40 mt-1 w-64 rounded-lg border border-line bg-paper-2 p-3 shadow-xl">
-          <p className="text-xs font-semibold uppercase tracking-wider text-ink-2">Add to a collection</p>
+          <p className="text-xs font-semibold text-ink-2">Add to a collection</p>
           <ul className="mt-2 max-h-48 space-y-1 overflow-auto">
             {p.collections.map((c) => (
               <li key={c.id}>

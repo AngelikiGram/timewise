@@ -428,7 +428,7 @@ function EventDetailPanel({
             target="_blank"
             rel="noopener noreferrer"
           >
-            Explore Event →
+            Explore Event
           </a>
         </div>
 
@@ -443,4 +443,4 @@ function EventDetailPanel({
       </div>
     </div>
   );
-}
+}

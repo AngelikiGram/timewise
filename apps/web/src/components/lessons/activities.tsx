@@ -104,7 +104,7 @@ function Feedback({ ok, activity, correct, onNext, nextLabel }: { ok: boolean; a
       <p className="mt-2 leading-relaxed">{activity.explanation}</p>
       {activity.kind === "choice" && activity.note && <p className="mt-1 text-sm text-ink-2">{activity.note}</p>}
       {activity.kind === "choice" && activity.map && <MiniMap className="mt-3 max-w-xl" points={activity.map} label={`Map of the answer options; the answer is ${correct}`} />}
-      <p className="mt-3 text-xs font-semibold uppercase tracking-wider text-ink-2">Sources</p>
+      <p className="mt-3 text-xs font-semibold text-ink-2">Sources</p>
       <Sources sources={activity.sources} />
       {!ok && <p className="mt-2 text-sm text-ink-2">Saved for review, so you can try it again later.</p>}
       <button ref={next} type="button" className="btn btn-primary mt-4 w-full sm:w-auto" onClick={onNext} data-testid="continue">{nextLabel}</button>
@@ -120,9 +120,9 @@ export function ActivityView({ activity, seed, onAnswer, onNext, nextLabel = "Co
   const answer = (a: Answer) => { setResult(a); onAnswer(a); };
   return (
     <section data-testid="activity" data-kind={activity.kind} data-skill={activity.skill}>
-      <p className="text-xs font-semibold uppercase tracking-wider text-bronze">{SKILLS[activity.skill].label}</p>
+      <p className="text-xs font-semibold text-bronze">{SKILLS[activity.skill].label}</p>
       <h2 className="mt-1 font-serif text-2xl leading-tight sm:text-3xl" tabIndex={-1} data-step-heading>{activity.prompt}</h2>
-      {activity.kind === "choice" && activity.context && <blockquote className="mt-3 rounded-md border-l-4 border-bronze bg-paper-3/60 px-4 py-3 leading-relaxed">{activity.context}</blockquote>}
+      {activity.kind === "choice" && activity.context && <blockquote className="mt-3 rounded-lg bg-paper-3/60 px-4 py-3 leading-relaxed">{activity.context}</blockquote>}
       {activity.kind === "order" ? <Order activity={activity} seed={seed} done={!!result} onCheck={answer} /> : activity.kind === "timeline" ? <TimelineSlot activity={activity} done={!!result} onCheck={answer} /> : <Choice activity={activity} seed={seed} done={!!result} onCheck={answer} />}
       {result && <Feedback ok={result.ok} activity={activity} correct={result.correct} onNext={onNext} nextLabel={nextLabel} />}
     </section>
@@ -190,7 +190,7 @@ function Order({ activity, seed, done, onCheck }: { activity: Extract<Activity, 
         ))}
       </ol>
       {!done && (
-        <button type="button" className="btn btn-primary mt-4 w-full sm:w-auto" onClick={() => onCheck({ ok: items.every((it, i) => correctAt(it.id, i)), correct: activity.items.map((x) => x.label).join(" → ") })}>
+        <button type="button" className="btn btn-primary mt-4 w-full sm:w-auto" onClick={() => onCheck({ ok: items.every((it, i) => correctAt(it.id, i)), correct: activity.items.map((x) => x.label).join(" ") })}>
           Check my order
         </button>
       )}

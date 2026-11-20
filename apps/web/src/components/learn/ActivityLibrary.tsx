@@ -276,7 +276,7 @@ function FilterChipGroup<T>({
 
   return (
     <div className="flex flex-wrap items-center gap-2">
-      <span className="text-xs font-medium text-ink-2 uppercase tracking-wider">{label}</span>
+      <span className="text-xs font-medium text-ink-2">{label}</span>
       {visibleOptions.map(opt => {
         const isSelected = single ? selectedArray[0] === opt.value : selectedArray.includes(opt.value);
         if (renderOption) {
@@ -449,4 +449,4 @@ function getDifficultyColor(difficulty: ActivityDifficulty): string {
     case "core": return "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400";
     case "advanced": return "bg-oxblood-100 text-oxblood-700 dark:bg-oxblood-900/30 dark:text-oxblood-400";
   }
-}
+}

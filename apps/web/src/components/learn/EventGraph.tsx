@@ -216,7 +216,7 @@ function EventNodeComponent({
       <div className="node-footer">
         <span className="node-id">{event.id}</span>
         <Link href={`/explore?event=${event.id}`} className="node-link" target="_blank" rel="noopener noreferrer">
-          Explore →
+          Explore
         </Link>
       </div>
     </div>
@@ -348,7 +348,7 @@ export function EventGraph({
                 className="px-3 py-1.5 rounded-sm border border-line bg-paper text-sm hover:border-bronze"
                 title="Fit view"
               >
-                🔍 Fit View
+                Fit view
               </button>
               <button
                 onClick={() => setShowFilters(!showFilters)}
@@ -578,4 +578,4 @@ function LegendItem({ color, dash, label }: { color: string; dash: string; label
       <span className="text-ink">{label}</span>
     </div>
   );
-}
+}

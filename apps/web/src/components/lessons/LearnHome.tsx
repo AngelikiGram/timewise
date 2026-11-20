@@ -160,7 +160,7 @@ function PathMap({ path, p }: { path: PathDef; p: Progress }) {
           return (
             <li key={l.id} className="relative">
               {l.milestone && (
-                <p className="relative mx-auto my-4 w-fit rounded-full border border-line bg-paper-2 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-ink-2">{l.milestone}</p>
+                <p className="relative mx-auto my-4 w-fit rounded-full border border-line bg-paper-2 px-3 py-1 text-xs font-semibold text-ink-2">{l.milestone}</p>
               )}
               <Link
                 href={lessonHref(l.id, path.id)}
@@ -208,7 +208,7 @@ export function LearnHome() {
 
           <div className="card mt-6 flex flex-col gap-4 border-2 border-bronze/40 p-5 sm:flex-row sm:items-center" data-testid="continue-learning">
             <div className="min-w-0 flex-1">
-              <p className="text-xs font-semibold uppercase tracking-wider text-bronze">{step.resume ? "Continue where you stopped" : started ? "Up next" : "Start here"}</p>
+              <p className="text-xs font-semibold text-bronze">{step.resume ? "Continue where you stopped" : started ? "Up next" : "Start here"}</p>
               <p className="mt-1 font-serif text-2xl leading-tight">{step.title}</p>
               <p className="text-sm text-ink-2">{pathById(step.pathId)?.title}</p>
             </div>
@@ -248,7 +248,7 @@ export function LearnHome() {
             return (
               <li key={x.id}>
                 <button type="button" className={`card card-link flex h-full w-full flex-col p-4 text-left ${x.id === path.id ? "!border-bronze" : ""}`} onClick={() => pick(x.id)} data-testid="recommended-path">
-                  <span className="text-xs font-semibold uppercase tracking-wider text-bronze">{why}</span>
+                  <span className="text-xs font-semibold text-bronze">{why}</span>
                   <span className="mt-1 font-serif text-xl leading-tight">{x.title}</span>
                   <span className="mt-1 line-clamp-2 text-sm text-ink-2">{x.blurb}</span>
                   <span className="mt-auto pt-3 text-xs tabular-nums text-ink-2">{x.lessons.length} lessons{done ? ` · ${done} done` : ""}</span>
