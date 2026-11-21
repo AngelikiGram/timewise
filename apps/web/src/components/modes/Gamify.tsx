@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { explorerBadges, explorerXp, level, recentOf, TIER_STYLE, useExplorer, type ExplorerBadge } from "@/lib/explorer";
+import { explorerBadges, explorerXp, level, recentOf, TIER_STYLE, useExplorer, type ExplorerBadge, type Quest } from "@/lib/explorer";
 import { useProgress } from "@/lib/progress";
 import { Icon } from "../icons";
 
@@ -53,6 +53,12 @@ export function LevelBar({ compact = false }: { compact?: boolean }) {
 export function BadgeToast() {
   const [shown, setShown] = useState<ExplorerBadge[]>([]);
   const [cards, setCards] = useState(0);
+  const [quest, setQuest] = useState<Quest | null>(null);
+  useEffect(() => {
+    const q = (ev: Event) => { setQuest((ev as CustomEvent<Quest>).detail); setTimeout(() => setQuest(null), 4500); };
+    window.addEventListener("tw-quest", q);
+    return () => window.removeEventListener("tw-quest", q);
+  }, []);
   useEffect(() => {
     const on = (ev: Event) => { const b = (ev as CustomEvent<ExplorerBadge[]>).detail; setShown(b); setTimeout(() => setShown([]), 4500); };
     const mem = (ev: Event) => { setCards((ev as CustomEvent<number>).detail); setTimeout(() => setCards(0), 4500); };
@@ -60,6 +66,17 @@ export function BadgeToast() {
     window.addEventListener("tw-memory", mem);
     return () => { window.removeEventListener("tw-badge", on); window.removeEventListener("tw-memory", mem); };
   }, []);
+  if (!shown.length && quest) {
+    return (
+      <div className="pointer-events-none fixed inset-x-0 bottom-6 z-50 flex justify-center px-4" role="status" aria-live="polite" data-testid="quest-toast">
+        <div className="pointer-events-auto flex items-center gap-3 rounded-xl border-2 border-bronze bg-paper p-3 pr-5 shadow-xl">
+          <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-bronze font-bold text-on-accent">+{quest.xp}</span>
+          <span><span className="block text-xs font-semibold text-bronze">Daily quest done</span><span className="block font-serif text-lg leading-tight">{quest.label}</span></span>
+          <Link href="/profile" className="btn btn-secondary btn-sm ml-2">Quests</Link>
+        </div>
+      </div>
+    );
+  }
   if (!shown.length && cards) {
     return (
       <div className="pointer-events-none fixed inset-x-0 bottom-6 z-50 flex justify-center px-4" role="status" aria-live="polite" data-testid="memory-toast">

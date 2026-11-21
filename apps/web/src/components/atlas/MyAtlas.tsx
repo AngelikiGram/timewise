@@ -72,6 +72,9 @@ export function MyAtlas() {
   const [types, setTypes] = useState<Set<EntityType>>(new Set(TYPES));
   const [path, setPath] = useState("");
   const [q, setQ] = useState("");
+  const [showFilters, setShowFilters] = useState(false);
+  const [guide, setGuide] = useState(true);
+  useEffect(() => { try { setGuide(localStorage.getItem("tw-atlas-guide") !== "off"); } catch { /* keep it */ } }, []);
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
   const [detail, setDetail] = useState<RecordData | null>(null);
@@ -291,16 +294,44 @@ export function MyAtlas() {
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div className="max-w-2xl">
           <h1 className="font-serif text-4xl leading-tight sm:text-5xl">My history atlas</h1>
-          <p className="mt-1 text-ink-2">The people, places and events you have met, joined only where a source says so. Click any of them to put it in the middle.</p>
+          <p className="mt-1 text-ink-2">Everyone and everything you have met in lessons and stories, joined only where a source says so.</p>
         </div>
         <ul className="flex flex-wrap gap-2" aria-label="Your atlas so far">
             {(Object.keys(STATE_LABEL) as (keyof typeof STATE_LABEL)[]).map((k) => <li key={k} className="min-w-[5.5rem] rounded-lg px-3 py-2" style={{ background: `color-mix(in srgb, ${STATE_COLOR[k]} 13%, transparent)` }}><span className="block font-serif text-2xl leading-none tabular-nums" style={{ color: STATE_COLOR[k] }}>{counts[k]}</span><span className="text-xs text-ink-2">{STATE_LABEL[k].toLowerCase()}</span></li>)}
           </ul>
       </header>
 
+      {guide && (
+        <div className="mt-5 rounded-xl border border-line bg-paper-2 p-4" data-testid="atlas-guide">
+          <div className="flex items-start justify-between gap-3">
+            <h2 className="font-serif text-xl">How to use your atlas</h2>
+            <button type="button" className="btn btn-ghost btn-sm" onClick={() => { setGuide(false); try { localStorage.setItem("tw-atlas-guide", "off"); } catch { /* ignore */ } }}>Got it, hide this</button>
+          </div>
+          <ol className="mt-2 grid gap-3 text-sm sm:grid-cols-3">
+            {[
+              ["Click a shape", "It moves to the middle and its own links spread around it. The shape tells the kind: see the key below."],
+              ["Read the right-hand panel", "It says what the record is, when, and every link with its source. Save it to keep it in your collection."],
+              ["Follow a suggestion", "Explore next lists things one link away from what you know. Restore a hidden link turns your atlas into a quiz."],
+            ].map(([t, d], i) => (
+              <li key={t} className="flex gap-3"><span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-ink font-bold text-paper-2">{i + 1}</span><span><b className="block">{t}</b><span className="text-ink-2">{d}</span></span></li>
+            ))}
+          </ol>
+          <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-1 border-t border-line pt-3 text-xs text-ink-2" aria-label="Key">
+            {TYPES.filter((t) => all.some((n) => n.type === t)).map((t) => <li key={t} className="inline-flex items-center gap-1.5"><svg viewBox="-12 -12 24 24" className="h-4 w-4" aria-hidden style={{ color: TYPE_COLOR[t] }}><Shape type={t} r={8} className="fill-current" /></svg>{TYPE_LABEL[t]}</li>)}
+            <li className="inline-flex items-center gap-1.5"><svg width="24" height="6" aria-hidden><line x1="0" y1="3" x2="24" y2="3" stroke="var(--ink)" strokeWidth="2" /></svg>solid: link from a lesson source</li>
+            <li className="inline-flex items-center gap-1.5"><svg width="24" height="6" aria-hidden><line x1="0" y1="3" x2="24" y2="3" stroke="var(--ink-2)" strokeWidth="1.6" strokeDasharray="2 4" strokeLinecap="round" /></svg>dotted: link from Wikidata</li>
+          </ul>
+        </div>
+      )}
+
       {/* One toolbar: find, filter, step back */}
       <div className="mt-5 flex flex-wrap items-center gap-x-3 gap-y-2 rounded-xl border border-line bg-paper-2 p-2.5">
         <label className="w-full sm:w-56"><span className="sr-only">Search my atlas</span><input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search my atlas" className="field !py-1.5 text-sm" /></label>
+        <button type="button" className="btn btn-secondary btn-sm" aria-expanded={showFilters} onClick={() => setShowFilters(!showFilters)}>
+          <Icon name="period" size={15} />Filters{(types.size < TYPES.length ? 1 : 0) + (path ? 1 : 0) + (from || to ? 1 : 0) > 0 && <span className="rounded bg-navy px-1.5 text-xs text-on-accent">{(types.size < TYPES.length ? 1 : 0) + (path ? 1 : 0) + (from || to ? 1 : 0)}</span>}
+        </button>
+        {showFilters && (
+        <div className="order-last flex w-full flex-wrap items-center gap-x-4 gap-y-2 border-t border-line pt-2.5" data-testid="atlas-filters">
         <fieldset className="contents"><legend className="sr-only">Kinds of entity</legend>
             <div className="flex flex-wrap gap-1.5">
               {TYPES.filter((t) => all.some((n) => n.type === t)).map((t) => (
@@ -327,10 +358,13 @@ export function MyAtlas() {
         {[["1800s", 1800, 1899], ["1900s", 1900, 1999]].map(([l, a, b]) => <button key={l as string} type="button" className="chip !min-h-7 !text-xs" onClick={() => { setFrom(String(a)); setTo(String(b)); }}>{l}</button>)}
         {(from || to) && <button type="button" className="link text-xs" onClick={() => { setFrom(""); setTo(""); }}>Clear</button>}
       </div>
+        </div>
+        )}
         <span className="flex flex-wrap gap-1.5 lg:ml-auto">
           <button type="button" className="btn btn-ghost btn-sm" disabled={!history.length} onClick={() => { const prev = history[history.length - 1]; setHistory((h) => h.slice(0, -1)); setFocus(prev); }}><Icon name="back" size={15} />Back</button>
             <button type="button" className="btn btn-ghost btn-sm" onClick={() => { setHistory([]); setFocus(latest ?? null); setTypes(new Set(TYPES)); setPath(""); setFrom(""); setTo(""); }}><Icon name="reset" size={15} />Reset view</button>
             {edges.length > 0 && <button type="button" className="btn btn-secondary btn-sm" onClick={startRestore} disabled={!!restore && !restore.answered} data-testid="restore-start"><Icon name="idea" size={15} />Restore a hidden link</button>}
+            {!guide && <button type="button" className="btn btn-ghost btn-sm" onClick={() => setGuide(true)}>How it works</button>}
             {back && <Link href={back} className="btn btn-secondary btn-sm" data-testid="back-to-lesson">← Back to the lesson</Link>}
         </span>
       </div>

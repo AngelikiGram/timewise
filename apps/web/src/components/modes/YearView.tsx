@@ -11,6 +11,7 @@ import { OWID_SOURCE, people, population, populationAt } from "@/lib/opendata";
 import { Icon } from "../icons";
 import { BadgeToast } from "./Gamify";
 import { ExploreMap, type MapItem } from "./ExploreMap";
+import { MadeAround } from "./OpenFinds";
 import { ModeBar, NextSteps, SaveInterest } from "./shared";
 
 /** Explore a year: the same year in different places, from documented records, with the collection's people and things. */
@@ -93,6 +94,8 @@ export function YearView() {
           ))}
         </ul>
       </section>
+
+      <MadeAround year={y} />
 
       {(alive.length > 0 || works.length > 0 || things.length > 0) && (
         <section className="mt-8" aria-labelledby="year-collection">

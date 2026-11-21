@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import type { Activity } from "@/lib/lessons";
 import { dueReviews, logAnswer, readProgress, useProgress, type Mistake } from "@/lib/progress";
 import { ActivityView } from "./activities";
+import { recordReview } from "@/lib/explorer";
 
 /**
  * Questions missed in lessons, asked again one at a time. A right answer takes a question off the list;
@@ -22,9 +23,8 @@ export function ReviewSession() {
   const current = items[i];
 
   return (
-    <div className="mx-auto max-w-2xl px-4 pb-16 pt-8 sm:px-6" data-testid="review">
-      <p className="eyebrow">Review</p>
-      <h1 className="mt-2 font-serif text-4xl leading-tight">Try these again</h1>
+    <div id="review" className="mx-auto max-w-3xl scroll-mt-24 px-4 pt-10 sm:px-6" data-testid="review">
+      <h2 className="font-serif text-3xl leading-tight">Questions from lessons</h2>
       {queue === null ? (
         <p className="mt-4 text-ink-2" role="status">Loading your review…</p>
       ) : !items.length ? (
@@ -37,6 +37,7 @@ export function ReviewSession() {
             seed={i + 11}
             onAnswer={(a) => {
               if (a.ok) setRight((r) => r + 1);
+              recordReview();
               logAnswer(current.challengeId, current.skill ?? (current.activity as Activity).skill, a.ok, { prompt: current.prompt, correct: current.correct, activity: current.activity }, true);
             }}
             onNext={() => setI(i + 1)}

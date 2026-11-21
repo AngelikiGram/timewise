@@ -77,7 +77,7 @@ export async function placeEvents(qid: string, signal?: AbortSignal): Promise<Pl
 
 // ---------------------------------------------------------------------------------------------- Why
 
-export type Link = { id: string; label: string; description?: string; year: number | null; kind: "cause" | "effect" | "before" | "after"; source: string };
+export type Link = { id: string; label: string; description?: string; year: number | null; kind: "cause" | "effect" | "before" | "after" | "part" | "whole"; source: string };
 export type Node = { id: string; label: string; description?: string; year: number | null };
 
 /** One event and the events Wikidata ties to it by cause and effect, or by coming just before or after. */
@@ -87,11 +87,15 @@ export async function loadLinks(qid: string, signal?: AbortSignal): Promise<{ no
     ["cause", `${q} wdt:P828 ?x.`, "cause", "q", "P828"], ["cause2", `?x wdt:P1542 ${q}.`, "cause", "x", "P1542"], ["cause3", `${q} wdt:P1478 ?x.`, "cause", "q", "P1478"],
     ["effect", `${q} wdt:P1542 ?x.`, "effect", "q", "P1542"], ["effect2", `?x wdt:P828 ${q}.`, "effect", "x", "P828"], ["effect3", `?x wdt:P1478 ${q}.`, "effect", "x", "P1478"],
     ["before", `${q} wdt:P155 ?x.`, "before", "q", "P155"], ["after", `${q} wdt:P156 ?x.`, "after", "q", "P156"],
+    ["before2", `${q} wdt:P1365 ?x.`, "before", "q", "P1365"], ["after2", `${q} wdt:P1366 ?x.`, "after", "q", "P1366"],
+    // When the record has no causes, its structure still explains it: the larger event it belongs to, and the steps it was made of.
+    ["whole", `${q} wdt:P361 ?x.`, "whole", "q", "P361"],
+    ["part", `${q} wdt:P527 ?x.`, "part", "q", "P527"], ["part2", `?x wdt:P361 ${q}.`, "part", "x", "P361"], ["part3", `${q} wdt:P793 ?x.`, "part", "q", "P793"],
   ];
   const [rows, self] = await Promise.all([
     sparql(`SELECT ?x ?xLabel ?xDescription ?rel ?d WHERE {
       ${pat.map(([k, p]) => `{ ${p} BIND("${k}" AS ?rel) }`).join(" UNION ")}
-      OPTIONAL { ?x wdt:P585 ?d1 } OPTIONAL { ?x wdt:P580 ?d2 } OPTIONAL { ?x wdt:P571 ?d3 } BIND(COALESCE(?d1, ?d2, ?d3) AS ?d) ${LABEL} } LIMIT 300`, signal),
+      OPTIONAL { ?x wdt:P585 ?d1 } OPTIONAL { ?x wdt:P580 ?d2 } OPTIONAL { ?x wdt:P571 ?d3 } BIND(COALESCE(?d1, ?d2, ?d3) AS ?d) ${LABEL} } LIMIT 500`, signal),
     sparql(`SELECT ?l ?desc ?d WHERE { OPTIONAL { ${q} rdfs:label ?l FILTER(LANG(?l) = "en") } OPTIONAL { ${q} schema:description ?desc FILTER(LANG(?desc) = "en") }
       OPTIONAL { ${q} wdt:P585 ?d1 } OPTIONAL { ${q} wdt:P580 ?d2 } OPTIONAL { ${q} wdt:P571 ?d3 } BIND(COALESCE(?d1, ?d2, ?d3) AS ?d) } LIMIT 1`, signal),
   ]);
@@ -103,6 +107,7 @@ export async function loadLinks(qid: string, signal?: AbortSignal): Promise<{ no
     const old = links.get(id);
     // A cause or effect says more than "came before/after": keep the stronger link.
     if (old && (old.kind === "cause" || old.kind === "effect")) continue;
+    if (old && (p[2] === "part" || p[2] === "whole")) continue;
     links.set(id, { id, label: v(r, "xLabel")!, description: v(r, "xDescription"), year: yearOfIso(v(r, "d")), kind: p[2], source: p[3] === "q" ? wdUrl(qid, p[4]) : wdUrl(id, p[4]) });
   }
   const s0: Binding = self[0] ?? {};

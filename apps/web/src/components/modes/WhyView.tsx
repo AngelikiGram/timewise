@@ -13,7 +13,7 @@ import { BadgeToast, LevelBar } from "./Gamify";
 import { LiveSearch } from "./LiveSearch";
 
 type N = { id: string; label: string; description?: string; year: number | null; depth: number; state: "closed" | "loading" | "open" | "failed" };
-type E = { from: string; to: string; kind: "cause" | "seq"; source: string };
+type E = { from: string; to: string; kind: "cause" | "seq" | "part"; source: string };
 const W = 230, H = 58, COL = 290, ROW = 74;
 
 /**
@@ -80,17 +80,24 @@ function Network({ root }: { root: string }) {
       const { node, links } = await loadLinks(id);
       recordWhy(id, node.label);
       const side = (k: WLink["kind"]) => links.filter((l) => l.kind === k).sort((a, b) => (a.year ?? 1e9) - (b.year ?? 1e9)).slice(0, 10);
+      const causal = links.filter((l) => l.kind !== "part" && l.kind !== "whole").length;
+      // Parts fill in when causes are thin; the whole is always worth showing, it is the context.
+      const parts = causal >= 6 ? [] : side("part").slice(0, Math.max(4, 10 - causal));
+      const wholes = side("whole").slice(0, 3);
+      const before = (l: WLink) => l.kind === "cause" || l.kind === "before" || l.kind === "whole";
+      const shown = [...side("cause"), ...side("before"), ...wholes, ...side("effect"), ...side("after"), ...parts];
       setNodes((m) => {
         const n = new Map(m), me = n.get(id)!;
         n.set(id, { ...me, label: node.label, description: node.description, year: node.year ?? me.year, state: "open" });
-        for (const l of [...side("cause"), ...side("before"), ...side("effect"), ...side("after")]) {
+        for (const l of shown) {
           if (n.has(l.id)) continue;
-          n.set(l.id, { id: l.id, label: l.label, description: l.description, year: l.year, depth: me.depth + (l.kind === "cause" || l.kind === "before" ? -1 : 1), state: "closed" });
+          n.set(l.id, { id: l.id, label: l.label, description: l.description, year: l.year, depth: me.depth + (before(l) ? -1 : 1), state: "closed" });
         }
         return n;
       });
       setEdges((es) => {
-        const add = [...side("cause"), ...side("before"), ...side("effect"), ...side("after")].map<E>((l) => (l.kind === "cause" || l.kind === "before" ? { from: l.id, to: id, kind: l.kind === "cause" ? "cause" : "seq", source: l.source } : { from: id, to: l.id, kind: l.kind === "effect" ? "cause" : "seq", source: l.source }));
+        const kindOf = (l: WLink): E["kind"] => (l.kind === "cause" || l.kind === "effect" ? "cause" : l.kind === "part" || l.kind === "whole" ? "part" : "seq");
+        const add = shown.map<E>((l) => (before(l) ? { from: l.id, to: id, kind: kindOf(l), source: l.source } : { from: id, to: l.id, kind: kindOf(l), source: l.source }));
         return [...es, ...add.filter((a) => !es.some((x) => x.from === a.from && x.to === a.to))];
       });
     } catch (e) {
@@ -129,18 +136,20 @@ function Network({ root }: { root: string }) {
       <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-ink-2">
         <li className="inline-flex items-center gap-1.5"><svg width="28" height="8"><line x1="0" y1="4" x2="28" y2="4" stroke="var(--oxblood)" strokeWidth="2" /></svg>cause → effect</li>
         <li className="inline-flex items-center gap-1.5"><svg width="28" height="8"><line x1="0" y1="4" x2="28" y2="4" stroke="var(--ink-2)" strokeWidth="2" strokeDasharray="4 3" /></svg>came before → came after</li>
+        <li className="inline-flex items-center gap-1.5"><svg width="28" height="8"><line x1="0" y1="4" x2="28" y2="4" stroke="var(--navy)" strokeWidth="2" strokeDasharray="1 3" strokeLinecap="round" /></svg>larger event → its parts</li>
         <li>Click a box to open its own causes and effects.</li>
       </ul>
-      {!lonely && rootNode.state === "open" && nodes.size <= 4 && <p className="mt-3 text-sm text-ink-2">Wikidata documents only {nodes.size - 1} direct cause or effect link{nodes.size === 2 ? "" : "s"} for {rootNode.label}. Click a box to follow the chain further, or <Link className="link" href={`/stories/live?q=${root}`}>read it as a story through its parts</Link>, or see its <Link className="link" href={`/connections?id=${root}`}>people, places and other connections</Link>.</p>}
-      {lonely && <p className="mt-4 rounded-xl border border-line bg-paper-2 p-4 text-ink-2">Wikidata records no causes or effects for {rootNode.label} yet. Try a larger event, or <Link className="link" href={`/stories/live?q=${root}`}>read it as a story</Link> through its parts.</p>}
+      {!lonely && rootNode.state === "open" && nodes.size <= 4 && edges.every((e) => e.kind !== "part") && <p className="mt-3 text-sm text-ink-2">Wikidata documents only {nodes.size - 1} direct cause or effect link{nodes.size === 2 ? "" : "s"} for {rootNode.label}. Click a box to follow the chain further, or <Link className="link" href={`/stories/live?q=${root}`}>read it as a story through its parts</Link>, or see its <Link className="link" href={`/connections?id=${root}`}>people, places and other connections</Link>.</p>}
+      {lonely && <Lonely id={root} label={rootNode.label} />}
       <div className="mt-4 grid gap-4 xl:grid-cols-[minmax(0,1fr)_320px]">
         <div className="overflow-auto rounded-2xl border border-line bg-paper-2" style={{ maxHeight: "70vh" }} data-testid="why-graph">
           <svg width={layout.width} height={layout.height} role="group" aria-label={`Causes and effects around ${rootNode.label}`}>
             <defs>
               <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" fill="var(--oxblood)" /></marker>
+              <marker id="arr3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" fill="var(--navy)" /></marker>
               <marker id="arr2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" fill="var(--ink-2)" /></marker>
             </defs>
-            {layout.depths.length > 1 && layout.depths.map((d, ci) => <text key={d} x={20 + ci * COL + W / 2} y={18} textAnchor="middle" fontSize={11} fill="var(--ink-2)">{d < 0 ? (d === -1 ? "Causes" : `Causes of causes${d < -2 ? ` (${-d})` : ""}`) : d > 0 ? (d === 1 ? "Consequences" : `Further on${d > 2 ? ` (${d})` : ""}`) : "The event"}</text>)}
+            {layout.depths.length > 1 && layout.depths.map((d, ci) => <text key={d} x={20 + ci * COL + W / 2} y={18} textAnchor="middle" fontSize={11} fill="var(--ink-2)">{d < 0 ? (d === -1 ? "Causes and context" : `Further back${d < -2 ? ` (${-d})` : ""}`) : d > 0 ? (d === 1 ? "Consequences and parts" : `Further on${d > 2 ? ` (${d})` : ""}`) : "The event"}</text>)}
             {edges.map((e) => {
               const a = layout.pos.get(e.from), b = layout.pos.get(e.to);
               if (!a || !b) return null;
@@ -148,7 +157,7 @@ function Network({ root }: { root: string }) {
               const back = x2 <= x1;
               const d = back ? `M${a.x + W / 2},${a.y + H} C${a.x + W / 2},${a.y + H + 40} ${b.x + W / 2},${b.y + H + 40} ${b.x + W / 2},${b.y + H}` : `M${x1},${y1} C${x1 + 50},${y1} ${x2 - 50},${y2} ${x2 - 2},${y2}`;
               const on = e.from === sel || e.to === sel;
-              return <path key={`${e.from}>${e.to}`} d={d} fill="none" stroke={e.kind === "cause" ? "var(--oxblood)" : "var(--ink-2)"} strokeDasharray={e.kind === "seq" ? "5 4" : undefined} strokeWidth={on ? 2.6 : 1.4} opacity={on ? 1 : 0.55} markerEnd={`url(#${e.kind === "cause" ? "arr" : "arr2"})`} />;
+              return <path key={`${e.from}>${e.to}`} d={d} fill="none" stroke={e.kind === "cause" ? "var(--oxblood)" : e.kind === "part" ? "var(--navy)" : "var(--ink-2)"} strokeDasharray={e.kind === "seq" ? "5 4" : e.kind === "part" ? "1 4" : undefined} strokeLinecap="round" strokeWidth={on ? 2.6 : 1.4} opacity={on ? 1 : 0.55} markerEnd={`url(#${e.kind === "cause" ? "arr" : e.kind === "part" ? "arr3" : "arr2"})`} />;
             })}
             {[...nodes.values()].map((n) => {
               const p = layout.pos.get(n.id)!;
@@ -171,11 +180,11 @@ function Network({ root }: { root: string }) {
         <aside className="rounded-2xl border border-line bg-paper p-4" aria-live="polite" data-testid="why-panel">
           {s && (
             <>
-              <p className="text-xs font-semibold text-bronze">{s.id === root ? "The event" : s.depth < 0 ? "A cause, or what came before" : "A consequence, or what came after"}</p>
+              <p className="text-xs font-semibold text-bronze">{s.id === root ? "The event" : s.depth < 0 ? "A cause, the larger event, or what came before" : "A consequence, a part, or what came after"}</p>
               <h2 className="mt-1 font-serif text-2xl leading-tight">{s.label}</h2>
               <p className="text-sm text-ink-2">{[s.year != null ? formatYear(s.year) : null, s.description].filter(Boolean).join(", ")}</p>
               <ul className="mt-3 grid gap-1.5 text-sm">
-                {touching.map((e) => { const a = nodes.get(e.from)!, b = nodes.get(e.to)!; return <li key={`${e.from}>${e.to}`}><b>{a.label}</b> {e.kind === "cause" ? "led to" : "was followed by"} <b>{b.label}</b>. <a className="link text-xs" href={e.source} target="_blank" rel="noopener noreferrer">statement ↗</a></li>; })}
+                {touching.map((e) => { const a = nodes.get(e.from)!, b = nodes.get(e.to)!; return <li key={`${e.from}>${e.to}`}><b>{a.label}</b> {e.kind === "cause" ? "led to" : e.kind === "part" ? "included" : "was followed by"} <b>{b.label}</b>. <a className="link text-xs" href={e.source} target="_blank" rel="noopener noreferrer">statement ↗</a></li>; })}
               </ul>
               <div className="mt-4 flex flex-wrap gap-2">
                 <Link href={`/stories/live?q=${s.id}`} className="btn btn-secondary btn-sm"><Icon name="book" size={15} />Read as a story</Link>
@@ -185,8 +194,21 @@ function Network({ root }: { root: string }) {
               </div>
             </>
           )}
-          <p className="mt-6 text-xs text-ink-2">Arrows follow Wikidata&rsquo;s has cause, has effect, immediate cause, follows and followed by. They show what is documented, which is not everything that mattered: absent arrows are gaps in the record, not proof of no influence.</p>
+          <p className="mt-6 text-xs text-ink-2">Arrows follow Wikidata&rsquo;s has cause, has effect, immediate cause, follows, followed by, replaces, part of and has part. They show what is documented, which is not everything that mattered: absent arrows are gaps in the record, not proof of no influence.</p>
         </aside>
+      </div>
+    </div>
+  );
+}
+
+/** Nothing at all is linked: still give ways on, never a dead end. */
+function Lonely({ id, label }: { id: string; label: string }) {
+  return (
+    <div className="mt-4 rounded-xl border border-line bg-paper-2 p-4">
+      <p className="text-ink-2">Wikidata has no cause, effect, larger event or parts recorded for {label} yet. You can still follow it another way:</p>
+      <div className="mt-3 flex flex-wrap gap-2">
+        <Link className="btn btn-primary btn-sm" href={`/connections?id=${id}`}><Icon name="idea" size={15} />Its people and places</Link>
+        <Link className="btn btn-secondary btn-sm" href={`/stories/live?q=${id}`}><Icon name="book" size={15} />Read it as a story</Link>
       </div>
     </div>
   );

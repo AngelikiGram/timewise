@@ -6,6 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 import { accuracy, badges, streaks } from "@/lib/achievements";
 import { CATEGORY_LABELS } from "@/lib/categories";
 import { lessonHref, PATHS, PLACE_PATHS, SKILLS, type Skill } from "@/lib/lessons";
+import { ExplorerCard } from "./ExplorerCard";
 import { dueReviews, exportProgress, importProgress, resetProgress, setInterests, setProfile, useProgress, type Progress } from "@/lib/progress";
 import { TYPE_LABEL, type EntityType } from "@/lib/entities";
 import { CONTINENT_LABELS } from "@/lib/world-index";
@@ -115,10 +116,7 @@ export function ProfileView() {
   return (
     <div className="mx-auto max-w-6xl px-4 pb-16 pt-8 sm:px-6" data-testid="profile">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <p className="eyebrow">Your profile</p>
-          <input value={name} onChange={(e) => setName(e.target.value)} onBlur={() => setProfile({ name: name.trim() || undefined, shareable })} placeholder="Add a name (optional)" aria-label="Your name" className="mt-1 w-full bg-transparent font-serif text-4xl outline-none placeholder:text-ink-2/50" />
-        </div>
+        <h1 className="font-serif text-4xl leading-tight">Your profile</h1>
         <div className="flex flex-wrap items-center gap-2">
           <div role="radiogroup" aria-label="Who can see this profile" className="flex rounded-full border border-line bg-paper-2 p-0.5 text-sm">
             {[false, true].map((v) => <button key={String(v)} type="button" role="radio" aria-checked={shareable === v} onClick={() => setProfile({ name: name.trim() || undefined, shareable: v })} className={`rounded-full px-3 py-1 ${shareable === v ? "bg-navy text-on-accent [[data-theme=dark]_&]:bg-bronze" : "text-ink-2"}`}>{v ? "Shareable" : "Private"}</button>)}
@@ -127,6 +125,8 @@ export function ProfileView() {
         </div>
       </div>
       <p className="mt-1 text-xs text-ink-2">{shareable ? "A share link carries a summary (lessons, paths, accuracy, badges, countries). Nothing is uploaded; your progress stays in this browser." : "Private: your progress stays in this browser, and no link can show it."}</p>
+
+      <div className="mt-5"><ExplorerCard /></div>
 
       <div className="card mt-6 flex flex-col gap-3 border-2 border-bronze/40 p-5 sm:flex-row sm:items-center">
         <div className="min-w-0 flex-1"><p className="text-xs font-semibold text-bronze">{step.resume ? "Continue where you stopped" : "Up next"}</p><p className="font-serif text-2xl">{step.title}</p></div>

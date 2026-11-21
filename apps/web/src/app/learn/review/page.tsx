@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { MemoryReview } from "@/components/lessons/MemoryReview";
+import { ReviewHub } from "@/components/lessons/ReviewHub";
+import { BadgeToast } from "@/components/modes/Gamify";
 import { ReviewSession } from "@/components/lessons/ReviewSession";
 import { SiteHeader } from "@/components/SiteHeader";
 
@@ -9,7 +11,7 @@ export default function ReviewPage() {
   return (
     <>
       <SiteHeader />
-      <main><ReviewSession /><MemoryReview /></main>
+      <main><BadgeToast /><ReviewHub /><ReviewSession /><MemoryReview /></main>
     </>
   );
 }

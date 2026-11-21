@@ -2,11 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { BASE_PATH } from "@/lib/paths";
 import { dueReviews, useProgress } from "@/lib/progress";
 import { SearchBox } from "./SearchBox";
 import { ThemeToggle } from "./ThemeToggle";
+import { Avatar } from "./profile/Avatar";
+import { activeProfile, explorerXp, level, questProgress, useExplorer, useProfiles } from "@/lib/explorer";
 import { Icon, type IconName } from "./icons";
 
 export function Wordmark() {
@@ -28,19 +31,19 @@ export const SECTIONS = [
 const MODE_PATHS = ["/explore/begin", "/explore/thing", "/explore/year", "/explore/life", "/explore/interests", "/explore/place", "/explore/why"];
 
 /** What sits inside a section, shown as tabs under the header. */
-export const SUBNAV: Partial<Record<(typeof SECTIONS)[number]["id"], { label: string; href: string; match: (p: string) => boolean }[]>> = {
+export const SUBNAV: Partial<Record<(typeof SECTIONS)[number]["id"], { label: string; href: string; hint: string; match: (p: string) => boolean }[]>> = {
   explore: [
-    { label: "Where to begin", href: "/explore/begin", match: (p) => MODE_PATHS.some((x) => p.startsWith(x)) && !p.startsWith("/explore/place") && !p.startsWith("/explore/why") },
-    { label: "World Map", href: "/atlas", match: (p) => ["/atlas", "/history", "/explore"].some((x) => p.startsWith(x)) && !MODE_PATHS.some((x) => p.startsWith(x)) },
-    { label: "Places", href: "/explore/place", match: (p) => p.startsWith("/explore/place") },
-    { label: "Why?", href: "/explore/why", match: (p) => p.startsWith("/explore/why") },
-    { label: "Stories", href: "/stories", match: (p) => p.startsWith("/stories") || p.startsWith("/journey") },
-    { label: "Connections", href: "/connections", match: (p) => p.startsWith("/connections") },
+    { label: "Start here", hint: "Pick a person, a year, a thing or your interests to begin with", href: "/explore/begin", match: (p) => MODE_PATHS.some((x) => p.startsWith(x)) && !p.startsWith("/explore/place") && !p.startsWith("/explore/why") },
+    { label: "Map of events", hint: "Every well-recorded event on one map: zoom, filter by period, click a dot", href: "/atlas", match: (p) => ["/atlas", "/history", "/explore"].some((x) => p.startsWith(x)) && !MODE_PATHS.some((x) => p.startsWith(x)) },
+    { label: "A place in time", hint: "Any town or city: what was built, what happened and who was born there, century by century", href: "/explore/place", match: (p) => p.startsWith("/explore/place") },
+    { label: "Causes and effects", hint: "Why did it happen, and what did it lead to? Click boxes to grow the chain", href: "/explore/why", match: (p) => p.startsWith("/explore/why") },
+    { label: "Stories", hint: "Short illustrated stories, read step by step on a map", href: "/stories", match: (p) => p.startsWith("/stories") || p.startsWith("/journey") },
+    { label: "Who is linked", hint: "Everyone and everything a record is linked to: people, places, events", href: "/connections", match: (p) => p.startsWith("/connections") },
   ],
   "my-atlas": [
-    { label: "Atlas", href: "/my-atlas", match: (p) => p.startsWith("/my-atlas") },
-    { label: "Saved", href: "/collection", match: (p) => p.startsWith("/collection") },
-    { label: "Profile", href: "/profile", match: (p) => p.startsWith("/profile") },
+    { label: "My atlas", hint: "Everything you have learned, as a map of links you can explore", href: "/my-atlas", match: (p) => p.startsWith("/my-atlas") },
+    { label: "Saved", hint: "Records and stories you bookmarked", href: "/collection", match: (p) => p.startsWith("/collection") },
+    { label: "Profile", hint: "Your explorer, level and badges", href: "/profile", match: (p) => p.startsWith("/profile") },
   ],
 };
 
@@ -86,6 +89,7 @@ export function SiteHeader({ children, search = true }: { children?: React.React
     <header className="sticky top-0 z-30 shrink-0 border-b border-line bg-paper-2/95 backdrop-blur">
       <div className="flex h-14 items-center gap-3 px-4 sm:px-6">
         <span className="lg:hidden"><Wordmark /></span>
+        <BackButton pathname={pathname} />
         <div className="min-w-0 flex-1 lg:flex-none">{children}</div>
         {!children && search && (
           <div className="hidden w-full max-w-xl md:block lg:mx-auto">
@@ -101,20 +105,21 @@ export function SiteHeader({ children, search = true }: { children?: React.React
         >
           <svg aria-hidden viewBox="0 0 20 20" className="h-5 w-5"><circle cx="8.5" cy="8.5" r="5.5" fill="none" stroke="currentColor" strokeWidth="1.8" /><path d="m13 13 4.5 4.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></svg>
         </button>
-        <div className="ml-auto md:ml-0 lg:ml-auto"><ThemeToggle /></div>
+        <div className="ml-auto flex items-center gap-2 md:ml-0 lg:ml-auto"><HeaderExplorer /><ThemeToggle /></div>
       </div>
       {active && SUBNAV[active] && (
         <nav aria-label="In this section" className="flex gap-1 overflow-x-auto border-t border-line px-4 sm:px-6 [&>*]:shrink-0" data-testid="subnav">
           {SUBNAV[active]!.map((t) => {
             const on = t.match(strip(pathname));
             return (
-              <Link key={t.href} href={t.href} aria-current={on ? "page" : undefined} className={`border-b-2 px-3 py-2 text-sm font-medium ${on ? "border-bronze text-ink" : "border-transparent text-ink-2 hover:text-ink"}`}>
+              <Link key={t.href} href={t.href} title={t.hint} aria-current={on ? "page" : undefined} className={`border-b-2 px-3 py-2 text-sm font-medium ${on ? "border-bronze text-ink" : "border-transparent text-ink-2 hover:text-ink"}`}>
                 {t.label}{t.label === "Saved" && saved > 0 && <span className="ml-1 rounded-full bg-paper-3 px-1.5 text-[11px] tabular-nums">{saved}</span>}
               </Link>
             );
           })}
         </nav>
       )}
+      {active && SUBNAV[active] && (() => { const t = SUBNAV[active]!.find((x) => x.match(strip(pathname))); return t ? <p className="border-t border-line/60 px-4 py-1.5 text-xs text-ink-2 sm:px-6" data-testid="subnav-hint">{t.hint}</p> : null; })()}
       {searching && (
         <div className="border-t border-line px-4 py-2 md:hidden">
           <SearchBox size="compact" placeholder="Search history…" />
@@ -134,5 +139,50 @@ export function SiteHeader({ children, search = true }: { children?: React.React
       </nav>
     </header>
     </>
+  );
+}
+
+/**
+ * A plain Back button whenever you got here from another TIMEWISE page, so nobody is stranded after a click.
+ * It counts pages seen in this tab; the browser's own history does the rest.
+ */
+function BackButton({ pathname }: { pathname: string }) {
+  const router = useRouter();
+  const [depth, setDepth] = useState(0);
+  useEffect(() => {
+    try {
+      const key = "tw-trail";
+      const here = pathname + window.location.search;
+      const trail: string[] = JSON.parse(sessionStorage.getItem(key) ?? "[]");
+      if (trail[trail.length - 2] === here) trail.pop();
+      else if (trail[trail.length - 1] !== here) trail.push(here);
+      sessionStorage.setItem(key, JSON.stringify(trail.slice(-50)));
+      setDepth(trail.length);
+    } catch { setDepth(0); }
+  }, [pathname]);
+  if (depth < 2) return null;
+  return (
+    <button type="button" onClick={() => router.back()} className="btn btn-secondary btn-sm shrink-0" data-testid="back">
+      <svg aria-hidden viewBox="0 0 20 20" className="h-4 w-4"><path d="M12.5 4.5 7 10l5.5 5.5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+      Back
+    </button>
+  );
+}
+
+/** Your explorer in the corner: avatar, level and quests left today. Opens the profile. */
+function HeaderExplorer() {
+  const ps = useProfiles();
+  const e = useExplorer();
+  const [ready, setReady] = useState(false);
+  useEffect(() => setReady(true), []);
+  if (!ready) return null;
+  const me = activeProfile(ps), l = level(explorerXp(e));
+  const left = questProgress(e).filter((q) => !q.done).length;
+  return (
+    <Link href="/profile" className="relative flex items-center gap-2 rounded-full py-0.5 pl-0.5 pr-2.5 hover:bg-paper-3" title={`${me.name || "Your explorer"}: level ${l.n}, ${left} quest${left === 1 ? "" : "s"} left today`} data-testid="header-explorer">
+      <Avatar archetype={me.archetype} color={me.color} level={l.n} size={34} />
+      <span className="hidden text-sm font-semibold tabular-nums sm:inline">Lv {l.n}</span>
+      {left > 0 && <span className="absolute -right-0.5 -top-0.5 grid h-4 min-w-4 place-items-center rounded-full bg-oxblood px-1 text-[10px] font-bold text-white" aria-hidden>{left}</span>}
+    </Link>
   );
 }

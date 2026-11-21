@@ -75,7 +75,7 @@ function useLoad<T>(qid: string, f: (q: string, s: AbortSignal) => Promise<T>): 
 }
 const ok = <T,>(x: Load<T>): T | null => (x && x !== "failed" ? x : null);
 
-type Row = { year: number; label: string; kind: "founded" | "built" | "event" | "born"; href: string; external?: boolean; sub?: string };
+type Row = { year: number; label: string; kind: "founded" | "built" | "event" | "born"; href: string; external?: boolean; wikidata?: string; sub?: string };
 const ROW: Record<Row["kind"], { icon: IconName; label: string; color: string }> = {
   founded: { icon: "city", label: "Founded", color: "#7a1f2b" }, built: { icon: "city", label: "Built", color: "#8a5a1c" },
   event: { icon: "event", label: "Event", color: "#2f4d7a" }, born: { icon: "person", label: "Born here", color: "#4b6b3a" },
@@ -101,7 +101,7 @@ function Place({ qid }: { qid: string }) {
 
   const rows = useMemo<Row[]>(() => [
     ...(b?.founded != null ? [{ year: b.founded, label: `${name} is founded or first recorded`, kind: "founded" as const, href: wd(qid) + "#P571", external: true }] : []),
-    ...L.filter((l) => l.year != null).map((l) => ({ year: l.year!, label: l.label, kind: "built" as const, href: wd(l.id), external: true, sub: l.kind })),
+    ...L.filter((l) => l.year != null).map((l) => ({ year: l.year!, label: l.label, kind: "built" as const, href: `/connections?id=${l.id}`, wikidata: wd(l.id), sub: l.kind })),
     ...E.map((e) => ({ year: e.year, label: e.label, kind: "event" as const, href: `/stories/live?q=${e.id}`, sub: e.description })),
     ...P.filter((p) => p.born != null).map((p) => ({ year: p.born!, label: p.label, kind: "born" as const, href: lifeHref(p.id), sub: p.description })),
   ].sort((x, y) => x.year - y.year), [b, L, E, P, name, qid]);
@@ -193,7 +193,7 @@ function Place({ qid }: { qid: string }) {
                   <li key={`${r.kind}${r.href}`} className="flex gap-2 text-sm">
                     <span className="w-12 shrink-0 text-right tabular-nums text-ink-2">{formatYear(r.year)}</span>
                     <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full" style={{ background: ROW[r.kind].color }} title={ROW[r.kind].label} />
-                    <span className="min-w-0">{r.external ? <a href={r.href} target="_blank" rel="noopener noreferrer" className="hover:text-bronze">{r.label}</a> : <Link href={r.href} className="hover:text-bronze">{r.label}</Link>}{r.sub && <span className="block truncate text-xs text-ink-2">{r.sub}</span>}</span>
+                    <span className="min-w-0">{r.external ? <a href={r.href} target="_blank" rel="noopener noreferrer" className="hover:text-bronze">{r.label}</a> : <Link href={r.href} className="font-medium underline decoration-line underline-offset-4 hover:text-navy hover:decoration-current">{r.label}</Link>}{r.wikidata && <a href={r.wikidata} target="_blank" rel="noopener noreferrer" className="ml-2 text-xs text-ink-2 hover:underline">Wikidata ↗</a>}{r.sub && <span className="block truncate text-xs text-ink-2">{r.sub}</span>}</span>
                   </li>
                 ))}
               </ul>

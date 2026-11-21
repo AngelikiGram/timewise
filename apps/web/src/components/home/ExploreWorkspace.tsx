@@ -95,7 +95,7 @@ function WorkspaceMap({ focus, bubbles, onPick, period, onFocus, rangeKey }: { f
         } });
         m!.addLayer({ id: "ws-names", type: "symbol", source: "ws-events", filter: ["<", ["get", "rank"], 40], layout: {
           "text-field": ["get", "title"], "text-font": ["Noto Sans Regular"], "text-size": 11.5, "text-max-width": 9,
-          "text-variable-anchor": ["top", "bottom", "left", "right"], "text-radial-offset": 0.9, "text-optional": true,
+          "text-anchor": "top", "text-offset": [0, 0.9], "text-optional": true,
           "symbol-sort-key": ["-", 0, ["get", "links"]],
         }, paint: { "text-color": "#3a2d1c", "text-halo-color": "#f4ecdc", "text-halo-width": 1.6 } });
         m!.on("click", "ws-dots", (e) => { const id = e.features?.[0]?.properties?.id; if (id) focusRef.current(id); });
@@ -123,7 +123,8 @@ function WorkspaceMap({ focus, bubbles, onPick, period, onFocus, rangeKey }: { f
     const shown = new Set([focus?.id, ...bubbles.map((b) => b.id)]);
     (m.getSource("ws-events") as import("maplibre-gl").GeoJSONSource).setData({
       type: "FeatureCollection",
-      features: period.filter((e) => !shown.has(e.id)).map((e, rank) => ({ type: "Feature", properties: { id: e.id, title: titleOf(e), links: e.links, rank }, geometry: { type: "Point", coordinates: [e.lng!, e.lat!] } })),
+      // Records sharing one spot get a single name (the first, best-ranked one), never one above and one below the dot.
+      features: (() => { const named = new Set<string>(); return period.filter((e) => !shown.has(e.id)).map((e, rank) => { const k = `${e.lng!.toFixed(2)},${e.lat!.toFixed(2)}`; const first = !named.has(k); named.add(k); return { type: "Feature" as const, properties: { id: e.id, title: titleOf(e), links: e.links, rank: first ? rank : 999 }, geometry: { type: "Point" as const, coordinates: [e.lng!, e.lat!] } }; }); })(),
     });
   }, [ready, period, focus, bubbles]);
 

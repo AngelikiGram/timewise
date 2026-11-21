@@ -91,3 +91,37 @@ export function populationAt(series: [number, number][], year: number): number |
 }
 export const people = (n: number) => (n >= 1e9 ? `${(n / 1e9).toFixed(n >= 1e10 ? 0 : 2)} billion` : n >= 1e6 ? `${(n / 1e6).toFixed(n >= 1e8 ? 0 : 1)} million` : n >= 1e3 ? `${Math.round(n / 1e3)} thousand` : String(Math.round(n)));
 export const OWID_SOURCE = "https://ourworldindata.org/grapher/population";
+
+// ---------------------------------------------------------------------------------------------- The Met
+// The Metropolitan Museum of Art's Open Access API: no key, CC0 data, public-domain images.
+
+export type MuseumObject = { id: number; title: string; image: string; artist?: string; date: string; culture?: string; link: string };
+
+/** Public-domain objects in The Met dated within a few years of `year`, with images. */
+export async function metObjects(year: number, signal?: AbortSignal, n = 8): Promise<MuseumObject[]> {
+  const span = year < 0 ? 100 : year < 1500 ? 25 : 5;
+  const base = "https://collectionapi.metmuseum.org/public/collection/v1";
+  const q = year < 1500 ? "art" : String(Math.abs(year));
+  const s = await cachedJson<{ objectIDs: number[] | null }>(`${base}/search?hasImages=true&dateBegin=${year - span}&dateEnd=${year + span}&q=${q}`, signal);
+  const ids = (s.objectIDs ?? []).slice(0, n * 3);
+  type O = { objectID: number; title: string; primaryImageSmall: string; artistDisplayName: string; objectDate: string; culture: string; objectURL: string; isPublicDomain: boolean };
+  const got = await Promise.all(ids.map((id) => cachedJson<O>(`${base}/objects/${id}`, signal).catch(() => null)));
+  return got.filter((o): o is O => !!o && o.isPublicDomain && !!o.primaryImageSmall).slice(0, n)
+    .map((o) => ({ id: o.objectID, title: o.title, image: o.primaryImageSmall, artist: o.artistDisplayName || undefined, date: o.objectDate, culture: o.culture || undefined, link: o.objectURL }));
+}
+export const MET_SOURCE = "https://metmuseum.github.io/";
+
+// ---------------------------------------------------------------------------------------------- On this day
+// Wikipedia's "On this day" selection: events editors picked for each calendar date (CC BY-SA).
+
+export type DayEvent = { year: number; text: string; page?: { title: string; url: string; qid?: string; thumb?: string } };
+
+export async function onThisDay(month: number, day: number, signal?: AbortSignal): Promise<DayEvent[]> {
+  const mm = String(month).padStart(2, "0"), dd = String(day).padStart(2, "0");
+  type R = { selected?: { year: number; text: string; pages?: { titles?: { normalized: string }; wikibase_item?: string; thumbnail?: { source: string }; content_urls?: { desktop?: { page: string } } }[] }[] };
+  const d = await cachedJson<R>(`https://en.wikipedia.org/api/rest_v1/feed/onthisday/selected/${mm}/${dd}`, signal, undefined, 86400000);
+  return (d.selected ?? []).map((e) => {
+    const p = e.pages?.[0];
+    return { year: e.year, text: e.text, page: p?.titles ? { title: p.titles.normalized, url: p.content_urls?.desktop?.page ?? "", qid: p.wikibase_item, thumb: p.thumbnail?.source } : undefined };
+  }).sort((a, b) => a.year - b.year);
+}

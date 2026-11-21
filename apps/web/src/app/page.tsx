@@ -2,6 +2,7 @@ import Link from "next/link";
 import { LearnCta } from "@/components/HomeWidgets";
 import { ExploreWorkspace } from "@/components/home/ExploreWorkspace";
 import { BeginCards } from "@/components/modes/BeginCards";
+import { OnThisDay } from "@/components/modes/OpenFinds";
 import { Icon, type IconName } from "@/components/icons";
 import { SearchBox } from "@/components/SearchBox";
 import { SiteFooter } from "@/components/SiteFooter";
@@ -75,7 +76,9 @@ export default function Home() {
           </nav>
         </section>
 
-        <div className="mt-8"><BeginCards /></div>
+        <div className="mt-10"><OnThisDay /></div>
+
+        <div className="mt-10"><BeginCards /></div>
 
         <div className="mt-8"><ExploreWorkspace /></div>
 

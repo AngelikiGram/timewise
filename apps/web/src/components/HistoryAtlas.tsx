@@ -390,14 +390,14 @@ export function HistoryAtlas({ region, regions }: { region: Region; regions: Reg
           "text-field": ["get", "glyph"], "text-font": ["Noto Sans Regular"], "text-size": ["interpolate", ["linear"], ["zoom"], 6, 8, 10, 10], "text-allow-overlap": true, "text-ignore-placement": true,
         } });
         // "+2": more records at exactly this spot, so the overlap is visible.
-        m.addLayer({ id: "h-stack", type: "symbol", source: "h", filter: ["all", single, [">", ["get", "stack"], 1]], layout: {
+        m.addLayer({ id: "h-stack", type: "symbol", source: "h", filter: ["all", single, [">", ["get", "stack"], 1], ["==", ["get", "lead"], true]], layout: {
           "text-field": ["concat", "+", ["to-string", ["-", ["get", "stack"], 1]]], "text-font": ["Noto Sans Regular"], "text-size": 11, "text-offset": [1.1, -1.1], "text-allow-overlap": true, "text-ignore-placement": true,
         }, paint: { "text-halo-width": 2 } });
         m.addLayer({ id: "h-selected", type: "circle", source: "h", filter: ["==", ["get", "id"], ""], paint: { "circle-radius": 15, "circle-color": "rgba(0,0,0,0)", "circle-stroke-width": 3 } });
         for (const [id, minzoom, minLinks] of LABEL_TIERS) {
-          m.addLayer({ id, type: "symbol", source: "h", minzoom, filter: ["all", single, [">=", ["get", "links"], minLinks]], layout: {
+          m.addLayer({ id, type: "symbol", source: "h", minzoom, filter: ["all", single, ["==", ["get", "lead"], true], [">=", ["get", "links"], minLinks]], layout: {
             "text-field": ["get", "title"], "text-font": ["Noto Sans Regular"], "text-size": ["interpolate", ["linear"], ["zoom"], 5, 11, 10, 13],
-            "text-max-width": 11, "text-variable-anchor": ["top", "bottom", "left", "right"], "text-radial-offset": 1, "text-justify": "auto",
+            "text-max-width": 11, "text-anchor": "top", "text-offset": [0, 1.1], "text-justify": "center",
             "symbol-sort-key": ["-", 0, ["get", "links"]], "text-optional": true,
           }, paint: { "text-halo-width": 1.6 } });
         }
@@ -492,14 +492,21 @@ export function HistoryAtlas({ region, regions }: { region: Region; regions: Reg
     const m = mapRef.current;
     if (!ready || !m) return;
     const onMap = filtered.filter(pinned);
-    const spot = (e: Item) => `${e.lng!.toFixed(4)},${e.lat!.toFixed(4)}`;
+    const spot = (e: Item) => `${e.lng!.toFixed(2)},${e.lat!.toFixed(2)}`;
     const perSpot = new Map<string, number>();
-    for (const e of onMap) perSpot.set(spot(e), (perSpot.get(spot(e)) ?? 0) + 1);
+    // One name per spot: the best-documented record there is named, the rest are counted by the "+n" badge.
+    const lead = new Map<string, Item>();
+    const weight = (e: Item) => (e.checked ? 40 : e.links ?? 0);
+    for (const e of onMap) {
+      perSpot.set(spot(e), (perSpot.get(spot(e)) ?? 0) + 1);
+      const l = lead.get(spot(e));
+      if (!l || weight(e) > weight(l)) lead.set(spot(e), e);
+    }
     (m.getSource("h") as GeoJSONSource).setData({
       type: "FeatureCollection",
       features: onMap.map((e) => ({
         type: "Feature",
-        properties: { stack: perSpot.get(spot(e)) ?? 1, id: e.id, category: e.category, glyph: CATEGORY_GLYPH[e.category] ?? "", title: e.title.en ?? e.title.de ?? "", links: e.checked ? 40 : e.links ?? 0, inside: e.inside !== false },
+        properties: { stack: perSpot.get(spot(e)) ?? 1, lead: lead.get(spot(e)) === e, id: e.id, category: e.category, glyph: CATEGORY_GLYPH[e.category] ?? "", title: e.title.en ?? e.title.de ?? "", links: e.checked ? 40 : e.links ?? 0, inside: e.inside !== false },
         geometry: { type: "Point", coordinates: [e.lng!, e.lat!] },
       })),
     });

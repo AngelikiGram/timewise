@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+import { recordReview } from "@/lib/explorer";
 import { answerCard, dueCards, removeCard, useMemory, type Card } from "@/lib/memory";
 import { Icon } from "../icons";
 
@@ -18,12 +19,12 @@ export function MemoryReview() {
   const start = (cards: Card[]) => { setQueue([...cards].sort(() => Math.random() - 0.5).slice(0, 12)); setI(0); setChosen(null); setRight(0); };
   const c = queue?.[i];
   const next = () => { setI(i + 1); setChosen(null); };
-  const pick = (o: string) => { if (!c || chosen) return; setChosen(o); const ok = o === c.answer; if (ok) setRight(right + 1); answerCard(c.id, ok); };
+  const pick = (o: string) => { if (!c || chosen) return; setChosen(o); const ok = o === c.answer; if (ok) setRight(right + 1); answerCard(c.id, ok); recordReview(); };
   const soon = all.filter((x) => !due.includes(x)).sort((a, b) => a.due.localeCompare(b.due))[0];
 
   return (
-    <section className="mx-auto mt-10 max-w-3xl px-4 pb-16 sm:px-6" aria-labelledby="memory-title" data-testid="memory-review">
-      <h2 id="memory-title" className="flex items-center gap-2 font-serif text-3xl"><Icon name="idea" size={26} className="text-bronze" />Story memory</h2>
+    <section id="memory-review" className="mx-auto mt-10 max-w-3xl scroll-mt-24 px-4 pb-16 sm:px-6" aria-labelledby="memory-title" data-testid="memory-review">
+      <h2 id="memory-title" className="flex items-center gap-2 font-serif text-3xl"><Icon name="idea" size={26} className="text-bronze" />Memory cards</h2>
       <p className="mt-1 text-ink-2">Finished stories, lives you scrubbed to the end and timeline rounds turn into questions. Each comes back after 1, 3, 7, 16, 35 and 90 days while you get it right, and tomorrow when you don&rsquo;t.</p>
 
       {!queue && (

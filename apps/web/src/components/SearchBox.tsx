@@ -84,11 +84,11 @@ export function SearchBox({ size = "large", placeholder }: { size?: "large" | "c
 
   const SCOPES = useMemo(() => {
     const list: { id: Scope; label: string; help: string }[] = [
-      { id: "indexed", label: "Indexed records", help: "The 10,250 best-documented imported events, plus countries, continents and the checked collection. Not every record in TIMEWISE." },
-      { id: "checked", label: "Checked only", help: "Only the hand-checked Austria collection (1844–1921), where every claim cites a source." },
+      { id: "indexed", label: "Main collection", help: "The 10,250 best-documented imported events, plus countries, continents and the checked collection. Not every record in TIMEWISE." },
+      { id: "checked", label: "Hand-checked only", help: "Only the hand-checked Austria collection (1844–1921), where every claim cites a source." },
     ];
-    if (regionId) list.push({ id: "region", label: `This map: ${regionName ?? regionId}`, help: `Every record on the ${regionName ?? regionId} map, including those not in the index.` });
-    list.push({ id: "wikidata", label: "Wikidata (live)", help: "All of Wikidata, searched live: events, people, places, inventions and ideas. Opens in the connections explorer." });
+    if (regionId) list.push({ id: "region", label: `Only this map`, help: `Every record on the ${regionName ?? regionId} map, including those not in the index.` });
+    list.push({ id: "wikidata", label: "All of Wikidata", help: "All of Wikidata, searched live: events, people, places, inventions and ideas. Opens in the connections explorer." });
     return list;
   }, [regionId, regionName]);
   const scopeInfo = SCOPES.find((s) => s.id === scope) ?? SCOPES[0];
@@ -167,7 +167,7 @@ export function SearchBox({ size = "large", placeholder }: { size?: "large" | "c
           className={`min-w-0 flex-1 bg-transparent px-2 outline-none placeholder:text-ink-2/80 ${large ? "py-1.5 text-lg" : "py-1 text-sm"}`}
         />
         <label className="shrink-0">
-          <span className="sr-only">Search in</span>
+          <span className={`mr-1 text-ink-2 ${large ? "text-sm" : "text-xs"}`}>in</span>
           <select
             value={scope}
             onChange={(e) => { setScope(e.target.value as Scope); setOpen(true); input.current?.focus(); }}
